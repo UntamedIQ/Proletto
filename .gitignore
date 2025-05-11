@@ -80,3 +80,5 @@ bot_scheduler_state.json
 # Any file with the word secret in it
 *secret*
 !env_vars.template.sh
+env_vars.sh
+env_vars.sh
