@@ -21,10 +21,17 @@ def get_db():
     from models import db
     return db
 
-# Get Google OAuth credentials from environment variables
-# These will need to be set up in the Replit environment
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
+# Get Google OAuth credentials using our helper module
+from utils.google_auth_helper import get_client_id, get_client_secret
+from typing import cast, Optional
+
+# Get credentials and ensure we have strings (not None)
+_client_id: Optional[str] = get_client_id()
+_client_secret: Optional[str] = get_client_secret()
+
+# We'll use these variables for string operations
+GOOGLE_CLIENT_ID = _client_id
+GOOGLE_CLIENT_SECRET = _client_secret
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
 # Make sure to use this redirect URL. It has to match the one in the whitelist
@@ -88,12 +95,20 @@ def callback():
         redirect_url=request.base_url.replace("http://", "https://"),
         code=code,
     )
-    token_response = requests.post(
-        token_url,
-        headers=headers,
-        data=body,
-        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
-    )
+    # Make sure client ID and secret are not None before using them for authentication
+    if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+        # We need to explicitly cast these to str to satisfy type checking
+        client_id_str = str(GOOGLE_CLIENT_ID)
+        client_secret_str = str(GOOGLE_CLIENT_SECRET)
+        
+        token_response = requests.post(
+            token_url,
+            headers=headers,
+            data=body,
+            auth=(client_id_str, client_secret_str),
+        )
+    else:
+        return "Google OAuth credentials not configured properly", 500
 
     client.parse_request_body_response(json.dumps(token_response.json()))
 

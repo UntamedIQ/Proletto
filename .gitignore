@@ -26,6 +26,17 @@ ENV/
 
 # Environment variables
 .env
+env_vars.sh
+*.env.sh
+
+# Credentials and secrets
+credentials.json
+client_secret*.json
+*_secret*.json
+*.pem
+*.key
+token*.json
+attached_assets/client_secret_*.json
 
 # Flask
 instance/
@@ -64,10 +75,8 @@ bot_scheduler_state.json
 # Temporary files
 *.swp
 *.swo
-*~credentials.json
-credentials.json
-attached_assets/client_secret_*.json
-credentials.json
-attached_assets/client_secret_*.json
-credentials.json
-attached_assets/client_secret_*.json
+*~
+
+# Any file with the word secret in it
+*secret*
+!env_vars.template.sh
