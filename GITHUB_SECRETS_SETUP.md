@@ -7,6 +7,8 @@ This document explains how to set up the necessary secrets in GitHub for the Pro
 ### For All Environments
 
 - `SLACK_WEBHOOK_URL`: The webhook URL for posting deployment notifications to Slack
+- `GOOGLE_OAUTH_CLIENT_ID`: Google OAuth Client ID for authentication
+- `GOOGLE_OAUTH_CLIENT_SECRET`: Google OAuth Client Secret for authentication
 
 ### For Production Environment
 
@@ -16,6 +18,11 @@ This document explains how to set up the necessary secrets in GitHub for the Pro
 - `DATABASE_URL`: PostgreSQL database connection string for production
 - `REDIS_URL`: Redis connection string for production
 - `FLASK_SECRET_KEY`: Secret key for Flask sessions in production
+- `STRIPE_SECRET_KEY`: Stripe Secret Key for production
+- `STRIPE_PUBLIC_KEY`: Stripe Public Key for production
+- `STRIPE_WEBHOOK_SECRET`: Stripe Webhook Secret for production
+- `SENDGRID_API_KEY`: SendGrid API Key for sending emails
+- `SENDGRID_FROM_EMAIL`: Email address to send from with SendGrid
 
 ### For Staging Environment
 
@@ -25,6 +32,8 @@ This document explains how to set up the necessary secrets in GitHub for the Pro
 - `STAGING_DATABASE_URL`: PostgreSQL database connection string for staging
 - `STAGING_REDIS_URL`: Redis connection string for staging
 - `STAGING_FLASK_SECRET_KEY`: Secret key for Flask sessions in staging
+- `STAGING_STRIPE_SECRET_KEY`: Stripe Secret Key for staging
+- `STAGING_STRIPE_PUBLIC_KEY`: Stripe Public Key for staging
 
 ### For Development Environment
 

@@ -64,4 +64,4 @@ bot_scheduler_state.json
 # Temporary files
 *.swp
 *.swo
-*~
+*~credentials.json
