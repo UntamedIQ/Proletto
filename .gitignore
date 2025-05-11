@@ -65,3 +65,9 @@ bot_scheduler_state.json
 *.swp
 *.swo
 *~credentials.json
+credentials.json
+attached_assets/client_secret_*.json
+credentials.json
+attached_assets/client_secret_*.json
+credentials.json
+attached_assets/client_secret_*.json
