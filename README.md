@@ -105,3 +105,4 @@ Proletto's infrastructure is designed as a three-part system:
    - API endpoint for capturing user feedback
    - Database model for storing and analyzing feedback
    - Infrastructure for retraining recommendation models based on user input# proletto
+# Proletto
