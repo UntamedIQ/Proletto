@@ -1,0 +1,144 @@
+{% extends "public/base.html" %}
+
+{% block title %}Server Error | Proletto{% endblock %}
+
+{% block content %}
+<section class="error-page">
+    <div class="container">
+        <div class="error-content">
+            <h1>500</h1>
+            <h2>Server Error</h2>
+            <p>Something went wrong on our end. We're working on fixing it and apologize for the inconvenience.</p>
+            
+            <div class="error-suggestions">
+                <h3>You can try:</h3>
+                <ul>
+                    <li>Refreshing the page</li>
+                    <li>Going back to the <a href="/">homepage</a></li>
+                    <li>Trying again later</li>
+                </ul>
+                
+                <p class="contact-support">
+                    If the problem persists, please contact our support team at <a href="mailto:support@myproletto.com">support@myproletto.com</a>.
+                </p>
+            </div>
+            
+            <a href="/" class="btn btn-primary">Return to Homepage</a>
+        </div>
+        
+        <div class="error-illustration">
+            <img src="/assets/500-illustration.svg" alt="Server error illustration">
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-page {
+        padding: 6rem 0;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .error-page .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .error-content {
+        flex: 1;
+        max-width: 600px;
+    }
+    
+    .error-content h1 {
+        font-size: 8rem;
+        color: #e74c3c;
+        margin: 0;
+        line-height: 1;
+    }
+    
+    .error-content h2 {
+        font-size: 2.5rem;
+        margin: 0 0 1.5rem;
+    }
+    
+    .error-content p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: #666;
+    }
+    
+    .error-suggestions {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .error-suggestions h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .error-suggestions ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0 0 1.5rem;
+    }
+    
+    .error-suggestions li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .error-suggestions li a {
+        color: #6c5ce7;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .error-suggestions li a:hover {
+        text-decoration: underline;
+    }
+    
+    .contact-support {
+        font-size: 0.95rem;
+        color: #666;
+        border-top: 1px solid #dee2e6;
+        padding-top: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .error-illustration {
+        flex: 1;
+        text-align: center;
+        max-width: 400px;
+    }
+    
+    .error-illustration img {
+        max-width: 100%;
+    }
+    
+    @media (max-width: 768px) {
+        .error-page .container {
+            flex-direction: column-reverse;
+            text-align: center;
+        }
+        
+        .error-illustration {
+            margin-bottom: 2rem;
+        }
+        
+        .error-content h1 {
+            font-size: 6rem;
+        }
+        
+        .error-content h2 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}

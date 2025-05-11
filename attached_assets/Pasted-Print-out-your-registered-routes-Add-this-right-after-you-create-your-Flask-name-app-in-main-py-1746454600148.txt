@@ -1,0 +1,73 @@
+Print out your registered routes
+Add this right after you create your Flask(__name__) app in main.py:
+
+python
+Copy
+Edit
+@app.before_first_request
+def _print_routes():
+    import logging
+    for rule in app.url_map.iter_rules():
+        logging.getLogger('root').info(f"Route: {rule} -> methods={rule.methods}")
+Restart your server, watch the console/logs.
+
+You’ll get a list of every URL pattern Flask is listening on.
+
+Confirm that each path you expect (/opportunities, /portfolio, etc.) shows up exactly once.
+
+If any are missing or misspelled here, that’s your culprit.
+
+2. Verify your route definitions
+For each endpoint you care about, you should have something like:
+
+python
+Copy
+Edit
+@app.route('/opportunities')
+def opportunities():
+    return render_template('opportunities.html')
+
+@app.route('/portfolio')
+def portfolio():
+    return render_template('portfolio.html')
+
+@app.route('/auth/login')
+def login():
+    return render_template('login.html')
+
+# etc.
+No file extension in the decorator (i.e. use '/portfolio', not '/portfolio.html').
+
+Case-sensitive, make sure your URLs and @app.route strings match exactly.
+
+3. Confirm your redirect rules
+If you added redirects, they should look like:
+
+python
+Copy
+Edit
+@app.route('/portfolio.html')
+def redirect_portfolio():
+    return redirect(url_for('portfolio'))
+Double-check that the url_for('portfolio') name matches the function name of the real route.
+
+4. Add a catch-all to trap stray URLs
+Right before your app.run(...), add:
+
+python
+Copy
+Edit
+@app.route('/<path:anything>')
+def catch_all(anything):
+    return render_template('404.html'), 404
+This ensures you get your custom 404 page rather than Flask’s default—but more importantly, it confirms all undefined routes land here. If you still see Flask’s default “404 Not Found,” you know your catch-all isn’t even being hit, which narrows the problem to registration order.
+
+5. Re-test after each change
+Make the change.
+
+Restart your Flask server.
+
+Hit each URL in your browser.
+
+Watch your console logs—Flask will tell you which handler fired (or that it fell to your catch-all).
+

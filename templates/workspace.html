@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspaces - Proletto</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/static/css/mobile.css">
+    <link rel="stylesheet" href="/static/css/workspace-mobile.css">
+    <style>
+        /* Workspace specific styles */
+        .workspace-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .workspace-card {
+            padding: 20px;
+            background-color: #f8f3e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        
+        .workspace-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .workspace-card h3 {
+            margin-top: 0;
+            color: #5d4037;
+        }
+        
+        .workspace-card p {
+            color: #6c6c6c;
+            margin-bottom: 15px;
+        }
+        
+        .workspace-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #6c6c6c;
+        }
+        
+        .workspace-role {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            background-color: #e0e0e0;
+        }
+        
+        .role-owner {
+            background-color: #ffd8b1;
+            color: #bf360c;
+        }
+        
+        .role-admin {
+            background-color: #d1c4e9;
+            color: #4527a0;
+        }
+        
+        .role-editor {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .create-workspace-btn {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .create-workspace-btn:hover {
+            background-color: #6d4c41;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #5d4037;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #5d4037;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #5d4037;
+        }
+        
+        .form-group input, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .cancel-btn {
+            background-color: #e0e0e0;
+            color: #5d4037;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .submit-btn {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .submit-btn:hover {
+            background-color: #6d4c41;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #757575;
+        }
+        
+        .empty-state h3 {
+            margin-top: 15px;
+            color: #5d4037;
+        }
+        
+        .empty-state p {
+            margin-bottom: 20px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main navigation -->
+    <header>
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="/" class="logo-link">
+                    <img src="/assets/proletto-logo.svg" alt="Proletto" class="logo">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/opportunities">Opportunities</a></li>
+                    <li><a href="/workspace" class="active">Workspaces</a></li>
+                    <li><a href="/portfolio">Portfolio</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="user-menu">
+                    <a href="/profile" class="user-link">
+                        <span id="user-name">Account</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="workspace-container">
+            <div class="workspace-header">
+                <h1>My Workspaces</h1>
+                <button id="create-workspace-btn" class="create-workspace-btn">Create Workspace</button>
+            </div>
+            
+            <div id="workspaces-grid" class="workspace-grid">
+                <!-- Workspaces will be loaded here -->
+                <!-- Empty state shown when no workspaces are available -->
+                <div id="empty-state" class="empty-state" style="display: none; grid-column: 1/-1;">
+                    <h3>No workspaces yet</h3>
+                    <p>Create a workspace to collaborate with artists, clients, and team members on projects.</p>
+                    <button class="create-workspace-btn">Create Your First Workspace</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Include Mobile Navigation -->
+    {% include "includes/mobile_nav.html" %}
+
+    <!-- Create Workspace Modal -->
+    <div id="create-workspace-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Workspace</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="create-workspace-form">
+                <div class="form-group">
+                    <label for="workspace-name">Workspace Name*</label>
+                    <input type="text" id="workspace-name" name="name" required placeholder="Enter workspace name">
+                </div>
+                <div class="form-group">
+                    <label for="workspace-description">Description</label>
+                    <textarea id="workspace-description" name="description" placeholder="Describe the purpose of this workspace"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-workspace">Cancel</button>
+                    <button type="submit" class="submit-btn">Create Workspace</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add mobile menu toggle functionality
+            const workspaceMenuToggle = document.querySelector('.workspace-menu-toggle');
+            const mobileMenu = document.querySelector('.workspace-mobile-menu');
+            
+            // Create mobile menu toggle if it doesn't exist yet
+            if (!workspaceMenuToggle && window.innerWidth <= 768) {
+                const header = document.querySelector('.workspace-header');
+                
+                // Create menu toggle button
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'workspace-menu-toggle';
+                toggleBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>';
+                header.appendChild(toggleBtn);
+                
+                // Create mobile menu
+                const menu = document.createElement('div');
+                menu.className = 'workspace-mobile-menu';
+                menu.innerHTML = `
+                    <a href="/opportunities">Browse Opportunities</a>
+                    <a href="/portfolio">View Portfolio</a>
+                    <a href="#" id="create-workspace-mobile">Create Workspace</a>
+                `;
+                document.querySelector('.workspace-container').appendChild(menu);
+                
+                // Add event listener
+                toggleBtn.addEventListener('click', function() {
+                    menu.classList.toggle('active');
+                });
+                
+                // Add click handler for create workspace link
+                document.getElementById('create-workspace-mobile').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openCreateWorkspaceModal();
+                });
+                
+                // Close menu when clicking elsewhere
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.workspace-menu-toggle') && 
+                        !e.target.closest('.workspace-mobile-menu')) {
+                        menu.classList.remove('active');
+                    }
+                });
+            }
+        });
+        
+        // Add mobile floating action button for small screens
+        if (window.innerWidth <= 480) {
+            const floatingBtn = document.createElement('button');
+            floatingBtn.className = 'mobile-floating-action';
+            floatingBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>';
+            document.body.appendChild(floatingBtn);
+            
+            floatingBtn.addEventListener('click', openCreateWorkspaceModal);
+        }
+        
+        // Variables for storing state
+        let workspaces = [];
+        let currentUser = {
+            isLoggedIn: false,
+            name: '',
+            email: ''
+        };
+        
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            
+            // Set up modal event listeners
+            document.getElementById('create-workspace-btn').addEventListener('click', openCreateWorkspaceModal);
+            document.querySelector('.close-modal').addEventListener('click', closeModal);
+            document.getElementById('cancel-workspace').addEventListener('click', closeModal);
+            document.getElementById('create-workspace-form').addEventListener('submit', createWorkspace);
+            
+            // Also set click handler for empty state button
+            const emptyStateBtn = document.querySelector('.empty-state .create-workspace-btn');
+            if (emptyStateBtn) {
+                emptyStateBtn.addEventListener('click', openCreateWorkspaceModal);
+            }
+        });
+        
+        // Check if user is logged in
+        function checkLoginStatus() {
+            // Check if there's a session cookie or token
+            // This is a simplified version - in a real app, you would verify the token with the server
+            const token = getCookie('session_token') || localStorage.getItem('auth_token');
+            
+            if (token) {
+                // User is logged in, update UI and fetch workspaces
+                currentUser.isLoggedIn = true;
+                
+                // Fetch user profile and workspaces
+                fetchUserProfile();
+                fetchWorkspaces();
+            } else {
+                // User is not logged in, redirect to login page
+                window.location.href = '/login?redirect=/workspace';
+            }
+        }
+        
+        // Fetch user profile information
+        function fetchUserProfile() {
+            fetch('/api/user/profile')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch user profile');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        currentUser.name = data.user.name || data.user.email;
+                        currentUser.email = data.user.email;
+                        
+                        // Update UI with user information
+                        document.getElementById('user-name').textContent = currentUser.name;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user profile:', error);
+                });
+        }
+        
+        // Fetch user's workspaces
+        function fetchWorkspaces() {
+            fetch('/api/workspaces')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch workspaces');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        workspaces = data.workspaces || [];
+                        renderWorkspaces();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching workspaces:', error);
+                    showError('Failed to load workspaces. Please try again later.');
+                });
+        }
+        
+        // Render workspaces in the UI
+        function renderWorkspaces() {
+            const workspacesGrid = document.getElementById('workspaces-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            // Clear previous content
+            workspacesGrid.innerHTML = '';
+            
+            if (workspaces.length === 0) {
+                // Show empty state if no workspaces
+                emptyState.style.display = 'block';
+                workspacesGrid.appendChild(emptyState);
+                return;
+            }
+            
+            // Hide empty state
+            emptyState.style.display = 'none';
+            
+            // Render each workspace
+            workspaces.forEach(workspace => {
+                const card = document.createElement('div');
+                card.className = 'workspace-card';
+                card.dataset.id = workspace.id;
+                
+                // Get role badge class
+                const roleClass = `role-${workspace.role}`;
+                
+                card.innerHTML = `
+                    <h3>${escapeHtml(workspace.name)}</h3>
+                    <p>${escapeHtml(workspace.description || 'No description')}</p>
+                    <span class="workspace-role ${roleClass}">${workspace.role}</span>
+                    <div class="workspace-stats">
+                        <span>${workspace.project_count} Project${workspace.project_count !== 1 ? 's' : ''}</span>
+                        <span>${workspace.member_count} Member${workspace.member_count !== 1 ? 's' : ''}</span>
+                    </div>
+                `;
+                
+                // Add click event to navigate to workspace detail page
+                card.addEventListener('click', () => {
+                    window.location.href = `/workspace/${workspace.id}`;
+                });
+                
+                workspacesGrid.appendChild(card);
+            });
+        }
+        
+        // Open the create workspace modal
+        function openCreateWorkspaceModal() {
+            const modal = document.getElementById('create-workspace-modal');
+            modal.style.display = 'flex';
+        }
+        
+        // Close modals
+        function closeModal() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+        
+        // Create a new workspace
+        function createWorkspace(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const name = form.elements.name.value.trim();
+            const description = form.elements.description.value.trim();
+            
+            if (!name) {
+                showError('Workspace name is required');
+                return;
+            }
+            
+            // Disable form submission to prevent multiple submissions
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+            
+            // Create workspace via API
+            fetch('/api/workspaces', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    description: description
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create workspace');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Add the new workspace to the list and re-render
+                    workspaces.push(data.workspace);
+                    renderWorkspaces();
+                    
+                    // Close the modal and reset form
+                    closeModal();
+                    form.reset();
+                    
+                    // Show success message
+                    showSuccess('Workspace created successfully');
+                    
+                    // Redirect to the new workspace
+                    setTimeout(() => {
+                        window.location.href = `/workspace/${data.workspace.id}`;
+                    }, 1000);
+                } else {
+                    showError(data.error || 'Failed to create workspace');
+                }
+            })
+            .catch(error => {
+                console.error('Error creating workspace:', error);
+                showError('Failed to create workspace. Please try again later.');
+            })
+            .finally(() => {
+                // Re-enable the submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Workspace';
+            });
+        }
+        
+        // Helper function to show error messages
+        function showError(message) {
+            // Simplified error display - in a real app, you might use a toast or notification system
+            alert(message);
+        }
+        
+        // Helper function to show success messages
+        function showSuccess(message) {
+            // Simplified success display
+            alert(message);
+        }
+        
+        // Helper function to safely escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+        
+        // Helper function to get cookie value
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+    </script>
+</body>
+</html>

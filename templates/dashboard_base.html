@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Proletto Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <link rel="stylesheet" href="/static/css/mobile.css">
+  <link rel="stylesheet" href="/static/css/dashboard-mobile.css">
+  {% block additional_css %}{% endblock %}
+  <script src="/static/js/lazy-load-components.js" defer></script>
+  {% block additional_js_head %}{% endblock %}
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <a href="/">
+            <img src="/assets/proletto-logo.svg" alt="Proletto">
+          </a>
+        </div>
+        <button class="mobile-menu-toggle">
+          <span></span>
+        </button>
+      </div>
+      
+      <div class="welcome-banner">
+        <div class="user-avatar">
+          <img id="user-avatar" src="/assets/default-avatar.svg" alt="User Avatar">
+        </div>
+        <h2>Welcome back,</h2>
+        <h3 id="artist-name">Artist</h3>
+        <p>Your creative journey continues.</p>
+      </div>
+      
+      <!-- Navigation menu -->
+      <nav class="sidebar-nav">
+        <ul>
+          <li {% if active_page == 'dashboard' %}class="active"{% endif %}><a href="/dashboard"><span class="nav-icon">Dashboard</span></a></li>
+          <li {% if active_page == 'opportunities' %}class="active"{% endif %}><a href="/dashboard/opportunities"><span class="nav-icon">Opportunities</span></a></li>
+          <li {% if active_page == 'portfolio' %}class="active"{% endif %}><a href="/portfolio"><span class="nav-icon">Portfolio</span></a></li>
+          <li {% if active_page == 'workspace' %}class="active"{% endif %}><a href="/workspace"><span class="nav-icon">Workspace</span></a></li>
+          <li {% if active_page == 'membership' %}class="active"{% endif %}><a href="/membership"><span class="nav-icon">Membership</span></a></li>
+        </ul>
+      </nav>
+      
+      <!-- Settings at bottom of sidebar -->
+      <div class="sidebar-settings">
+        <h3>Settings</h3>
+        <ul>
+          <li><a href="/profile"><span class="nav-icon">Edit Profile</span></a></li>
+          <li><a href="/membership"><span class="nav-icon">Upgrade Account</span></a></li>
+          <li><a href="#" id="delete-account-btn"><span class="nav-icon">Delete Account</span></a></li>
+          <li><a href="/logout"><span class="nav-icon">Logout</span></a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main content area -->
+    <main class="dashboard-main">
+      <header class="dashboard-top-bar">
+        <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+        <div class="user-controls">
+          <div class="notification-bell">
+            <span class="bell-icon"></span>
+            <span class="notification-count">3</span>
+          </div>
+        </div>
+      </header>
+
+      {% block content %}
+      <!-- Content will be placed here by extending templates -->
+      {% endblock %}
+
+      <footer>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="/portfolio">Portfolio</a>
+          <a href="/workspace">Workspace</a>
+        </div>
+        <div class="footer-social">
+          <a href="#">Instagram</a>
+          <a href="#">Facebook</a>
+        </div>
+        <p>&copy; 2025 Proletto. Built by an artist, for all artists.</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Include Mobile Navigation -->
+  {% include "includes/mobile_nav.html" %}
+
+  <!-- Mobile menu toggle button for smaller screens -->
+  <div class="menu-toggle"><span class="menu-icon"></span></div>
+
+  <!-- Common JS -->
+  <script src="/static/js/ai-tooltips.js"></script>
+  {% block scripts %}{% endblock %}
+  
+  <script>
+    // Mobile menu functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Handle mobile menu toggle
+      const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+      const dashboardSidebar = document.querySelector('.dashboard-sidebar');
+      const sidebarOverlay = document.createElement('div');
+      
+      // Create overlay for mobile sidebar
+      sidebarOverlay.className = 'sidebar-overlay';
+      document.body.appendChild(sidebarOverlay);
+      
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function() {
+          // Toggle mobile menu
+          dashboardSidebar.classList.toggle('active');
+          mobileMenuToggle.classList.toggle('active');
+          sidebarOverlay.classList.toggle('active');
+          
+          // Prevent background scrolling when sidebar is open
+          if (dashboardSidebar.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+          } else {
+            document.body.style.overflow = '';
+          }
+        });
+        
+        // Close sidebar when clicking on overlay
+        sidebarOverlay.addEventListener('click', function() {
+          dashboardSidebar.classList.remove('active');
+          mobileMenuToggle.classList.remove('active');
+          sidebarOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      }
+      
+      // Handle menu toggle button
+      const menuToggle = document.querySelector('.menu-toggle');
+      const sidebarNav = document.querySelector('.sidebar-nav');
+      const sidebarSettings = document.querySelector('.sidebar-settings');
+      
+      function toggleMobileMenu() {
+        sidebarNav.classList.toggle('expanded');
+        sidebarSettings.classList.toggle('expanded');
+      }
+      
+      if (menuToggle) {
+        menuToggle.addEventListener('click', toggleMobileMenu);
+      }
+    });
+  </script>
+</body>
+</html>

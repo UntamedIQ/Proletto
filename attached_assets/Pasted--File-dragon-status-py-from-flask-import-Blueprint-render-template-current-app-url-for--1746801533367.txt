@@ -1,0 +1,111 @@
+# File: dragon\_status.py
+
+from flask import Blueprint, render\_template, current\_app, url\_for
+import psutil, os
+from datetime import datetime
+
+status\_bp = Blueprint('dragon\_status', **name**, url\_prefix='/admin/dragon-status')
+
+@status\_bp.route('/')
+def status():
+\# Scheduler jobs
+jobs = \[]
+for job in current\_app.scheduler.get\_jobs():
+jobs.append({
+'id': job.id,
+'next\_run': job.next\_run\_time,
+'failures': current\_app.\_job\_failures.get(job.id, 0)
+})
+\# Cache info via info endpoint
+cache\_type = current\_app.cache\_backend\['type']
+\# Redis stats if available
+hits = current\_app.cache\_backend.get('keyspace\_hits', 'N/A') if cache\_type == 'redis' else 'N/A'
+misses = current\_app.cache\_backend.get('keyspace\_misses', 'N/A') if cache\_type == 'redis' else 'N/A'
+\# Snapshot timestamp
+try:
+mtime = os.path.getmtime('data/opportunities\_latest.json')
+snapshot = datetime.fromtimestamp(mtime).isoformat()
+except:
+snapshot = 'Not found'
+\# System metrics
+vm = psutil.virtual\_memory()
+cpu = psutil.cpu\_percent(interval=0.5)
+
+```
+return render_template('admin/dragon_status.html',
+    jobs=jobs,
+    cache_type=cache_type,
+    hits=hits,
+    misses=misses,
+    snapshot=snapshot,
+    mem=vm.percent,
+    cpu=cpu
+)
+```
+
+# Integration: in your create\_app() or main entry
+
+# app.register\_blueprint(status\_bp)
+
+# File: templates/admin/dragon\_status.html
+
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dragon Status Dashboard</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    h1, h2 { color: #444; }
+    .section { margin-bottom: 2rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.5rem; border: 1px solid #ddd; text-align: left; }
+    .badge { background: #007aff; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <h1>🐉 Dragon Status Dashboard</h1>
+
+  <section class="section">
+    <h2>Scheduler Jobs</h2>
+    <table>
+      <thead>
+        <tr><th>Job ID</th><th>Next Run</th><th>Failures</th></tr>
+      </thead>
+      <tbody>
+        {% for j in jobs %}
+        <tr>
+          <td>{{ j.id }}</td>
+          <td>{{ j.next_run }}</td>
+          <td>{{ j.failures }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <h2>Cache</h2>
+    <p>Backend: <span class="badge">{{ cache_type }}</span> &nbsp; Hits: {{ hits }} &nbsp; Misses: {{ misses }}</p>
+  </section>
+
+  <section class="section">
+    <h2>Snapshot</h2>
+    <p>Last Dump: {{ snapshot }}</p>
+  </section>
+
+  <section class="section">
+    <h2>System Metrics</h2>
+    <p>CPU Usage: {{ cpu }}% &nbsp; Memory Usage: {{ mem }}%</p>
+  </section>
+
+  <script>
+    // Auto-refresh every 15 seconds
+    setTimeout(() => window.location.reload(), 15000);
+  </script>
+
+</body>
+</html>

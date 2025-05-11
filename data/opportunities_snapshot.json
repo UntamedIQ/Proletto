@@ -1,0 +1,116 @@
+{
+  "timestamp": "2025-05-09T20:41:15.159160",
+  "count": 5,
+  "opportunities": [
+    {
+      "id": 5,
+      "title": "Painting Workshop Series",
+      "description": "Lead a series of painting workshops for the community.",
+      "url": "https://example.com/painting-workshop",
+      "deadline": "2025-06-07T02:51:31.652922",
+      "source": "Community Art Center",
+      "location": "Seattle, WA",
+      "state": "WA",
+      "category": "Teaching",
+      "tags": [
+        "painting",
+        "education",
+        "workshop"
+      ],
+      "engine": "unknown",
+      "scraped_at": "2025-05-08T02:51:31.654986",
+      "created_at": "2025-05-08T02:51:31.654986",
+      "updated_at": "2025-05-08T12:02:29.596800",
+      "membership_level": "free",
+      "type": "general"
+    },
+    {
+      "id": 4,
+      "title": "Art in Public Spaces Commission",
+      "description": "Commission for a public art installation in the downtown area.",
+      "url": "https://example.com/public-art-commission",
+      "deadline": "2025-08-06T02:51:31.652921",
+      "source": "City Arts Department",
+      "location": "Boston, MA",
+      "state": "MA",
+      "category": "Commission",
+      "tags": [
+        "public art",
+        "commission",
+        "installation"
+      ],
+      "engine": "unknown",
+      "scraped_at": "2025-05-08T02:51:31.654985",
+      "created_at": "2025-05-08T02:51:31.654985",
+      "updated_at": "2025-05-08T12:02:29.596796",
+      "membership_level": "free",
+      "type": "general"
+    },
+    {
+      "id": 3,
+      "title": "Photography Grant 2025",
+      "description": "$5,000 grant for emerging photographers.",
+      "url": "https://example.com/photography-grant",
+      "deadline": "2025-07-07T02:51:31.652919",
+      "source": "Visual Arts Council",
+      "location": "Chicago, IL",
+      "state": "IL",
+      "category": "Grant",
+      "tags": [
+        "photography",
+        "grant",
+        "emerging artists"
+      ],
+      "engine": "unknown",
+      "scraped_at": "2025-05-08T02:51:31.654984",
+      "created_at": "2025-05-08T02:51:31.654982",
+      "updated_at": "2025-05-08T12:02:29.518068",
+      "membership_level": "premium",
+      "type": "grant"
+    },
+    {
+      "id": 2,
+      "title": "Sculpture Residency Program",
+      "description": "3-month residency for sculptors to work on new pieces.",
+      "url": "https://example.com/sculpture-residency",
+      "deadline": "2025-06-22T02:51:31.652918",
+      "source": "Art Foundation",
+      "location": "Los Angeles, CA",
+      "state": "CA",
+      "category": "Residency",
+      "tags": [
+        "sculpture",
+        "residency",
+        "3d art"
+      ],
+      "engine": "unknown",
+      "scraped_at": "2025-05-08T02:51:31.654982",
+      "created_at": "2025-05-08T02:51:31.654981",
+      "updated_at": "2025-05-08T12:02:29.518065",
+      "membership_level": "premium",
+      "type": "residency"
+    },
+    {
+      "id": 1,
+      "title": "Digital Art Exhibition 2025",
+      "description": "Submit your digital artwork for our annual exhibition.",
+      "url": "https://example.com/digital-art-exhibition",
+      "deadline": "2025-06-07T02:51:31.652909",
+      "source": "Modern Digital Gallery",
+      "location": "New York, NY",
+      "state": "NY",
+      "category": "Exhibition",
+      "tags": [
+        "digital art",
+        "exhibition",
+        "contemporary"
+      ],
+      "engine": "unknown",
+      "scraped_at": "2025-05-08T02:51:31.654981",
+      "created_at": "2025-05-08T02:51:31.654979",
+      "updated_at": "2025-05-08T12:02:29.473801",
+      "membership_level": "supporter",
+      "type": "exhibition"
+    }
+  ]
+}

@@ -1,0 +1,1188 @@
+{% extends "admin/base.html" %}
+
+{% block title %}System Monitoring | Proletto Admin{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+    <style>
+        .health-indicator {
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            font-weight: bold;
+        }
+        .health-healthy {
+            background-color: #4CAF50;
+        }
+        .health-degraded {
+            background-color: #FF9800;
+        }
+        .health-unhealthy {
+            background-color: #F44336;
+        }
+        .health-unknown {
+            background-color: #9E9E9E;
+        }
+        .status-card {
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .metric-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 30px;
+        }
+        .logs-container {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-error {
+            color: #F44336;
+        }
+        .log-warning {
+            color: #FF9800;
+        }
+        .log-info {
+            color: #2196F3;
+        }
+        .refresh-controls {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .refresh-controls select {
+            margin-left: 10px;
+            padding: 5px;
+        }
+        .service-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .status-green {
+            background-color: #4CAF50;
+        }
+        .status-yellow {
+            background-color: #FF9800;
+        }
+        .status-red {
+            background-color: #F44336;
+        }
+        .status-gray {
+            background-color: #9E9E9E;
+        }
+        .error-rate-alert {
+            color: #F44336;
+            font-weight: bold;
+        }
+        .requests-summary {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .requests-summary > div {
+            text-align: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            flex: 1;
+            margin: 0 5px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .data-table th, .data-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background-color: #f5f5f5;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-right: 5px;
+            border: 1px solid transparent;
+        }
+        .tab.active {
+            border: 1px solid #ddd;
+            border-bottom-color: white;
+            margin-bottom: -1px;
+            border-radius: 4px 4px 0 0;
+            background-color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">System Monitoring</h1>
+    
+    <div class="refresh-controls">
+        <button id="refreshBtn" class="btn btn-primary btn-sm">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+        <select id="refreshInterval" class="form-control form-control-sm ml-2" style="width: auto;">
+            <option value="0">Manual refresh</option>
+            <option value="5000">Every 5 seconds</option>
+            <option value="10000">Every 10 seconds</option>
+            <option value="30000" selected>Every 30 seconds</option>
+            <option value="60000">Every minute</option>
+            <option value="300000">Every 5 minutes</option>
+        </select>
+        <span id="lastUpdated" class="ml-3 text-muted">Last updated: Never</span>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div id="systemHealth" class="health-indicator health-unknown">
+                Loading system health...
+            </div>
+        </div>
+    </div>
+    
+    <div class="tab-container">
+        <div class="tabs">
+            <div class="tab active" data-tab="overview">Overview</div>
+            <div class="tab" data-tab="requests">Request Metrics</div>
+            <div class="tab" data-tab="errors">Errors</div>
+            <div class="tab" data-tab="resources">System Resources</div>
+            <div class="tab" data-tab="services">Services</div>
+            <div class="tab" data-tab="logs">Logs</div>
+        </div>
+        
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="row">
+                <div class="col-xl-3 col-md-6">
+                    <div class="status-card">
+                        <div class="metric-label">CPU Usage</div>
+                        <div class="metric-value" id="cpuUsage">-</div>
+                        <div class="progress">
+                            <div id="cpuProgressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="status-card">
+                        <div class="metric-label">Memory Usage</div>
+                        <div class="metric-value" id="memoryUsage">-</div>
+                        <div class="progress">
+                            <div id="memoryProgressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="status-card">
+                        <div class="metric-label">Disk Usage</div>
+                        <div class="metric-value" id="diskUsage">-</div>
+                        <div class="progress">
+                            <div id="diskProgressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="status-card">
+                        <div class="metric-label">Error Rate</div>
+                        <div class="metric-value" id="errorRate">-</div>
+                        <div class="progress">
+                            <div id="errorProgressBar" class="progress-bar bg-danger" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="status-card">
+                        <h5>Service Status</h5>
+                        <div id="serviceStatusContainer">
+                            <div class="text-center py-3">Loading services...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="status-card">
+                        <h5>Request Summary</h5>
+                        <div class="requests-summary">
+                            <div>
+                                <div class="metric-label">Total Requests</div>
+                                <div class="metric-value" id="totalRequests">-</div>
+                            </div>
+                            <div>
+                                <div class="metric-label">Errors</div>
+                                <div class="metric-value" id="totalErrors">-</div>
+                            </div>
+                            <div>
+                                <div class="metric-label">Avg Response Time</div>
+                                <div class="metric-value" id="avgResponseTime">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>System Load (Last 30 minutes)</h5>
+                        <div class="chart-container">
+                            <canvas id="systemLoadChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Request Metrics Tab -->
+        <div id="requests" class="tab-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>API Requests by Endpoint</h5>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Endpoint</th>
+                                        <th>Method</th>
+                                        <th>Count</th>
+                                        <th>Errors</th>
+                                        <th>Avg Time (ms)</th>
+                                        <th>Error Rate</th>
+                                        <th>Last Request</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="requestsTable">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Loading request data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>Response Time (Last 20 Requests)</h5>
+                        <div class="chart-container">
+                            <canvas id="responseTimeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Errors Tab -->
+        <div id="errors" class="tab-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="status-card">
+                        <h5>Errors by Endpoint</h5>
+                        <div class="chart-container">
+                            <canvas id="errorsByEndpointChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="status-card">
+                        <h5>Errors by Type</h5>
+                        <div class="chart-container">
+                            <canvas id="errorsByTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>Recent Errors</h5>
+                        <div class="logs-container" id="recentErrorsLog">
+                            <div class="text-center">Loading error logs...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Resources Tab -->
+        <div id="resources" class="tab-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>CPU & Memory Usage (Last 30 minutes)</h5>
+                        <div class="chart-container">
+                            <canvas id="resourcesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="status-card">
+                        <h5>System Information</h5>
+                        <table class="data-table">
+                            <tbody>
+                                <tr>
+                                    <td>Hostname</td>
+                                    <td id="systemHostname">-</td>
+                                </tr>
+                                <tr>
+                                    <td>Environment</td>
+                                    <td id="systemEnvironment">-</td>
+                                </tr>
+                                <tr>
+                                    <td>Open Files</td>
+                                    <td id="openFiles">-</td>
+                                </tr>
+                                <tr>
+                                    <td>Network Connections</td>
+                                    <td id="networkConnections">-</td>
+                                </tr>
+                                <tr>
+                                    <td>System Load</td>
+                                    <td id="systemLoad">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="status-card">
+                        <h5>Disk Usage</h5>
+                        <div class="chart-container">
+                            <canvas id="diskUsageChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Services Tab -->
+        <div id="services" class="tab-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>Service Health</h5>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Status</th>
+                                        <th>Last Check</th>
+                                        <th>Response Time</th>
+                                        <th>Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="servicesTable">
+                                    <tr>
+                                        <td colspan="5" class="text-center">Loading services data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4" id="databaseSection">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>Database Metrics</h5>
+                        <div class="text-center py-3">Database metrics not available</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4" id="redisSection">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>Redis Metrics</h5>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Metric</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="redisMetricsTable">
+                                    <tr>
+                                        <td colspan="2" class="text-center">Redis metrics not available</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logs Tab -->
+        <div id="logs" class="tab-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5>Application Logs</h5>
+                        <div class="mb-3">
+                            <select id="logLevel" class="form-control form-control-sm" style="width: auto;">
+                                <option value="all">All Levels</option>
+                                <option value="error">Errors Only</option>
+                                <option value="warning">Warnings & Errors</option>
+                                <option value="info">Info & Above</option>
+                                <option value="debug">Debug & Above</option>
+                            </select>
+                        </div>
+                        <div class="logs-container" id="applicationLogs">
+                            <div class="text-center">Loading logs...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Configuration
+        const API_URL = '/api/monitor/metrics';
+        let refreshInterval = 30000; // 30 seconds
+        let charts = {};
+        let intervalId = null;
+        let systemMetrics = [];
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up tab switching
+            document.querySelectorAll('.tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+                });
+            });
+            
+            // Set up refresh controls
+            document.getElementById('refreshBtn').addEventListener('click', fetchMetrics);
+            document.getElementById('refreshInterval').addEventListener('change', function() {
+                refreshInterval = parseInt(this.value);
+                
+                // Clear existing interval
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+                
+                // Set new interval if not manual
+                if (refreshInterval > 0) {
+                    intervalId = setInterval(fetchMetrics, refreshInterval);
+                }
+            });
+            
+            // Initialize charts
+            initializeCharts();
+            
+            // Fetch initial metrics
+            fetchMetrics();
+            
+            // Start auto-refresh
+            const selectedInterval = document.getElementById('refreshInterval').value;
+            refreshInterval = parseInt(selectedInterval);
+            if (refreshInterval > 0) {
+                intervalId = setInterval(fetchMetrics, refreshInterval);
+            }
+        });
+        
+        // Initialize chart objects
+        function initializeCharts() {
+            // System load chart
+            charts.systemLoad = new Chart(
+                document.getElementById('systemLoadChart').getContext('2d'),
+                {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'CPU Usage',
+                                data: [],
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 2,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Memory Usage',
+                                data: [],
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 2,
+                                tension: 0.3
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Usage (%)'
+                                }
+                            }
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.raw.toFixed(1)}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+            
+            // Response time chart
+            charts.responseTime = new Chart(
+                document.getElementById('responseTimeChart').getContext('2d'),
+                {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Response Time',
+                                data: [],
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Response Time (ms)'
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+            
+            // Resource usage chart
+            charts.resources = new Chart(
+                document.getElementById('resourcesChart').getContext('2d'),
+                {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'CPU Usage',
+                                data: [],
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 2,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Memory Usage',
+                                data: [],
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 2,
+                                yAxisID: 'y'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Usage (%)'
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+            
+            // Disk usage chart
+            charts.diskUsage = new Chart(
+                document.getElementById('diskUsageChart').getContext('2d'),
+                {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Used', 'Free'],
+                        datasets: [
+                            {
+                                data: [0, 100],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.8)',
+                                    'rgba(200, 200, 200, 0.8)'
+                                ],
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+            
+            // Errors by endpoint chart
+            charts.errorsByEndpoint = new Chart(
+                document.getElementById('errorsByEndpointChart').getContext('2d'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Errors',
+                                data: [],
+                                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Error Count'
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+            
+            // Errors by type chart
+            charts.errorsByType = new Chart(
+                document.getElementById('errorsByTypeChart').getContext('2d'),
+                {
+                    type: 'pie',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                data: [],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.8)',
+                                    'rgba(54, 162, 235, 0.8)',
+                                    'rgba(255, 206, 86, 0.8)',
+                                    'rgba(75, 192, 192, 0.8)',
+                                    'rgba(153, 102, 255, 0.8)',
+                                    'rgba(255, 159, 64, 0.8)'
+                                ],
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                }
+            );
+        }
+        
+        // Fetch metrics from API
+        function fetchMetrics() {
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    updateLastUpdatedTime();
+                    updateSystemHealth(data);
+                    updateSystemMetrics(data);
+                    updateRequestMetrics(data);
+                    updateErrorMetrics(data);
+                    updateServiceStatus(data);
+                    updateCharts(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching metrics:', error);
+                    document.getElementById('systemHealth').className = 'health-indicator health-unknown';
+                    document.getElementById('systemHealth').textContent = 'Error fetching system health';
+                });
+        }
+        
+        // Update last updated time
+        function updateLastUpdatedTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('lastUpdated').textContent = `Last updated: ${timeString}`;
+        }
+        
+        // Update system health indicator
+        function updateSystemHealth(data) {
+            const healthEl = document.getElementById('systemHealth');
+            const systemHealth = data.system_health;
+            
+            if (!systemHealth || systemHealth.status === 'disabled') {
+                healthEl.className = 'health-indicator health-unknown';
+                healthEl.textContent = 'System monitoring disabled';
+                return;
+            }
+            
+            const status = systemHealth.status || 'unknown';
+            healthEl.className = `health-indicator health-${status}`;
+            
+            let message = `System Status: ${status.toUpperCase()}`;
+            if (status !== 'healthy') {
+                const issues = [];
+                
+                if (systemHealth.system && systemHealth.system.status !== 'healthy') {
+                    issues.push('System resources');
+                }
+                
+                if (systemHealth.services) {
+                    for (const [name, service] of Object.entries(systemHealth.services)) {
+                        if (service.status !== 'healthy') {
+                            issues.push(name);
+                        }
+                    }
+                }
+                
+                if (issues.length > 0) {
+                    message += ` - Issues with: ${issues.join(', ')}`;
+                }
+            }
+            
+            healthEl.textContent = message;
+        }
+        
+        // Update system metrics
+        function updateSystemMetrics(data) {
+            const systemHealth = data.system_health;
+            
+            if (!systemHealth || !systemHealth.system || !systemHealth.system.metrics) {
+                return;
+            }
+            
+            const metrics = systemHealth.system.metrics;
+            
+            // Store for charts
+            if (metrics.timestamp) {
+                systemMetrics.push(metrics);
+                
+                // Keep only last 30 minutes of data (assuming 30 second intervals)
+                const thirtyMinAgo = Date.now() - 30 * 60 * 1000;
+                systemMetrics = systemMetrics.filter(m => m.timestamp * 1000 > thirtyMinAgo);
+            }
+            
+            // Update UI
+            if (typeof metrics.cpu_percent === 'number') {
+                document.getElementById('cpuUsage').textContent = `${metrics.cpu_percent.toFixed(1)}%`;
+                const progressBar = document.getElementById('cpuProgressBar');
+                progressBar.style.width = `${metrics.cpu_percent}%`;
+                
+                // Color based on usage
+                if (metrics.cpu_percent > 90) {
+                    progressBar.className = 'progress-bar bg-danger';
+                } else if (metrics.cpu_percent > 70) {
+                    progressBar.className = 'progress-bar bg-warning';
+                } else {
+                    progressBar.className = 'progress-bar bg-success';
+                }
+            }
+            
+            if (typeof metrics.memory_percent === 'number') {
+                document.getElementById('memoryUsage').textContent = `${metrics.memory_percent.toFixed(1)}%`;
+                const progressBar = document.getElementById('memoryProgressBar');
+                progressBar.style.width = `${metrics.memory_percent}%`;
+                
+                // Color based on usage
+                if (metrics.memory_percent > 90) {
+                    progressBar.className = 'progress-bar bg-danger';
+                } else if (metrics.memory_percent > 70) {
+                    progressBar.className = 'progress-bar bg-warning';
+                } else {
+                    progressBar.className = 'progress-bar bg-success';
+                }
+            }
+            
+            if (typeof metrics.disk_percent === 'number') {
+                document.getElementById('diskUsage').textContent = `${metrics.disk_percent.toFixed(1)}%`;
+                const progressBar = document.getElementById('diskProgressBar');
+                progressBar.style.width = `${metrics.disk_percent}%`;
+                
+                // Color based on usage
+                if (metrics.disk_percent > 90) {
+                    progressBar.className = 'progress-bar bg-danger';
+                } else if (metrics.disk_percent > 70) {
+                    progressBar.className = 'progress-bar bg-warning';
+                } else {
+                    progressBar.className = 'progress-bar bg-success';
+                }
+                
+                // Update disk chart
+                updateDiskUsageChart(metrics.disk_percent);
+            }
+            
+            // System info
+            document.getElementById('systemHostname').textContent = systemHealth.hostname || '-';
+            document.getElementById('systemEnvironment').textContent = systemHealth.environment || '-';
+            
+            if (metrics.open_files !== undefined) {
+                document.getElementById('openFiles').textContent = metrics.open_files;
+            }
+            
+            if (metrics.network_connections !== undefined) {
+                document.getElementById('networkConnections').textContent = metrics.network_connections;
+            }
+            
+            if (metrics.system_load) {
+                document.getElementById('systemLoad').textContent = metrics.system_load.map(l => l.toFixed(2)).join(', ');
+            }
+        }
+        
+        // Update request metrics
+        function updateRequestMetrics(data) {
+            const requestMetrics = data.request_metrics;
+            
+            if (!requestMetrics || requestMetrics.status === 'disabled') {
+                return;
+            }
+            
+            // Update summary
+            document.getElementById('totalRequests').textContent = requestMetrics.total_requests || 0;
+            document.getElementById('totalErrors').textContent = requestMetrics.total_errors || 0;
+            
+            // Calculate average response time across all endpoints
+            let totalTime = 0;
+            let totalCount = 0;
+            
+            for (const endpoint of Object.values(requestMetrics.endpoints || {})) {
+                totalTime += endpoint.avg_time * endpoint.count;
+                totalCount += endpoint.count;
+            }
+            
+            const avgTime = totalCount > 0 ? totalTime / totalCount : 0;
+            document.getElementById('avgResponseTime').textContent = avgTime.toFixed(2) + 'ms';
+            
+            // Update error rate
+            const errorRate = requestMetrics.error_rate || 0;
+            document.getElementById('errorRate').textContent = (errorRate * 100).toFixed(2) + '%';
+            
+            // Update error rate progress bar
+            const errorProgressBar = document.getElementById('errorProgressBar');
+            errorProgressBar.style.width = `${errorRate * 100}%`;
+            
+            // Update requests table
+            const tableBody = document.getElementById('requestsTable');
+            
+            if (!requestMetrics.endpoints || Object.keys(requestMetrics.endpoints).length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No request data available</td></tr>';
+                return;
+            }
+            
+            let tableHtml = '';
+            
+            for (const [key, endpoint] of Object.entries(requestMetrics.endpoints)) {
+                const errorRateClass = endpoint.error_rate > 0.1 ? 'error-rate-alert' : '';
+                
+                let lastRequestTime = '-';
+                if (endpoint.last_request_time) {
+                    const date = new Date(endpoint.last_request_time * 1000);
+                    lastRequestTime = date.toLocaleTimeString();
+                }
+                
+                tableHtml += `
+                    <tr>
+                        <td>${endpoint.endpoint}</td>
+                        <td>${endpoint.method}</td>
+                        <td>${endpoint.count}</td>
+                        <td>${endpoint.error_count}</td>
+                        <td>${endpoint.avg_time.toFixed(2)}ms</td>
+                        <td class="${errorRateClass}">${(endpoint.error_rate * 100).toFixed(2)}%</td>
+                        <td>${lastRequestTime}</td>
+                    </tr>
+                `;
+            }
+            
+            tableBody.innerHTML = tableHtml;
+            
+            // Update response time chart
+            updateResponseTimeChart(requestMetrics.recent_latency || []);
+        }
+        
+        // Update error metrics
+        function updateErrorMetrics(data) {
+            const errorReport = data.error_report;
+            
+            if (!errorReport) {
+                return;
+            }
+            
+            // Update errors by endpoint chart
+            const endpoints = Object.keys(errorReport.by_endpoint || {});
+            const endpointCounts = endpoints.map(e => errorReport.by_endpoint[e]);
+            
+            if (endpoints.length > 0) {
+                charts.errorsByEndpoint.data.labels = endpoints;
+                charts.errorsByEndpoint.data.datasets[0].data = endpointCounts;
+                charts.errorsByEndpoint.update();
+            }
+            
+            // Update errors by type chart
+            const errorTypes = Object.keys(errorReport.by_type || {});
+            const typeCounts = errorTypes.map(t => errorReport.by_type[t]);
+            
+            if (errorTypes.length > 0) {
+                charts.errorsByType.data.labels = errorTypes;
+                charts.errorsByType.data.datasets[0].data = typeCounts;
+                charts.errorsByType.update();
+            }
+            
+            // Placeholder for recent errors log - in a real app this would come from an API endpoint
+            document.getElementById('recentErrorsLog').innerHTML = '<div class="text-center">Error logs would be displayed here...</div>';
+        }
+        
+        // Update service status
+        function updateServiceStatus(data) {
+            const systemHealth = data.system_health;
+            
+            if (!systemHealth || !systemHealth.services) {
+                return;
+            }
+            
+            const services = systemHealth.services;
+            const serviceContainer = document.getElementById('serviceStatusContainer');
+            let serviceHtml = '';
+            
+            for (const [name, service] of Object.entries(services)) {
+                const statusClass = service.status === 'healthy' ? 'status-green' : 
+                                  service.status === 'degraded' ? 'status-yellow' : 'status-red';
+                
+                serviceHtml += `
+                    <div class="service-status">
+                        <span class="status-dot ${statusClass}"></span>
+                        <span>${name}</span>
+                        <span class="ml-auto">${service.status}</span>
+                    </div>
+                `;
+            }
+            
+            if (!serviceHtml) {
+                serviceHtml = '<div class="text-center py-3">No services found</div>';
+            }
+            
+            serviceContainer.innerHTML = serviceHtml;
+            
+            // Update services table
+            const servicesTable = document.getElementById('servicesTable');
+            let tableHtml = '';
+            
+            for (const [name, service] of Object.entries(services)) {
+                const statusClass = service.status === 'healthy' ? 'text-success' : 
+                                  service.status === 'degraded' ? 'text-warning' : 'text-danger';
+                
+                const lastCheck = new Date(service.last_check * 1000).toLocaleTimeString();
+                const responseTime = service.metrics && service.metrics.response_time_ms ? 
+                                  `${service.metrics.response_time_ms.toFixed(2)}ms` : '-';
+                
+                tableHtml += `
+                    <tr>
+                        <td>${name}</td>
+                        <td class="${statusClass}">${service.status}</td>
+                        <td>${lastCheck}</td>
+                        <td>${responseTime}</td>
+                        <td>${service.message || '-'}</td>
+                    </tr>
+                `;
+            }
+            
+            if (!tableHtml) {
+                tableHtml = '<tr><td colspan="5" class="text-center">No services data available</td></tr>';
+            }
+            
+            servicesTable.innerHTML = tableHtml;
+            
+            // Check for Redis metrics
+            let hasRedis = false;
+            const redisTable = document.getElementById('redisMetricsTable');
+            let redisHtml = '';
+            
+            for (const [name, service] of Object.entries(services)) {
+                if (name.toLowerCase().includes('redis') && service.metrics) {
+                    hasRedis = true;
+                    
+                    for (const [metric, value] of Object.entries(service.metrics)) {
+                        if (metric !== 'response_time_ms') {
+                            redisHtml += `
+                                <tr>
+                                    <td>${metric}</td>
+                                    <td>${value}</td>
+                                </tr>
+                            `;
+                        }
+                    }
+                }
+            }
+            
+            if (hasRedis && redisHtml) {
+                redisTable.innerHTML = redisHtml;
+            } else {
+                redisTable.innerHTML = '<tr><td colspan="2" class="text-center">Redis metrics not available</td></tr>';
+            }
+        }
+        
+        // Update charts
+        function updateCharts(data) {
+            // System load chart
+            if (systemMetrics.length > 0) {
+                const timestamps = systemMetrics.map(m => {
+                    const date = new Date(m.timestamp * 1000);
+                    return date.toLocaleTimeString();
+                });
+                
+                const cpuData = systemMetrics.map(m => m.cpu_percent);
+                const memoryData = systemMetrics.map(m => m.memory_percent);
+                
+                charts.systemLoad.data.labels = timestamps;
+                charts.systemLoad.data.datasets[0].data = cpuData;
+                charts.systemLoad.data.datasets[1].data = memoryData;
+                charts.systemLoad.update();
+                
+                // Resources chart (same data, different visualization)
+                charts.resources.data.labels = timestamps;
+                charts.resources.data.datasets[0].data = cpuData;
+                charts.resources.data.datasets[1].data = memoryData;
+                charts.resources.update();
+            }
+        }
+        
+        // Update disk usage chart
+        function updateDiskUsageChart(diskPercent) {
+            if (typeof diskPercent === 'number') {
+                charts.diskUsage.data.datasets[0].data = [diskPercent, 100 - diskPercent];
+                charts.diskUsage.update();
+            }
+        }
+        
+        // Update response time chart
+        function updateResponseTimeChart(latencyData) {
+            if (!latencyData || latencyData.length === 0) {
+                return;
+            }
+            
+            const labels = latencyData.map((item, index) => {
+                if (item.timestamp) {
+                    const date = new Date(item.timestamp * 1000);
+                    return date.toLocaleTimeString();
+                }
+                return `Request ${index + 1}`;
+            });
+            
+            const durations = latencyData.map(item => item.duration * 1000); // convert to ms
+            
+            charts.responseTime.data.labels = labels;
+            charts.responseTime.data.datasets[0].data = durations;
+            charts.responseTime.update();
+        }
+    </script>
+{% endblock %}

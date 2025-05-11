@@ -1,0 +1,505 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}{{ opportunity.title }} - Proletto Dashboard{% endblock %}
+
+{% block page_title %}Opportunity Details{% endblock %}
+
+{% block additional_css %}
+<style>
+  .opportunity-detail {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    color: #777;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+  
+  .back-link:hover {
+    color: #e44d26;
+  }
+  
+  .back-link span {
+    margin-right: 0.5rem;
+  }
+  
+  .opportunity-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #333;
+  }
+  
+  .opportunity-banner {
+    height: 240px;
+    background-color: #f3f3f3;
+    background-size: cover;
+    background-position: center;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .opportunity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .meta-label {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 0.25rem;
+  }
+  
+  .meta-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .deadline-value {
+    color: #e44d26;
+  }
+  
+  .opportunity-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 2rem;
+  }
+  
+  .opportunity-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-primary {
+    background-color: #e44d26;
+    color: white;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #d03e1c;
+  }
+  
+  .btn-secondary {
+    background-color: #f8f3e6;
+    color: #8c7851;
+    border: 1px solid #e6dac7;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #e6dac7;
+  }
+  
+  .btn-outline {
+    background-color: transparent;
+    color: #555;
+    border: 1px solid #ccc;
+  }
+  
+  .btn-outline:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .btn-icon {
+    margin-right: 0.5rem;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-left: 1rem;
+  }
+  
+  .status-saved {
+    background-color: #f8f3e6;
+    color: #8c7851;
+  }
+  
+  .opportunity-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #f3f3f3;
+    color: #555;
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+  
+  .opportunity-sections {
+    margin-top: 2rem;
+  }
+  
+  .section {
+    margin-bottom: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .section-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  .requirements-list {
+    padding-left: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .requirements-list li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .ai-assistant {
+    background: linear-gradient(135deg, #f8f3e6, #ffffff);
+    border-radius: 8px;
+    border-left: 4px solid #9c27b0;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .ai-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .ai-avatar {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #9c27b0, #e91e63);
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .ai-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  
+  .ai-badge {
+    font-size: 0.75rem;
+    background: linear-gradient(135deg, #9c27b0, #e91e63);
+    color: white;
+    padding: 0.15rem 0.5rem;
+    border-radius: 20px;
+    margin-left: 0.5rem;
+  }
+  
+  .ai-content {
+    color: #555;
+  }
+  
+  .ai-suggestions {
+    margin-top: 1rem;
+  }
+  
+  .ai-suggestion-item {
+    background-color: white;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+  
+  @media (max-width: 768px) {
+    .opportunity-detail {
+      padding: 1.5rem;
+    }
+    
+    .opportunity-banner {
+      height: 180px;
+    }
+    
+    .opportunity-title {
+      font-size: 1.5rem;
+    }
+    
+    .opportunity-meta {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .opportunity-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-content">
+  <!-- Back link -->
+  <a href="/dashboard/opportunities" class="back-link">
+    <span class="icon-arrow-left"></span> Back to Opportunities
+  </a>
+  
+  <div class="opportunity-detail">
+    <!-- Title and save status -->
+    <h1 class="opportunity-title">
+      {{ opportunity.title }}
+      {% if is_saved %}
+      <span class="status-badge status-saved">Saved</span>
+      {% endif %}
+    </h1>
+    
+    <!-- Banner Image -->
+    <div class="opportunity-banner" style="background-image: url('{{ opportunity.image_url|default('/assets/opportunity-placeholder.jpg') }}');"></div>
+    
+    <!-- Metadata -->
+    <div class="opportunity-meta">
+      <div class="meta-item">
+        <span class="meta-label">Source</span>
+        <span class="meta-value">{{ opportunity.source }}</span>
+      </div>
+      
+      {% if opportunity.deadline %}
+      <div class="meta-item">
+        <span class="meta-label">Application Deadline</span>
+        <span class="meta-value deadline-value">{{ opportunity.deadline }}</span>
+      </div>
+      {% endif %}
+      
+      {% if opportunity.location %}
+      <div class="meta-item">
+        <span class="meta-label">Location</span>
+        <span class="meta-value">{{ opportunity.location }}</span>
+      </div>
+      {% endif %}
+      
+      {% if opportunity.category %}
+      <div class="meta-item">
+        <span class="meta-label">Category</span>
+        <span class="meta-value">{{ opportunity.category }}</span>
+      </div>
+      {% endif %}
+      
+      {% if opportunity.type %}
+      <div class="meta-item">
+        <span class="meta-label">Type</span>
+        <span class="meta-value">{{ opportunity.type }}</span>
+      </div>
+      {% endif %}
+    </div>
+    
+    <!-- Tags -->
+    {% if opportunity.tags %}
+    <div class="opportunity-tags">
+      {% for tag in opportunity.tags.split(',') %}
+      <span class="tag">{{ tag.strip() }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Description -->
+    <div class="opportunity-description">
+      {{ opportunity.description }}
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="opportunity-actions">
+      {% if opportunity.apply_url %}
+      <a href="{{ opportunity.apply_url }}" target="_blank" class="btn btn-primary">
+        <span class="btn-icon icon-external-link"></span> Apply Now
+      </a>
+      {% endif %}
+      
+      <button id="saveBtn" class="btn {% if is_saved %}btn-secondary{% else %}btn-outline{% endif %}">
+        <span class="btn-icon {% if is_saved %}icon-check{% else %}icon-heart{% endif %}"></span>
+        {% if is_saved %}Saved{% else %}Save for Later{% endif %}
+      </button>
+      
+      <button class="btn btn-outline">
+        <span class="btn-icon icon-share"></span> Share
+      </button>
+    </div>
+    
+    <!-- AI Assistant -->
+    <div class="ai-assistant">
+      <div class="ai-header">
+        <div class="ai-avatar">AI</div>
+        <div class="ai-title">Proletto Assistant <span class="ai-badge">AI</span></div>
+      </div>
+      <div class="ai-content">
+        <p>I've analyzed this opportunity based on your portfolio and application history. This {{ opportunity.category|default('opportunity') }} aligns well with your creative style and expertise in {% if opportunity.tags %}{{ opportunity.tags.split(',')[0] }}{% else %}visual arts{% endif %}.</p>
+        
+        <div class="ai-suggestions">
+          <p><strong>Application Tips:</strong></p>
+          <div class="ai-suggestion-item">Emphasize your experience with similar projects in your application.</div>
+          <div class="ai-suggestion-item">Include your piece "{% if opportunity.category %}{{ opportunity.category }} Study{% else %}Forest Dreamscape{% endif %}" in your portfolio submission.</div>
+          <div class="ai-suggestion-item">Mention your technical skills that relate to this opportunity.</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Additional Sections -->
+    <div class="opportunity-sections">
+      <!-- Requirements Section -->
+      <div class="section">
+        <h3 class="section-title">Requirements</h3>
+        <div class="section-content">
+          <ul class="requirements-list">
+            <li>Professional portfolio demonstrating relevant experience</li>
+            <li>Ability to work within specified timelines</li>
+            <li>Strong communication skills</li>
+            {% if opportunity.category %}
+            <li>Experience in {{ opportunity.category }}</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Benefits Section -->
+      <div class="section">
+        <h3 class="section-title">Benefits</h3>
+        <div class="section-content">
+          <ul class="requirements-list">
+            <li>Professional exposure and networking opportunities</li>
+            <li>Potential for future collaborations</li>
+            <li>Access to resources and mentorship</li>
+            <li>Portfolio enhancement</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Save/unsave functionality
+    const saveBtn = document.getElementById('saveBtn');
+    
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        const isSaved = saveBtn.classList.contains('btn-secondary');
+        const opportunityId = '{{ opportunity.id }}';
+        
+        // Optimistic UI update
+        if (isSaved) {
+          saveBtn.classList.replace('btn-secondary', 'btn-outline');
+          saveBtn.innerHTML = '<span class="btn-icon icon-heart"></span> Save for Later';
+          
+          // Remove saved badge if exists
+          const badge = document.querySelector('.status-badge.status-saved');
+          if (badge) badge.remove();
+        } else {
+          saveBtn.classList.replace('btn-outline', 'btn-secondary');
+          saveBtn.innerHTML = '<span class="btn-icon icon-check"></span> Saved';
+          
+          // Add saved badge if not exists
+          const title = document.querySelector('.opportunity-title');
+          if (!document.querySelector('.status-badge.status-saved')) {
+            const badge = document.createElement('span');
+            badge.className = 'status-badge status-saved';
+            badge.textContent = 'Saved';
+            title.appendChild(badge);
+          }
+        }
+        
+        // API call to save/unsave
+        fetch(`/dashboard/opportunities/${isSaved ? 'unsave' : 'save'}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ opportunity_id: opportunityId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            // Revert UI change if API call failed
+            console.error('Error:', data.error);
+            if (isSaved) {
+              saveBtn.classList.replace('btn-outline', 'btn-secondary');
+              saveBtn.innerHTML = '<span class="btn-icon icon-check"></span> Saved';
+              
+              // Add saved badge back
+              const title = document.querySelector('.opportunity-title');
+              if (!document.querySelector('.status-badge.status-saved')) {
+                const badge = document.createElement('span');
+                badge.className = 'status-badge status-saved';
+                badge.textContent = 'Saved';
+                title.appendChild(badge);
+              }
+            } else {
+              saveBtn.classList.replace('btn-secondary', 'btn-outline');
+              saveBtn.innerHTML = '<span class="btn-icon icon-heart"></span> Save for Later';
+              
+              // Remove saved badge
+              const badge = document.querySelector('.status-badge.status-saved');
+              if (badge) badge.remove();
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Similar revert logic
+        });
+      });
+    }
+  });
+</script>
+{% endblock %}

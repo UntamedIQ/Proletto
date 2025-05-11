@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Successful | Proletto</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-50">
+  <header class="bg-white px-6 py-4 shadow">
+    <div class="flex items-center justify-between">
+      <div>
+        <a href="/" class="text-xl font-bold text-gray-800">Proletto</a>
+      </div>
+      <div>
+        <a href="/dashboard" class="text-gray-600 hover:text-gray-800 mr-4">Dashboard</a>
+        <a href="/logout" class="text-gray-600 hover:text-gray-800">Logout</a>
+      </div>
+    </div>
+  </header>
+  
+  <div class="max-w-3xl mx-auto px-4 py-12 text-center">
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
+        <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">Payment Successful!</h1>
+      
+      <p class="text-lg text-gray-600 mb-6">
+        Thank you for subscribing to Proletto Premium. Your account has been upgraded.
+      </p>
+      
+      <div class="border border-green-200 rounded-md bg-green-50 p-4 mb-8">
+        <p class="text-green-800">
+          Your premium membership is now active. You now have access to all Proletto features!
+        </p>
+      </div>
+      
+      <h2 class="text-xl font-semibold text-gray-700 mb-3">What's included in your Premium subscription:</h2>
+      
+      <ul class="text-left mb-8 space-y-3">
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">Full access to all specialized search engines</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">Weekly personalized email digests</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">AI-powered portfolio optimization</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">Priority support</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">Early access to new features</span>
+        </li>
+      </ul>
+      
+      <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+        <a href="/dashboard" class="px-6 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          Go to Dashboard
+        </a>
+        <a href="/billing" class="px-6 py-3 bg-white text-blue-600 border border-blue-300 rounded-md font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          Manage Subscription
+        </a>
+      </div>
+    </div>
+    
+    <p class="text-gray-600 text-sm">
+      A receipt for your purchase has been sent to your email address.
+      If you have any questions, please contact <a href="mailto:support@myproletto.com" class="text-blue-600 hover:underline">support@myproletto.com</a>
+    </p>
+  </div>
+  
+  <script>
+    // Track successful conversion
+    document.addEventListener('DOMContentLoaded', function() {
+      // You can add analytics tracking code here
+      console.log('Premium subscription conversion complete');
+    });
+  </script>
+</body>
+</html>

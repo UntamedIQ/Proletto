@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Proletto</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/static/css/mobile.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 100px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: #d98841;
+            margin: 0;
+            line-height: 1;
+        }
+        .error-message {
+            font-size: 24px;
+            margin: 20px 0 40px;
+        }
+        .error-path {
+            background: #f4f1ea;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            max-width: 100%;
+            word-break: break-all;
+            display: inline-block;
+            margin-bottom: 40px;
+        }
+        .return-links {
+            margin-top: 40px;
+        }
+        .return-links a {
+            margin: 0 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="/"><img src="/static/images/logo.svg" alt="Proletto Logo"></a>
+            </div>
+            
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="/how-it-works.html">How It Works</a></li>
+                    <li><a href="/opportunities">Opportunities</a></li>
+                    <li><a href="/portfolio">Portfolio Tools</a></li>
+                    <li><a href="/membership">Pricing</a></li>
+                    <li><a href="/auth/login" class="btn-small">Sign In</a></li>
+                </ul>
+            </nav>
+            
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="error-container">
+            <h1 class="error-code">404</h1>
+            <h2 class="error-message">Page Not Found</h2>
+            
+            {% if requested_path %}
+            <p>We couldn't find the page you were looking for:</p>
+            <div class="error-path">{{ requested_path }}</div>
+            {% else %}
+            <p>We couldn't find the page you were looking for.</p>
+            {% endif %}
+            
+            <p>The page might have been moved, deleted, or never existed. Please check the URL and try again.</p>
+            
+            <div class="return-links">
+                <a href="/" class="btn">Return to Home</a>
+                <a href="/opportunities" class="btn btn-secondary">Browse Opportunities</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/how-it-works.html">How It Works</a>
+                <a href="/opportunities">Opportunities</a>
+                <a href="/portfolio">Portfolio</a>
+                <a href="/membership">Pricing</a>
+                <a href="/auth/login">Sign In</a>
+            </div>
+            <div class="footer-social">
+                <a href="#"><i class="icon-instagram"></i></a>
+                <a href="#"><i class="icon-facebook"></i></a>
+            </div>
+            <p>&copy; 2025 Proletto. Built by an artist, for all artists.</p>
+        </div>
+    </footer>
+    
+    <!-- JavaScript for mobile navigation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const hamburger = document.querySelector('.hamburger-menu');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+                document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+            });
+            
+            // Close menu when clicking a nav link
+            document.querySelectorAll('.nav-links li a').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!hamburger.contains(e.target) && 
+                    !navMenu.contains(e.target) && 
+                    navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close menu when window is resized to desktop size
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

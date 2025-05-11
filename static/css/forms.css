@@ -1,0 +1,53 @@
+/* Form button styling to match links */
+.button-form {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+
+.button-form button.btn {
+  width: 100%;
+  font-size: inherit;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  background: #a86a3e;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.button-form button.btn:hover {
+  background: #8c562e;
+}
+
+.button-form button.cta-button {
+  width: 100%;
+  font-size: 1.2rem;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  background: #a86a3e;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.button-form button.cta-button:hover {
+  background: #8c562e;
+  transform: translateY(-2px);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .button-form button.btn,
+  .button-form button.cta-button {
+    width: 100%;
+    padding: 12px 20px;
+  }
+}

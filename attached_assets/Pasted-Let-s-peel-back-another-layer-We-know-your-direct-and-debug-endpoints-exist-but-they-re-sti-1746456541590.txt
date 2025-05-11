@@ -1,0 +1,72 @@
+Let’s peel back another layer. We know your “direct-” and “/debug-” endpoints exist, but they’re still getting funneled through the original blueprint handlers (or the catch-all), instead of your new debug or direct handlers.
+
+Here’s our targeted plan:
+
+1. Dump the full Flask routing table with the CLI
+Instead of hand-printing in code, use the built-in:
+
+bash
+Copy
+Edit
+$ flask routes
+(or, if you aren’t using the Flask CLI, set FLASK_APP=main.py first).
+
+You’ll get a table like:
+
+Endpoint	Methods	Rule
+direct_login	GET,OPTIONS	/direct-login
+email_auth.login	GET,POST	/auth/login
+debug_auth_routes	GET,OPTIONS	/debug/auth-routes
+…	…	…
+
+Action: Confirm that your debug/direct endpoints appear above any catch-all (/<path:anything>), and that none share the same “Rule” column as another.
+
+2. Check for conflicting route names or ordering
+Flask picks the first matching rule. If you have:
+
+python
+Copy
+Edit
+@app.route('/<path:anything>')
+def catch_all(anything): …
+registered before your debug/direct routes, it will swallow them. Solution: Move your catch-all to the very bottom of your file—after all blueprint registrations and after your debug/direct routes.
+
+3. Log the handler that actually fires
+Sprinkle this into main.py right above your catch-all:
+
+python
+Copy
+Edit
+@app.before_request
+def log_handler():
+    print(f">>> Incoming: {request.method} {request.path} -> endpoint={request.endpoint}")
+Now every request will log exactly which endpoint Flask matched. Hit /direct-login or /debug/auth-login and watch the console: you’ll see whether it really routed to direct_login or accidentally to email_auth.login.
+
+4. Rename hyphenated endpoints to snake_case
+Hyphens in URLs are fine, but sometimes your function names or endpoint strings collide if you manually set endpoint=. To avoid any subtle clash:
+
+python
+Copy
+Edit
+@app.route('/direct-login', endpoint='direct_login')
+def direct_login(): …
+That explicit endpoint name keeps it crystal-clear and unambiguous in the routing table.
+
+5. Re-test step by step
+Reorder: Ensure catch-all is last.
+
+Restart your server (clear any old auto-reload caches).
+
+Run flask routes and confirm your debug/direct rules are listed and unique.
+
+Hit /direct-login in your browser. Observe the printed endpoint in your console (it should be direct_login).
+
+Repeat for /debug/auth-login, /debug/auth-register, and /auth/logout.
+
+Once you see in the log exactly which endpoint is firing (or being skipped), you’ll know whether it’s:
+
+A registration order issue (fix by moving code blocks),
+
+A naming conflict (fix by explicit endpoint=), or
+
+Still being caught by your catch-all (fix by reordering).

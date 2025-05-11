@@ -1,0 +1,147 @@
+Proper Flask + Gunicorn Setup for Replit Deployments
+Deploying a Flask app on Replit’s Autoscale/Production environment requires running a production WSGI server (like Gunicorn) instead of Flask’s development server. Below we explain how to configure your files for a clean deployment, avoiding dev-server warnings and port mismatches.
+1. Use Gunicorn Instead of the Dev Server in Production
+Flask’s built-in server (invoked via app.run() or flask run) is not meant for production
+flask.palletsprojects.com
+. In development on Replit, you might use app.run(debug=True) for convenience, but in production you should launch Gunicorn to serve the app. Gunicorn will handle requests more robustly (and with multiple workers) while eliminating the warning about the dev server
+flask.palletsprojects.com
+. Key points:
+Do not call app.run() in the production environment. Instead, let Gunicorn launch the app. Typically, you put app.run() inside an if __name__ == "__main__": block so it only runs in dev mode (when you run python main.py) and not when Gunicorn imports your app module.
+Ensure the Flask app is bound to 0.0.0.0 (all interfaces), not just 127.0.0.1. Replit routes external traffic to your instance, but only if your server is listening on all interfaces
+docs.replit.com
+. (Flask’s default is 127.0.0.1, which would make the app unreachable from Replit’s proxy.)
+Use a non-privileged port internally for Gunicorn (e.g. 5000 or 8000). Replit’s platform will map that to external port 80. Binding Gunicorn to port 80 directly is not recommended unless the container runs as root (and generally Replit’s containers do not run as root)
+flask.palletsprojects.com
+. Gunicorn’s docs note that non-root processes cannot bind to 80/443
+flask.palletsprojects.com
+, so we bind to a higher port and let Replit handle the routing.
+2. Configure .replit, Deployment Script, and Gunicorn
+To use Gunicorn on Replit Deployments, you need to adjust your .replit configuration and any startup scripts. Below is a minimal setup:
+.replit file: Define separate run commands for development vs deployment. Also configure port mapping so Replit knows which internal port corresponds to external port 80.
+Deployment startup script (flask_deploy.sh): Use this to launch Gunicorn in production (instead of python main.py).
+Gunicorn config (gunicorn_config.py): Set the bind address (0.0.0.0:<port>) and any other options (workers, threads, etc.) appropriate for your app.
+Example .replit:
+# .replit
+
+# Default run command for the Repl (development mode)
+run = "python3 main.py"
+
+# (Optional) specify an entrypoint if needed
+entrypoint = "main.py"
+
+[deployment]
+# Deployment run command uses Gunicorn via our script
+run = ["bash", "flask_deploy.sh"]
+# Target could be cloudrun (Autoscale) or GCE VM; autoscale uses Cloud Run by default
+deploymentTarget = "cloudrun"
+
+[env]
+# Dev environment variables (if any)
+FLASK_ENV = "development"
+
+[deployment.env]
+# Deployment-specific env vars
+FLASK_ENV = "production"
+# (Replit also auto-sets REPLIT_DEPLOYMENT=1 and PORT=80 in deployment environment)
+In the above:
+The development run remains python3 main.py (which will invoke Flask’s dev server for preview).
+The deployment run is set to execute our shell script. We use an array form for the command (["bash","flask_deploy.sh"]) as recommended by Replit’s config.
+We explicitly set FLASK_ENV=production in deployment to ensure Flask knows it’s in production mode (disabling debug, etc.). This isn’t strictly required for Gunicorn to work, but it’s good practice to mirror a production config and silence any debug-only features.
+Port mappings: Replit uses the first open port for external :80 by default
+docs.replit.com
+. We should ensure Gunicorn opens the same internal port that we configured for external 80. For example, if we want to use port 5000 internally, add a ports section:
+[[ports]]
+localPort = 5000
+externalPort = 80
+If you have an additional service (e.g. an API on port 5001 in development), be aware that Replit Deployments support only one external port
+docs.replit.com
+. It’s safest to run a single process/listener in production. You may need to merge your API into the main Flask app or deploy it separately. In any case, do not open multiple ports in the production deployment, or promotion may fail with port errors
+docs.replit.com
+. Example flask_deploy.sh:
+#!/bin/bash
+# flask_deploy.sh - Launch Flask app with Gunicorn in production
+
+# Activate any virtual env or source secrets if needed (not shown for brevity)
+
+# Set environment to production (optional if already set in .replit)
+export FLASK_ENV=production
+
+# Run Gunicorn with our app. Bind to 0.0.0.0:<internal-port>.
+# Using exec replaces the shell with gunicorn process (helps with signals).
+exec gunicorn -c gunicorn_config.py main:app
+This script ensures we start Gunicorn. We use main:app (assuming your Flask application instance is named app in main.py). The -c gunicorn_config.py flag loads configuration from the file below. We export FLASK_ENV=production just in case (so Flask knows not to enable debug or dev mode features). Example gunicorn_config.py:
+# gunicorn_config.py
+
+bind = "0.0.0.0:5000"        # Bind to internal port 5000 on all interfaces
+workers = 3                 # Example: use 3 worker processes (adjust as needed)
+# Optional: other settings like timeouts, loglevel, etc.
+# e.g., threads = 2, backlog = 2048, loglevel = "info", etc.
+In this config:
+We bind Gunicorn to 0.0.0.0:5000 (matching the internal port we chose). This allows external traffic via Replit’s mapping
+docs.replit.com
+docs.replit.com
+.
+We avoid binding to port 80 here – Gunicorn would require root privileges for 80, which is not allowed on Replit’s managed infrastructure
+flask.palletsprojects.com
+. Instead, Replit will route external port 80 to our internal 5000. (If Replit sets the PORT env to 80, do not use it directly for binding – use your configured internal port as above to avoid permission issues
+flask.palletsprojects.com
+.)
+3. Prevent Flask Dev Warnings and Port Errors
+By following the above setup, you resolve the common issues:
+“WARNING: This is a development server. Do not use it in a production deployment.” – This message disappears because we no longer use app.run() in production. Gunicorn is a production WSGI server, so Flask’s dev-server warning is not triggered. (Also, setting FLASK_ENV=production ensures Flask won’t think it’s in debug mode.)
+Port binding mismatches during promotion: Replit’s deployment check expects your app to listen on the port configured for external traffic (typically 80). If your app doesn’t open the expected port, the deployment will fail with errors like “The application must serve traffic on port 80 (if configured) or the first port... This port was never opened.”
+stackoverflow.com
+. Our configuration avoids this by:
+Binding Gunicorn to the same internal port (5000 in our example) that is mapped to external 80 in .replit. Thus, when the app is promoted, Replit finds port 5000 open and maps it to 80.
+Using 0.0.0.0 as the host, so the port is truly opened to the outside (not just localhost)
+docs.replit.com
+.
+Ensuring only one process/port is listening. If you had both the Flask dev server and Gunicorn running on different ports, or an extra service on port 5001, it would confuse the deployment. In our setup, the deployment script runs only Gunicorn, and the Flask dev server isn’t started at all in production.
+Important: If you previously had multiple port mappings (e.g. a separate API on port 5001 -> external 3000 in dev), you should disable or remove those for production. Replit will only expose one port in a deployment
+docs.replit.com
+. You might combine the API into the main app or use a single Gunicorn instance to serve both via Flask blueprints. The key is to end up with one listening port when deployed.
+4. Summary of Minimal Working Configuration
+Putting it all together, here’s a minimal configuration that achieves a smooth Replit deployment:
+main.py (Flask app) – Include your Flask routes as usual. At the end, guard the app.run() with if __name__ == "__main__": so it doesn’t execute when imported:
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return "Hello, World!"
+
+if __name__ == "__main__":
+    # Only used in development mode
+    app.run(host="0.0.0.0", port=5000)
+In production, Gunicorn will import main:app and serve it, skipping the app.run().
+gunicorn_config.py – Configure Gunicorn to bind to the chosen port and use a suitable number of workers:
+bind = "0.0.0.0:5000"
+workers = 2  # (for example, 2 worker processes)
+This ensures Gunicorn listens on port 5000 on all interfaces (no need for Flask dev server)
+docs.replit.com
+.
+flask_deploy.sh – Entrypoint script for deployments:
+#!/bin/bash
+export FLASK_ENV=production
+exec gunicorn -c gunicorn_config.py main:app
+This will launch Gunicorn serving your Flask app. The exec is used to tie Gunicorn to PID 1 in the container (so it can receive stop signals properly).
+.replit – Configuration file to wire it all together:
+run = "python3 main.py"  # dev run command
+
+[deployment]
+run = ["bash", "flask_deploy.sh"]  # prod run command (calls Gunicorn)
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+# (Optionally, define other port mappings for dev, but remember only one is used in production)
+This tells Replit to use the Gunicorn launch script when deploying. We map internal port 5000 to external 80 so that promotion passes and your app is served at the default HTTPS port
+docs.replit.com
+.
+By applying the above configuration, when you promote to production (deploy), Replit will spin up your app using Gunicorn on port 5000. External traffic on port 80 will be forwarded to Gunicorn, and you’ll no longer see Flask’s dev server warnings. The deployment should succeed without port errors, since the first (and only) opened port is correctly mapped to 80
+docs.replit.com
+docs.replit.com
+. Your Flask app will be running in a proper production environment under Gunicorn, which is the recommended approach for serving Flask apps in production
+flask.palletsprojects.com
+.

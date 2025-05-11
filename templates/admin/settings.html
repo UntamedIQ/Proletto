@@ -1,0 +1,161 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Admin Settings</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">System Information</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><strong>Operating System</strong></td>
+                                <td>{{ system_info.os }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Python Version</strong></td>
+                                <td>{{ system_info.python_version }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hostname</strong></td>
+                                <td>{{ system_info.hostname }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>CPU Count</strong></td>
+                                <td>{{ system_info.cpu_count }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Environment</strong></td>
+                                <td>{{ system_info.environment }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Database Configuration</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><strong>Database Type</strong></td>
+                                <td>{{ db_info.type }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Host</strong></td>
+                                <td>{{ db_info.host }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Database Name</strong></td>
+                                <td>{{ db_info.database }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-info">Check Database Status</a>
+                        <a href="#" class="btn btn-warning">Run Migrations</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">API Configuration</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" {% if api_configs.openai_available %}checked{% endif %} disabled>
+                            <label class="form-check-label">
+                                OpenAI API
+                                {% if api_configs.openai_available %}
+                                <span class="badge badge-success">Configured</span>
+                                {% else %}
+                                <span class="badge badge-danger">Not Configured</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" {% if api_configs.google_oauth_available %}checked{% endif %} disabled>
+                            <label class="form-check-label">
+                                Google OAuth
+                                {% if api_configs.google_oauth_available %}
+                                <span class="badge badge-success">Configured</span>
+                                {% else %}
+                                <span class="badge badge-danger">Not Configured</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" {% if api_configs.sendgrid_available %}checked{% endif %} disabled>
+                            <label class="form-check-label">
+                                SendGrid Email
+                                {% if api_configs.sendgrid_available %}
+                                <span class="badge badge-success">Configured</span>
+                                {% else %}
+                                <span class="badge badge-danger">Not Configured</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" {% if api_configs.stripe_available %}checked{% endif %} disabled>
+                            <label class="form-check-label">
+                                Stripe Payment
+                                {% if api_configs.stripe_available %}
+                                <span class="badge badge-success">Configured</span>
+                                {% else %}
+                                <span class="badge badge-danger">Not Configured</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-primary">Update API Settings</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Admin Controls</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <button class="btn btn-success btn-block">Run All Scrapers</button>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-warning btn-block">Clear Cache</button>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-info btn-block">Reindex Search</button>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-danger btn-block">System Maintenance Mode</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

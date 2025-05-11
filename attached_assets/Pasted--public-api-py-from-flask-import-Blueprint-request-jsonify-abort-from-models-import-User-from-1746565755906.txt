@@ -1,0 +1,102 @@
+# public_api.py
+from flask import Blueprint, request, jsonify, abort
+from models import User
+from self_learning_bot import get_recommendations  # your inference function
+from functools import wraps
+
+public_api = Blueprint('public_api', __name__, url_prefix='/api/v2')
+
+# Simple API key check decorator
+def require_api_key(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        key = request.args.get('key') or request.headers.get('X-API-KEY')
+        if not key or key != os.getenv('API_KEY'):
+            abort(401)
+        return f(*args, **kwargs)
+    return decorated
+
+@public_api.route('/recommendations', methods=['GET'])
+@require_api_key
+def recommendations():
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'Missing user_id'}), 400
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    recs = get_recommendations(user.id)
+    return jsonify({'recommendations': recs})
+
+# main.py integration
+# from public_api import public_api
+# app.register_blueprint(public_api)
+
+# =======================================================================
+
+# templates/admin/metrics_dashboard.html
+'''<!doctype html>
+<html>
+<head>
+  <title>Proletto Metrics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Metrics Dashboard</h1>
+  <canvas id="schedulerChart" width="400" height="200"></canvas>
+  <canvas id="scraperChart" width="400" height="200"></canvas>
+  <canvas id="businessChart" width="400" height="200"></canvas>
+
+  <script>
+    async function fetchMetrics() {
+      const res = await fetch('/admin/api/metrics-v2');
+      return res.json();
+    }
+
+    async function draw() {
+      const data = await fetchMetrics();
+      // Scheduler health over time
+      new Chart(document.getElementById('schedulerChart'), {
+        type: 'line',
+        data: {
+          labels: data.scheduler.map(d => d.date),
+          datasets: [{ label: 'Job Success Rate', data: data.scheduler.map(d => d.success_rate) }]
+        }
+      });
+      // Scraper success rate
+      new Chart(document.getElementById('scraperChart'), {
+        type: 'bar',
+        data: {
+          labels: data.scrapers.map(d => d.site),
+          datasets: [{ label: 'Success %', data: data.scrapers.map(d => d.success_rate) }]
+        }
+      });
+      // Business metrics: MRR, signups
+      new Chart(document.getElementById('businessChart'), {
+        type: 'line',
+        data: {
+          labels: data.business.map(d => d.date),
+          datasets: [
+            { label: 'MRR', data: data.business.map(d => d.mrr) },
+            { label: 'New Signups', data: data.business.map(d => d.signups) }
+          ]
+        }
+      });
+    }
+    draw();
+  </script>
+</body>
+</html>'''
+
+# admin API endpoint in admin.py
+# @admin_bp.route('/api/metrics-v2')
+# @admin_required
+# def metrics_v2():
+#     from scraper_health import get_scheduler_metrics, get_scraper_metrics
+#     from business_metrics import get_business_metrics
+#     return jsonify({
+#         'scheduler': get_scheduler_metrics(),
+#         'scrapers': get_scraper_metrics(),
+#         'business': get_business_metrics()
+#     })

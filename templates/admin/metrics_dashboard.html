@@ -1,0 +1,1458 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Metrics Dashboard | Proletto Admin{% endblock %}
+
+{% block page_title %}Metrics Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-content-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="admin-content-title">Metrics Dashboard</h1>
+            <p class="admin-content-subtitle">Comprehensive analytics and performance metrics for Proletto</p>
+        </div>
+        <div class="col-auto">
+            <div class="date-range-picker">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dateRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-calendar3"></i> Last 30 Days
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dateRangeDropdown">
+                    <li><a class="dropdown-item active" href="#" data-range="30">Last 30 Days</a></li>
+                    <li><a class="dropdown-item" href="#" data-range="90">Last 90 Days</a></li>
+                    <li><a class="dropdown-item" href="#" data-range="180">Last 6 Months</a></li>
+                    <li><a class="dropdown-item" href="#" data-range="365">Last Year</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" data-range="custom">Custom Range</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row stats-cards">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="admin-card stat-card">
+            <div class="stat-card-body">
+                <div class="row align-items-center">
+                    <div class="col mr-2">
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-value" id="total-users">{{ user_count }}</div>
+                        <div class="stat-change increase">
+                            <i class="bi bi-arrow-up-right"></i> <span id="user-growth">+12.5%</span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon bg-primary-light">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="admin-card stat-card">
+            <div class="stat-card-body">
+                <div class="row align-items-center">
+                    <div class="col mr-2">
+                        <div class="stat-label">Premium Users</div>
+                        <div class="stat-value" id="premium-users">{{ premium_count }}</div>
+                        <div class="stat-change increase">
+                            <i class="bi bi-arrow-up-right"></i> <span id="premium-growth">+8.3%</span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon bg-success-light">
+                            <i class="bi bi-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="admin-card stat-card">
+            <div class="stat-card-body">
+                <div class="row align-items-center">
+                    <div class="col mr-2">
+                        <div class="stat-label">Total Opportunities</div>
+                        <div class="stat-value" id="total-opportunities">{{ opportunity_count }}</div>
+                        <div class="stat-change increase">
+                            <i class="bi bi-arrow-up-right"></i> <span id="opportunity-growth">+23.7%</span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon bg-info-light">
+                            <i class="bi bi-lightning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="admin-card stat-card">
+            <div class="stat-card-body">
+                <div class="row align-items-center">
+                    <div class="col mr-2">
+                        <div class="stat-label">Active Engines</div>
+                        <div class="stat-value" id="active-engines">{{ active_engines }}</div>
+                        <div class="stat-change no-change">
+                            <i class="bi bi-dash"></i> <span id="engine-change">No Change</span>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon bg-warning-light">
+                            <i class="bi bi-cpu"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <!-- User Growth Chart -->
+    <div class="col-lg-8 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">User Growth</h2>
+                <div class="admin-card-actions">
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary active" data-chart-period="daily">Daily</button>
+                        <button type="button" class="btn btn-outline-secondary" data-chart-period="weekly">Weekly</button>
+                        <button type="button" class="btn btn-outline-secondary" data-chart-period="monthly">Monthly</button>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-card-body">
+                <canvas id="userGrowthChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Tier Distribution -->
+    <div class="col-lg-4 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">User Distribution</h2>
+            </div>
+            <div class="admin-card-body">
+                <canvas id="userDistributionChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Opportunity & Performance Metrics -->
+<div class="row">
+    <!-- Opportunity Sources -->
+    <div class="col-lg-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">Opportunity Sources</h2>
+            </div>
+            <div class="admin-card-body">
+                <canvas id="opportunitySourcesChart" height="350"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Engine Performance -->
+    <div class="col-lg-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">Engine Performance</h2>
+                <div class="admin-card-actions">
+                    <button class="btn btn-sm btn-outline-primary" id="refreshEngineStats">
+                        <i class="bi bi-arrow-repeat"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="admin-card-body">
+                <canvas id="enginePerformanceChart" height="350"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Health & Recent Activity -->
+<div class="row">
+    <!-- System Health -->
+    <div class="col-lg-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">System Health</h2>
+                <div class="admin-card-actions">
+                    <button class="btn btn-sm btn-outline-secondary" id="viewSystemLogs">
+                        <i class="bi bi-journal-text"></i> View Logs
+                    </button>
+                </div>
+            </div>
+            <div class="admin-card-body p-0">
+                <div class="system-health-metrics">
+                    <div class="system-metric">
+                        <div class="metric-label">Server CPU</div>
+                        <div class="metric-value">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 32%" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100">32%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-metric">
+                        <div class="metric-label">Server Memory</div>
+                        <div class="metric-value">
+                            <div class="progress">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 67%" aria-valuenow="67" aria-valuemin="0" aria-valuemax="100">67%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-metric">
+                        <div class="metric-label">Database Size</div>
+                        <div class="metric-value">
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-metric">
+                        <div class="metric-label">API Response Time</div>
+                        <div class="metric-value">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 28%" aria-valuenow="28" aria-valuemin="0" aria-valuemax="100">128ms</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-metric">
+                        <div class="metric-label">Cache Hit Rate</div>
+                        <div class="metric-value">
+                            <div class="progress">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100">89%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="col-lg-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">Recent Activity</h2>
+                <div class="admin-card-actions">
+                    <button class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye"></i> View All
+                    </button>
+                </div>
+            </div>
+            <div class="admin-card-body p-0">
+                <div class="activity-list">
+                    {% for activity in recent_activities %}
+                    <div class="activity-item">
+                        <div class="activity-icon {{ activity.icon_class }}">
+                            <i class="bi {{ activity.icon }}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ activity.title }}</div>
+                            <div class="activity-time">{{ activity.time }}</div>
+                            <div class="activity-details">{{ activity.details }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Placeholder data if no activities -->
+                    {% if not recent_activities %}
+                    <div class="activity-item">
+                        <div class="activity-icon bg-success-light">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">New user registered</div>
+                            <div class="activity-time">2 hours ago</div>
+                            <div class="activity-details">Jane Smith (jane.smith@example.com) created a new account</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-primary-light">
+                            <i class="bi bi-credit-card"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Subscription upgraded</div>
+                            <div class="activity-time">5 hours ago</div>
+                            <div class="activity-details">User #3456 upgraded to Proletto Insider plan</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-warning-light">
+                            <i class="bi bi-cpu"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Engine restarted</div>
+                            <div class="activity-time">8 hours ago</div>
+                            <div class="activity-details">California Grants engine restarted after maintenance</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon bg-info-light">
+                            <i class="bi bi-lightning"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">New opportunities added</div>
+                            <div class="activity-time">10 hours ago</div>
+                            <div class="activity-details">35 new opportunities added from New York Residencies engine</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Opportunities & User Retention -->
+<div class="row">
+    <!-- Top Opportunities -->
+    <div class="col-lg-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">Top Opportunities</h2>
+                <div class="admin-card-subtitle">Most viewed and saved opportunities</div>
+            </div>
+            <div class="admin-card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-borderless mb-0">
+                        <thead>
+                            <tr>
+                                <th>Opportunity</th>
+                                <th>Source</th>
+                                <th>Views</th>
+                                <th>Saves</th>
+                                <th>Applications</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>NYC Artist Residency Program</td>
+                                <td>ArtSpace NYC</td>
+                                <td>352</td>
+                                <td>127</td>
+                                <td>43</td>
+                            </tr>
+                            <tr>
+                                <td>California Arts Grant 2026</td>
+                                <td>CA Arts Council</td>
+                                <td>298</td>
+                                <td>103</td>
+                                <td>37</td>
+                            </tr>
+                            <tr>
+                                <td>Summer Exhibition Showcase</td>
+                                <td>Gallery Collective</td>
+                                <td>276</td>
+                                <td>94</td>
+                                <td>29</td>
+                            </tr>
+                            <tr>
+                                <td>Digital Art Competition</td>
+                                <td>Art & Tech Foundation</td>
+                                <td>245</td>
+                                <td>89</td>
+                                <td>31</td>
+                            </tr>
+                            <tr>
+                                <td>Public Sculpture Commission</td>
+                                <td>City of Chicago</td>
+                                <td>221</td>
+                                <td>78</td>
+                                <td>18</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Retention -->
+    <div class="col-lg-6 mb-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">User Retention</h2>
+                <div class="admin-card-subtitle">Cohort analysis by subscription date</div>
+            </div>
+            <div class="admin-card-body">
+                <canvas id="retentionChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dashboard Metrics Page Styles */
+    .stats-cards .admin-card {
+        border-left: 4px solid var(--primary-color);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .stats-cards .admin-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .stats-cards .col-xl-3:nth-child(1) .admin-card {
+        border-left-color: var(--primary-color);
+    }
+    
+    .stats-cards .col-xl-3:nth-child(2) .admin-card {
+        border-left-color: var(--success-color);
+    }
+    
+    .stats-cards .col-xl-3:nth-child(3) .admin-card {
+        border-left-color: var(--info-color);
+    }
+    
+    .stats-cards .col-xl-3:nth-child(4) .admin-card {
+        border-left-color: var(--warning-color);
+    }
+    
+    .stat-card-body {
+        padding: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--gray-600);
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-change {
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    .stat-change.increase {
+        color: var(--success-color);
+    }
+    
+    .stat-change.decrease {
+        color: var(--danger-color);
+    }
+    
+    .stat-change.no-change {
+        color: var(--gray-600);
+    }
+    
+    .stat-change i {
+        margin-right: 0.25rem;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .bg-primary-light {
+        background-color: rgba(108, 92, 231, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .bg-success-light {
+        background-color: rgba(0, 184, 148, 0.1);
+        color: var(--success-color);
+    }
+    
+    .bg-info-light {
+        background-color: rgba(9, 132, 227, 0.1);
+        color: var(--info-color);
+    }
+    
+    .bg-warning-light {
+        background-color: rgba(253, 203, 110, 0.1);
+        color: var(--warning-color);
+    }
+    
+    .bg-danger-light {
+        background-color: rgba(214, 48, 49, 0.1);
+        color: var(--danger-color);
+    }
+    
+    .admin-card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .admin-card-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0;
+    }
+    
+    .admin-card-subtitle {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        margin: 0.25rem 0 0;
+    }
+    
+    .admin-card-body {
+        padding: 1.5rem;
+    }
+    
+    .admin-card-body.p-0 {
+        padding: 0;
+    }
+    
+    .system-health-metrics {
+        padding: 0;
+    }
+    
+    .system-metric {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+    }
+    
+    .system-metric:last-child {
+        border-bottom: none;
+    }
+    
+    .metric-label {
+        width: 200px;
+        font-weight: 500;
+        color: var(--gray-700);
+    }
+    
+    .metric-value {
+        flex: 1;
+    }
+    
+    .progress {
+        height: 8px;
+        border-radius: 4px;
+    }
+    
+    .progress-bar {
+        border-radius: 4px;
+    }
+    
+    .activity-list {
+        padding: 0;
+    }
+    
+    .activity-item {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-title {
+        font-weight: 500;
+        color: var(--gray-900);
+        margin-bottom: 0.25rem;
+    }
+    
+    .activity-time {
+        font-size: 0.75rem;
+        color: var(--gray-600);
+        margin-bottom: 0.5rem;
+    }
+    
+    .activity-details {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+    }
+    
+    .date-range-picker {
+        position: relative;
+    }
+    
+    .date-range-picker .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .date-range-picker .dropdown-menu {
+        padding: 0.5rem;
+    }
+    
+    .date-range-picker .dropdown-item {
+        border-radius: 4px;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .date-range-picker .dropdown-item.active {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+    
+    /* Table styles */
+    .table th {
+        font-weight: 600;
+        color: var(--gray-700);
+        border-top: none;
+        padding: 1rem 1.5rem;
+        background-color: var(--gray-100);
+    }
+    
+    .table td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(108, 92, 231, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up Chart.js defaults
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#6c757d';
+    Chart.defaults.plugins.legend.position = 'bottom';
+    Chart.defaults.plugins.title.display = false;
+    
+    // Get charts data from API
+    fetch('/admin/api/metrics-v2')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update stats cards
+                updateStatsCards(data.stats);
+                
+                // Initialize charts
+                initUserGrowthChart(data.userGrowth);
+                initUserDistributionChart(data.userDistribution);
+                initOpportunitySourcesChart(data.opportunitySources);
+                initEnginePerformanceChart(data.enginePerformance);
+                initRetentionChart(data.retention);
+            } else {
+                console.error('Failed to load metrics data:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching metrics data:', error);
+        });
+    
+    // Initialize charts with fallback data if needed
+    initUserGrowthChartFallback();
+    initUserDistributionChartFallback();
+    initOpportunitySourcesChartFallback();
+    initEnginePerformanceChartFallback();
+    initRetentionChartFallback();
+    
+    // Set up date range picker
+    const dateRangeDropdown = document.getElementById('dateRangeDropdown');
+    const dateRangeItems = document.querySelectorAll('.dropdown-item[data-range]');
+    
+    dateRangeItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Update active state
+            dateRangeItems.forEach(el => el.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update dropdown text
+            const range = this.dataset.range;
+            let rangeText = '';
+            
+            switch(range) {
+                case '30':
+                    rangeText = 'Last 30 Days';
+                    break;
+                case '90':
+                    rangeText = 'Last 90 Days';
+                    break;
+                case '180':
+                    rangeText = 'Last 6 Months';
+                    break;
+                case '365':
+                    rangeText = 'Last Year';
+                    break;
+                case 'custom':
+                    rangeText = 'Custom Range';
+                    // TODO: Show date picker modal
+                    break;
+            }
+            
+            dateRangeDropdown.innerHTML = `<i class="bi bi-calendar3"></i> ${rangeText}`;
+            
+            // Refresh data with new date range
+            refreshData(range);
+        });
+    });
+    
+    // Set up chart period toggles
+    const chartPeriodButtons = document.querySelectorAll('[data-chart-period]');
+    chartPeriodButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const periodButtons = this.parentElement.querySelectorAll('button');
+            periodButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const period = this.dataset.chartPeriod;
+            updateChartPeriod(period);
+        });
+    });
+    
+    // Set up refresh button
+    const refreshEngineStatsBtn = document.getElementById('refreshEngineStats');
+    if (refreshEngineStatsBtn) {
+        refreshEngineStatsBtn.addEventListener('click', function() {
+            // Add spinning animation to button icon
+            const icon = this.querySelector('i');
+            icon.classList.add('spin');
+            
+            // Fetch updated engine performance data
+            fetch('/admin/api/engine-performance')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update engine performance chart
+                        updateEnginePerformanceChart(data.enginePerformance);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching engine performance data:', error);
+                })
+                .finally(() => {
+                    // Remove spinning animation
+                    setTimeout(() => {
+                        icon.classList.remove('spin');
+                    }, 500);
+                });
+        });
+    }
+    
+    // Set up view logs button
+    const viewSystemLogsBtn = document.getElementById('viewSystemLogs');
+    if (viewSystemLogsBtn) {
+        viewSystemLogsBtn.addEventListener('click', function() {
+            window.location.href = '/admin/logs';
+        });
+    }
+});
+
+// Function to update stats cards
+function updateStatsCards(stats) {
+    // Update stats if data is available
+    if (stats) {
+        document.getElementById('total-users').textContent = stats.totalUsers.toLocaleString();
+        document.getElementById('premium-users').textContent = stats.premiumUsers.toLocaleString();
+        document.getElementById('total-opportunities').textContent = stats.totalOpportunities.toLocaleString();
+        document.getElementById('active-engines').textContent = stats.activeEngines;
+        
+        // Update growth indicators
+        const userGrowthEl = document.getElementById('user-growth');
+        const premiumGrowthEl = document.getElementById('premium-growth');
+        const opportunityGrowthEl = document.getElementById('opportunity-growth');
+        const engineChangeEl = document.getElementById('engine-change');
+        
+        updateGrowthIndicator(userGrowthEl, stats.userGrowthRate);
+        updateGrowthIndicator(premiumGrowthEl, stats.premiumGrowthRate);
+        updateGrowthIndicator(opportunityGrowthEl, stats.opportunityGrowthRate);
+        updateChangeIndicator(engineChangeEl, stats.engineChangeRate);
+    }
+}
+
+// Function to update growth indicator
+function updateGrowthIndicator(element, rate) {
+    if (!element) return;
+    
+    if (rate > 0) {
+        element.parentElement.classList.remove('decrease', 'no-change');
+        element.parentElement.classList.add('increase');
+        element.parentElement.querySelector('i').className = 'bi bi-arrow-up-right';
+        element.textContent = `+${rate.toFixed(1)}%`;
+    } else if (rate < 0) {
+        element.parentElement.classList.remove('increase', 'no-change');
+        element.parentElement.classList.add('decrease');
+        element.parentElement.querySelector('i').className = 'bi bi-arrow-down-right';
+        element.textContent = `${rate.toFixed(1)}%`;
+    } else {
+        element.parentElement.classList.remove('increase', 'decrease');
+        element.parentElement.classList.add('no-change');
+        element.parentElement.querySelector('i').className = 'bi bi-dash';
+        element.textContent = 'No Change';
+    }
+}
+
+// Function to update change indicator
+function updateChangeIndicator(element, rate) {
+    if (!element) return;
+    
+    if (rate > 0) {
+        element.parentElement.classList.remove('decrease', 'no-change');
+        element.parentElement.classList.add('increase');
+        element.parentElement.querySelector('i').className = 'bi bi-arrow-up-right';
+        element.textContent = `+${rate}`;
+    } else if (rate < 0) {
+        element.parentElement.classList.remove('increase', 'no-change');
+        element.parentElement.classList.add('decrease');
+        element.parentElement.querySelector('i').className = 'bi bi-arrow-down-right';
+        element.textContent = `${rate}`;
+    } else {
+        element.parentElement.classList.remove('increase', 'decrease');
+        element.parentElement.classList.add('no-change');
+        element.parentElement.querySelector('i').className = 'bi bi-dash';
+        element.textContent = 'No Change';
+    }
+}
+
+// Function to refresh data with new date range
+function refreshData(range) {
+    // Make API call with new date range
+    fetch(`/admin/api/metrics-v2?range=${range}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update stats cards
+                updateStatsCards(data.stats);
+                
+                // Update charts
+                updateUserGrowthChart(data.userGrowth);
+                updateUserDistributionChart(data.userDistribution);
+                updateOpportunitySourcesChart(data.opportunitySources);
+                updateEnginePerformanceChart(data.enginePerformance);
+                updateRetentionChart(data.retention);
+            } else {
+                console.error('Failed to load metrics data:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching metrics data:', error);
+        });
+}
+
+// Function to update chart period
+function updateChartPeriod(period) {
+    // Update user growth chart period
+    fetch(`/admin/api/metrics-v2?chart=userGrowth&period=${period}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateUserGrowthChart(data.userGrowth);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user growth data:', error);
+        });
+}
+
+// User Growth Chart
+function initUserGrowthChart(data) {
+    if (data) {
+        updateUserGrowthChart(data);
+    }
+}
+
+function updateUserGrowthChart(data) {
+    const ctx = document.getElementById('userGrowthChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if it exists
+    if (window.userGrowthChart) {
+        window.userGrowthChart.destroy();
+    }
+    
+    window.userGrowthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Total Users',
+                backgroundColor: 'rgba(108, 92, 231, 0.1)',
+                borderColor: 'rgba(108, 92, 231, 1)',
+                data: data.totalUsers,
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Premium Users',
+                backgroundColor: 'rgba(0, 184, 148, 0.1)',
+                borderColor: 'rgba(0, 184, 148, 1)',
+                data: data.premiumUsers,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [2, 2]
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            }
+        }
+    });
+}
+
+// User Growth Chart (fallback)
+function initUserGrowthChartFallback() {
+    const ctx = document.getElementById('userGrowthChart');
+    if (!ctx || window.userGrowthChart) return;
+    
+    // Sample data for demonstration
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const currentMonth = new Date().getMonth();
+    const labels = [];
+    
+    for (let i = 0; i < 12; i++) {
+        const month = (currentMonth - 11 + i + 12) % 12;
+        labels.push(months[month]);
+    }
+    
+    const totalUsers = [1200, 1350, 1500, 1750, 1900, 2150, 2300, 2500, 2650, 2800, 3000, 3150];
+    const premiumUsers = [200, 230, 260, 310, 340, 390, 450, 510, 560, 620, 680, 740];
+    
+    window.userGrowthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Users',
+                backgroundColor: 'rgba(108, 92, 231, 0.1)',
+                borderColor: 'rgba(108, 92, 231, 1)',
+                data: totalUsers,
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Premium Users',
+                backgroundColor: 'rgba(0, 184, 148, 0.1)',
+                borderColor: 'rgba(0, 184, 148, 1)',
+                data: premiumUsers,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [2, 2]
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            }
+        }
+    });
+}
+
+// User Distribution Chart
+function initUserDistributionChart(data) {
+    if (data) {
+        updateUserDistributionChart(data);
+    }
+}
+
+function updateUserDistributionChart(data) {
+    const ctx = document.getElementById('userDistributionChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if it exists
+    if (window.userDistributionChart) {
+        window.userDistributionChart.destroy();
+    }
+    
+    window.userDistributionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'User Distribution',
+                data: data.values,
+                backgroundColor: [
+                    'rgba(108, 92, 231, 0.8)',
+                    'rgba(0, 184, 148, 0.8)',
+                    'rgba(9, 132, 227, 0.8)',
+                    'rgba(253, 203, 110, 0.8)'
+                ],
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        boxWidth: 12
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+}
+
+// User Distribution Chart (fallback)
+function initUserDistributionChartFallback() {
+    const ctx = document.getElementById('userDistributionChart');
+    if (!ctx || window.userDistributionChart) return;
+    
+    window.userDistributionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Free', 'Essentials', 'Insider', 'Gallery'],
+            datasets: [{
+                label: 'User Distribution',
+                data: [2100, 600, 380, 70],
+                backgroundColor: [
+                    'rgba(108, 92, 231, 0.8)',
+                    'rgba(0, 184, 148, 0.8)',
+                    'rgba(9, 132, 227, 0.8)',
+                    'rgba(253, 203, 110, 0.8)'
+                ],
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        boxWidth: 12
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+}
+
+// Opportunity Sources Chart
+function initOpportunitySourcesChart(data) {
+    if (data) {
+        updateOpportunitySourcesChart(data);
+    }
+}
+
+function updateOpportunitySourcesChart(data) {
+    const ctx = document.getElementById('opportunitySourcesChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if it exists
+    if (window.opportunitySourcesChart) {
+        window.opportunitySourcesChart.destroy();
+    }
+    
+    window.opportunitySourcesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Opportunities',
+                data: data.values,
+                backgroundColor: 'rgba(9, 132, 227, 0.8)',
+                borderColor: 'rgba(9, 132, 227, 1)',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [2, 2]
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Opportunity Sources Chart (fallback)
+function initOpportunitySourcesChartFallback() {
+    const ctx = document.getElementById('opportunitySourcesChart');
+    if (!ctx || window.opportunitySourcesChart) return;
+    
+    window.opportunitySourcesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Grants', 'Residencies', 'Exhibitions', 'Commissions', 'Competitions', 'Others'],
+            datasets: [{
+                label: 'Opportunities',
+                data: [125, 87, 103, 62, 45, 28],
+                backgroundColor: 'rgba(9, 132, 227, 0.8)',
+                borderColor: 'rgba(9, 132, 227, 1)',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [2, 2]
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Engine Performance Chart
+function initEnginePerformanceChart(data) {
+    if (data) {
+        updateEnginePerformanceChart(data);
+    }
+}
+
+function updateEnginePerformanceChart(data) {
+    const ctx = document.getElementById('enginePerformanceChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if it exists
+    if (window.enginePerformanceChart) {
+        window.enginePerformanceChart.destroy();
+    }
+    
+    window.enginePerformanceChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Opportunities Found',
+                data: data.found,
+                backgroundColor: 'rgba(253, 203, 110, 0.2)',
+                borderColor: 'rgba(253, 203, 110, 1)',
+                pointBackgroundColor: 'rgba(253, 203, 110, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(253, 203, 110, 1)',
+                pointRadius: 4
+            }, {
+                label: 'Matched to Users',
+                data: data.matched,
+                backgroundColor: 'rgba(0, 184, 148, 0.2)',
+                borderColor: 'rgba(0, 184, 148, 1)',
+                pointBackgroundColor: 'rgba(0, 184, 148, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(0, 184, 148, 1)',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    ticks: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Engine Performance Chart (fallback)
+function initEnginePerformanceChartFallback() {
+    const ctx = document.getElementById('enginePerformanceChart');
+    if (!ctx || window.enginePerformanceChart) return;
+    
+    window.enginePerformanceChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['NY Engine', 'CA Engine', 'Global Engine', 'Exhibition Engine', 'Grant Engine', 'Residency Engine'],
+            datasets: [{
+                label: 'Opportunities Found',
+                data: [65, 59, 90, 81, 56, 55],
+                backgroundColor: 'rgba(253, 203, 110, 0.2)',
+                borderColor: 'rgba(253, 203, 110, 1)',
+                pointBackgroundColor: 'rgba(253, 203, 110, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(253, 203, 110, 1)',
+                pointRadius: 4
+            }, {
+                label: 'Matched to Users',
+                data: [28, 48, 40, 19, 96, 27],
+                backgroundColor: 'rgba(0, 184, 148, 0.2)',
+                borderColor: 'rgba(0, 184, 148, 1)',
+                pointBackgroundColor: 'rgba(0, 184, 148, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(0, 184, 148, 1)',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    ticks: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Retention Chart
+function initRetentionChart(data) {
+    if (data) {
+        updateRetentionChart(data);
+    }
+}
+
+function updateRetentionChart(data) {
+    const ctx = document.getElementById('retentionChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if it exists
+    if (window.retentionChart) {
+        window.retentionChart.destroy();
+    }
+    
+    window.retentionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: data.datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [2, 2]
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Retention Chart (fallback)
+function initRetentionChartFallback() {
+    const ctx = document.getElementById('retentionChart');
+    if (!ctx || window.retentionChart) return;
+    
+    const colors = [
+        'rgba(108, 92, 231, 1)',
+        'rgba(0, 184, 148, 1)',
+        'rgba(9, 132, 227, 1)',
+        'rgba(253, 203, 110, 1)',
+        'rgba(214, 48, 49, 1)',
+        'rgba(253, 121, 168, 1)'
+    ];
+    
+    const datasets = [
+        {
+            label: 'Jan Cohort',
+            data: [100, 85, 72, 65, 58, 52],
+            borderColor: colors[0],
+            backgroundColor: 'transparent',
+            tension: 0.1
+        },
+        {
+            label: 'Feb Cohort',
+            data: [100, 88, 75, 68, 60],
+            borderColor: colors[1],
+            backgroundColor: 'transparent',
+            tension: 0.1
+        },
+        {
+            label: 'Mar Cohort',
+            data: [100, 82, 70, 63],
+            borderColor: colors[2],
+            backgroundColor: 'transparent',
+            tension: 0.1
+        },
+        {
+            label: 'Apr Cohort',
+            data: [100, 86, 75],
+            borderColor: colors[3],
+            backgroundColor: 'transparent',
+            tension: 0.1
+        },
+        {
+            label: 'May Cohort',
+            data: [100, 84],
+            borderColor: colors[4],
+            backgroundColor: 'transparent',
+            tension: 0.1
+        }
+    ];
+    
+    window.retentionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [2, 2]
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

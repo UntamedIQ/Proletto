@@ -1,0 +1,154 @@
+1. Install New Dependencies
+In your Replit shell or requirements.txt, add:
+
+bash
+Copy
+Edit
+pip install playwright slack_sdk requests
+playwright install
+2. Add the Instagram Ads Scraper
+File: scrapers/instagram_ads.py
+Place alongside your other scrapers:
+
+python
+Copy
+Edit
+# scrapers/instagram_ads.py
+from playwright.sync_api import sync_playwright
+import time, json, os
+
+OUTPUT_PATH = os.getenv('INSTAGRAM_ADS_PATH', 'data/instagram_ads.json')
+
+def run():
+    results = []
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)..."
+        )
+        page = context.new_page()
+        page.goto("https://www.instagram.com/explore/tags/artopportunity/")
+        time.sleep(5)
+        for _ in range(5):
+            page.mouse.wheel(0, 1000)
+            time.sleep(2)
+        posts = page.query_selector_all("article a")
+        for post in posts:
+            href = post.get_attribute("href")
+            caption = post.get_attribute("aria-label") or ""
+            is_ad = bool(post.query_selector("span:has-text('Sponsored')"))
+            if is_ad or "grant" in caption.lower():
+                results.append({
+                    "url": f"https://instagram.com{href}",
+                    "caption": caption,
+                    "is_ad": is_ad
+                })
+        browser.close()
+    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    with open(OUTPUT_PATH, "w") as f:
+        json.dump(results, f, indent=2)
+    print(f"[Instagram Ads] Found {len(results)} items.")
+3. Add the Maintenance Bot Listener
+File: maintenance/bot.py
+Alongside your alerts.py:
+
+python
+Copy
+Edit
+# maintenance/bot.py
+import os, time, requests
+from apscheduler.events import EVENT_JOB_ERROR
+from alerts import alert_slack
+from scheduler import scheduler  # wherever you instantiate APScheduler
+
+# track failures in memory
+FAIL_COUNTS = {}
+
+def on_job_error(event):
+    job_id = event.job_id
+    exc    = event.exception
+    FAIL_COUNTS[job_id] = FAIL_COUNTS.get(job_id, 0) + 1
+
+    if FAIL_COUNTS[job_id] <= 2:
+        alert_slack(f"🔄 Retrying `{job_id}` (attempt {FAIL_COUNTS[job_id]}) in 1m")
+        scheduler.modify_job(job_id, next_run_time=time.time() + 60)
+    else:
+        alert_slack(f"🚨 `{job_id}` failed {FAIL_COUNTS[job_id]} times—requiring manual fix.")
+        _create_github_issue(job_id, exc)
+
+def _create_github_issue(job_id, exception):
+    repo  = os.getenv("GITHUB_REPO")
+    token = os.getenv("GITHUB_TOKEN")
+    if not repo or not token:
+        alert_slack("⚠️ GITHUB_REPO or GITHUB_TOKEN not set—cannot open issue.")
+        return
+    url = f"https://api.github.com/repos/{repo}/issues"
+    data = {
+      "title": f"[Auto-Fix Bot] Job `{job_id}` failing",
+      "body": f"Job `{job_id}` has failed repeatedly:\n```\n{exception}\n```"
+    }
+    resp = requests.post(url, json=data, headers={"Authorization": f"token {token}"})
+    if resp.status_code == 201:
+        alert_slack(f"✅ Created GitHub issue for `{job_id}`")
+    else:
+        alert_slack(f"❌ Failed to create GitHub issue: {resp.text}")
+
+# Register listener when the module is imported
+scheduler.add_listener(on_job_error, EVENT_JOB_ERROR)
+4. Wire It All Up in Your Scheduler
+Open your APScheduler setup (e.g. ap_scheduler.py or inside main.py) and:
+
+python
+Copy
+Edit
+# ap_scheduler.py  (or your existing scheduler module)
+from apscheduler.schedulers.background import BackgroundScheduler
+from scrapers.callforentry import run as scrape_callforentry
+from scrapers.instagram_ads  import run as scrape_instagram_ads
+# … import other scrapers …
+import maintenance.bot  # registers the on_job_error listener
+
+scheduler = BackgroundScheduler()
+
+# existing scraper jobs
+scheduler.add_job(scrape_callforentry, 'interval', minutes=15, id='callforentry')
+
+# new Instagram ads job
+scheduler.add_job(scrape_instagram_ads, 'interval', hours=1, id='instagram_ads',
+                  coalesce=True, max_instances=1)
+
+# … any other jobs …
+
+scheduler.start()
+Ensure you import maintenance.bot after you create the scheduler so the listener attaches.
+
+5. Environment Variables
+In your Replit Secrets (padlock icon) add:
+
+GITHUB_REPO=your-username/your-repo
+
+GITHUB_TOKEN=<a GitHub token with repo scope>
+
+(You already have SLACK_BOT_TOKEN & SLACK_CHANNEL)
+
+6. Test & Validate
+Trigger an Instagram scrape manually:
+
+bash
+Copy
+Edit
+python3 - <<'EOF'
+from scrapers.instagram_ads import run
+run()
+EOF
+Confirm data/instagram_ads.json appears with results.
+
+Force a failure in one job (e.g. temporarily raise an exception in scrape_callforentry) and watch:
+
+2 auto-retry alerts in #all-proletto-alerts
+
+On 3rd failure, a GitHub issue created and a Slack escalation.
+
+Watch your Replit console for APScheduler logs every run.
+
+With these changes, you’ll be scraping Instagram ads on the hour and have a self-healing bot that retries failures and creates GitHub issues when it can’t fix itself. Let me know how it goes or if you need tweaks!

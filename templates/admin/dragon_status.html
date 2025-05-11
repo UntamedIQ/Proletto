@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proletto Dragon Status Dashboard</title>
+  <!-- Use a fallback style if the dashboard.css is not found -->
+  <link rel="stylesheet" href="/static/css/dashboard.css" onerror="this.href='/static/styles.css'">
+  <link rel="stylesheet" href="/static/css/styles.css" onerror="this.href='/styles.css'">
+  <style>
+    body {
+      font-family: 'Inter', 'Arial', sans-serif;
+      padding: 2rem;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.5;
+    }
+    
+    h1, h2, h3 {
+      color: #444;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .section {
+      margin-bottom: 2rem;
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .section h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+      font-size: 1.4rem;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+    
+    th, td {
+      padding: 0.8rem;
+      border: 1px solid #eee;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #f5f5f5;
+      font-weight: 600;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    .badge {
+      background: #007aff;
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+    
+    .badge-success {
+      background-color: #28a745;
+    }
+    
+    .badge-warning {
+      background-color: #ffc107;
+      color: #212529;
+    }
+    
+    .badge-danger {
+      background-color: #dc3545;
+    }
+    
+    .badge-info {
+      background-color: #17a2b8;
+    }
+    
+    .badge-secondary {
+      background-color: #6c757d;
+    }
+    
+    .metric {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .metric-label {
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    
+    .metric-value {
+      font-weight: 700;
+    }
+    
+    .admin-controls {
+      margin: 1rem 0;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      background-color: #007aff;
+      color: white;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s;
+    }
+    
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .refresh-area {
+      display: flex;
+      align-items: center;
+    }
+    
+    .auto-refresh {
+      margin-left: 1rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .auto-refresh input {
+      margin-right: 0.5rem;
+    }
+    
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+    }
+    
+    .status-healthy {
+      background-color: #28a745;
+    }
+    
+    .status-warning {
+      background-color: #ffc107;
+    }
+    
+    .status-error {
+      background-color: #dc3545;
+    }
+    
+    .status-unknown {
+      background-color: #6c757d;
+    }
+    
+    /* Grid layout for key metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .metric-card {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 6px;
+      text-align: center;
+    }
+    
+    .metric-card .metric-title {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    
+    .metric-card .metric-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #333;
+    }
+    
+    .tab-navigation {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 1rem;
+    }
+    
+    .tab-button {
+      padding: 0.8rem 1.2rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 500;
+      color: #666;
+    }
+    
+    .tab-button.active {
+      border-bottom-color: #007aff;
+      color: #007aff;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-header">
+    <h1>🐉 Proletto Multi-Headed Dragon</h1>
+    
+    <div class="refresh-area">
+      <button id="refresh-btn" class="btn">Refresh</button>
+      <div class="auto-refresh">
+        <input type="checkbox" id="auto-refresh" checked>
+        <label for="auto-refresh">Auto-refresh (15s)</label>
+      </div>
+    </div>
+  </div>
+  
+  <div class="tab-navigation">
+    <button class="tab-button active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-button" data-tab="scrapers">Scrapers</button>
+    <button class="tab-button" data-tab="scheduler">Scheduler</button>
+    <button class="tab-button" data-tab="maintenance">Maintenance</button>
+    <button class="tab-button" data-tab="logs">Logs</button>
+  </div>
+  
+  <!-- Dashboard Tab -->
+  <div id="dashboard" class="tab-content active">
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-title">Scheduler Status</div>
+        <div class="metric-number">
+          {% if jobs %}
+          <span class="status-indicator status-healthy"></span>Running
+          {% else %}
+          <span class="status-indicator status-error"></span>Unknown
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Active Jobs</div>
+        <div class="metric-number">{{ jobs|length }}</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Cache Type</div>
+        <div class="metric-number" style="font-size: 1.4rem;">{{ cache_type }}</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">CPU Usage</div>
+        <div class="metric-number">{{ cpu }}{% if cpu != "N/A (psutil not installed)" %}%{% endif %}</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Memory Usage</div>
+        <div class="metric-number">{{ mem }}{% if mem != "N/A (psutil not installed)" %}%{% endif %}</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Available Scrapers</div>
+        <div class="metric-number">{{ scrapers|length }}</div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>System Health</h2>
+      
+      <div class="metric">
+        <span class="metric-label">Maintenance Status:</span>
+        <span class="metric-value">
+          {% if maintenance.status == "healthy" %}
+          <span class="badge badge-success">Healthy</span>
+          {% elif maintenance.status == "warning" %}
+          <span class="badge badge-warning">Warning</span>
+          {% elif maintenance.status == "error" %}
+          <span class="badge badge-danger">Error</span>
+          {% else %}
+          <span class="badge badge-secondary">Unknown</span>
+          {% endif %}
+        </span>
+      </div>
+      
+      <div class="metric">
+        <span class="metric-label">Last Maintenance Run:</span>
+        <span class="metric-value">{{ maintenance.last_run }}</span>
+      </div>
+      
+      <div class="metric">
+        <span class="metric-label">Last Snapshot:</span>
+        <span class="metric-value">{{ snapshot }}</span>
+      </div>
+      
+      <div class="metric">
+        <span class="metric-label">Cache Hits:</span>
+        <span class="metric-value">{{ hits }}</span>
+      </div>
+      
+      <div class="metric">
+        <span class="metric-label">Cache Misses:</span>
+        <span class="metric-value">{{ misses }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scrapers Tab -->
+  <div id="scrapers" class="tab-content">
+    <div class="section">
+      <h2>Scraper Status</h2>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Last Run</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for scraper in scrapers %}
+          <tr>
+            <td>{{ scraper.name }}</td>
+            <td>
+              {% if scraper.status == "available" %}
+              <span class="badge badge-success">Available</span>
+              {% elif scraper.status == "error" %}
+              <span class="badge badge-danger">Error</span>
+              {% elif scraper.status == "not_implemented" %}
+              <span class="badge badge-secondary">Not Implemented</span>
+              {% else %}
+              <span class="badge">{{ scraper.status }}</span>
+              {% endif %}
+            </td>
+            <td>{{ scraper.description }}</td>
+            <td>{{ scraper.last_run }}</td>
+            <td>
+              {% if scraper.status == "available" %}
+              <button class="btn btn-sm run-scraper" data-scraper="{{ scraper.name }}">Run Now</button>
+              {% else %}
+              <button class="btn btn-sm" disabled>Run Now</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Scheduler Tab -->
+  <div id="scheduler" class="tab-content">
+    <div class="section">
+      <h2>Scheduled Jobs</h2>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Job ID</th>
+            <th>Next Run</th>
+            <th>Failures</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+          <tr>
+            <td>{{ job.id }}</td>
+            <td>{{ job.next_run }}</td>
+            <td>
+              {% if job.failures > 0 %}
+              <span class="badge badge-danger">{{ job.failures }}</span>
+              {% else %}
+              <span class="badge badge-success">0</span>
+              {% endif %}
+            </td>
+            <td>
+              <button class="btn btn-sm run-job" data-job="{{ job.id }}">Run Now</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      <div class="admin-controls">
+        <button id="pause-scheduler" class="btn">Pause Scheduler</button>
+        <button id="resume-scheduler" class="btn">Resume Scheduler</button>
+        <button id="run-all-jobs" class="btn">Run All Jobs</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Maintenance Tab -->
+  <div id="maintenance" class="tab-content">
+    <div class="section">
+      <h2>Maintenance Status</h2>
+      
+      <div class="metric">
+        <span class="metric-label">Status:</span>
+        <span class="metric-value">
+          {% if maintenance.status == "healthy" %}
+          <span class="badge badge-success">Healthy</span>
+          {% elif maintenance.status == "warning" %}
+          <span class="badge badge-warning">Warning</span>
+          {% elif maintenance.status == "error" %}
+          <span class="badge badge-danger">Error</span>
+          {% else %}
+          <span class="badge badge-secondary">Unknown</span>
+          {% endif %}
+        </span>
+      </div>
+      
+      <div class="metric">
+        <span class="metric-label">Last Run:</span>
+        <span class="metric-value">{{ maintenance.last_run }}</span>
+      </div>
+      
+      <div class="admin-controls">
+        <button id="run-maintenance" class="btn">Run Maintenance Now</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Logs Tab -->
+  <div id="logs" class="tab-content">
+    <div class="section">
+      <h2>Recent Logs</h2>
+      
+      <div class="admin-controls">
+        <button id="refresh-logs" class="btn">Refresh Logs</button>
+        <select id="log-level">
+          <option value="all">All Levels</option>
+          <option value="info">Info+</option>
+          <option value="warning">Warning+</option>
+          <option value="error">Error Only</option>
+        </select>
+      </div>
+      
+      <pre id="log-content" style="background: #f5f5f5; padding: 1rem; border-radius: 5px; overflow: auto; max-height: 400px;">Loading logs...</pre>
+    </div>
+  </div>
+  
+  <script>
+    // Tab Navigation
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        
+        // Deactivate all buttons
+        document.querySelectorAll('.tab-button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        // Show the selected tab
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+        
+        // Activate the clicked button
+        button.classList.add('active');
+      });
+    });
+    
+    // Auto-refresh
+    const autoRefreshCheckbox = document.getElementById('auto-refresh');
+    const refreshBtn = document.getElementById('refresh-btn');
+    let refreshInterval;
+    
+    function enableAutoRefresh() {
+      if (autoRefreshCheckbox.checked) {
+        refreshInterval = setInterval(() => {
+          window.location.reload();
+        }, 15000); // 15 seconds
+      } else {
+        clearInterval(refreshInterval);
+      }
+    }
+    
+    autoRefreshCheckbox.addEventListener('change', enableAutoRefresh);
+    refreshBtn.addEventListener('click', () => window.location.reload());
+    
+    // Initialize auto-refresh
+    enableAutoRefresh();
+    
+    // API action handlers
+    async function callApi(url, method = 'POST') {
+      try {
+        const response = await fetch(url, { 
+          method: method,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          showMessage(`Success: ${data.message}`, 'success');
+        } else {
+          showMessage(`Error: ${data.message}`, 'error');
+        }
+        
+        return data;
+      } catch (error) {
+        showMessage(`Error: ${error.message}`, 'error');
+        return { status: 'error', message: error.message };
+      }
+    }
+    
+    // Simple notification system
+    function showMessage(message, type = 'info') {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `notification notification-${type}`;
+      messageDiv.innerHTML = `
+        <div class="notification-content">
+          <span>${message}</span>
+          <button class="close-btn">×</button>
+        </div>
+      `;
+      document.body.appendChild(messageDiv);
+      
+      // Add close button functionality
+      messageDiv.querySelector('.close-btn').addEventListener('click', () => {
+        messageDiv.remove();
+      });
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        if (document.body.contains(messageDiv)) {
+          messageDiv.remove();
+        }
+      }, 5000);
+    }
+    
+    // Add this CSS for notifications
+    const style = document.createElement('style');
+    style.textContent = `
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        max-width: 300px;
+        padding: 12px 16px;
+        border-radius: 4px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+        animation: slide-in 0.3s ease-out;
+      }
+      
+      @keyframes slide-in {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      
+      .notification-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        margin-left: 10px;
+        color: inherit;
+        opacity: 0.7;
+      }
+      
+      .close-btn:hover {
+        opacity: 1;
+      }
+      
+      .notification-info {
+        background-color: #007aff;
+        color: white;
+      }
+      
+      .notification-success {
+        background-color: #28a745;
+        color: white;
+      }
+      
+      .notification-error {
+        background-color: #dc3545;
+        color: white;
+      }
+      
+      .notification-warning {
+        background-color: #ffc107;
+        color: #333;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Run a scraper
+    document.querySelectorAll('.run-scraper').forEach(button => {
+      button.addEventListener('click', async () => {
+        const scraper = button.getAttribute('data-scraper');
+        button.disabled = true;
+        button.innerHTML = 'Running...';
+        
+        try {
+          await callApi(`/admin/dragon-status/api/run-scraper/${scraper}`);
+        } finally {
+          button.disabled = false;
+          button.innerHTML = 'Run Now';
+        }
+      });
+    });
+    
+    // Run a job
+    document.querySelectorAll('.run-job').forEach(button => {
+      button.addEventListener('click', async () => {
+        const job = button.getAttribute('data-job');
+        button.disabled = true;
+        button.innerHTML = 'Running...';
+        
+        try {
+          await callApi(`/admin/dragon-status/api/run-job/${job}`);
+        } finally {
+          button.disabled = false;
+          button.innerHTML = 'Run Now';
+        }
+      });
+    });
+    
+    // Pause scheduler
+    document.getElementById('pause-scheduler').addEventListener('click', async () => {
+      const button = document.getElementById('pause-scheduler');
+      button.disabled = true;
+      
+      try {
+        await callApi('/admin/dragon-status/api/scheduler/pause');
+      } finally {
+        button.disabled = false;
+      }
+    });
+    
+    // Resume scheduler
+    document.getElementById('resume-scheduler').addEventListener('click', async () => {
+      const button = document.getElementById('resume-scheduler');
+      button.disabled = true;
+      
+      try {
+        await callApi('/admin/dragon-status/api/scheduler/resume');
+      } finally {
+        button.disabled = false;
+      }
+    });
+    
+    // Run all jobs
+    document.getElementById('run-all-jobs').addEventListener('click', async () => {
+      const button = document.getElementById('run-all-jobs');
+      button.disabled = true;
+      button.innerHTML = 'Running all jobs...';
+      
+      try {
+        await callApi('/admin/dragon-status/api/run-all-jobs');
+      } finally {
+        button.disabled = false;
+        button.innerHTML = 'Run All Jobs';
+      }
+    });
+    
+    // Run maintenance bot
+    document.getElementById('run-maintenance').addEventListener('click', async () => {
+      const button = document.getElementById('run-maintenance');
+      button.disabled = true;
+      button.innerHTML = 'Running...';
+      
+      try {
+        await callApi('/admin/dragon-status/api/run-maintenance');
+      } finally {
+        button.disabled = false;
+        button.innerHTML = 'Run Maintenance';
+      }
+    });
+    
+    document.getElementById('refresh-logs').addEventListener('click', () => {
+      const logContent = document.getElementById('log-content');
+      logContent.textContent = 'Refreshing logs...';
+      
+      // Simulated log fetching (could be replaced with actual API call)
+      setTimeout(() => {
+        logContent.textContent = 'Log API not implemented yet.\n\nThis would show the most recent log entries from the Dragon system.';
+      }, 500);
+    });
+    
+    // Initial log load
+    document.getElementById('refresh-logs').click();
+  </script>
+</body>
+</html>

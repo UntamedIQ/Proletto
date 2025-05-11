@@ -1,0 +1,50 @@
+[
+  {
+    "plan": "free",
+    "key": "dzN70j7STIhMlwPtJjFZuO-Ds4hA4ksPN4OhOkqaSd0",
+    "prefix": "dzN70j7S",
+    "expires_at": "2026-05-07T00:48:06.342282"
+  },
+  {
+    "plan": "pro",
+    "key": "OaUHxd3A-ijSqfF0v1dx3kZAx4vQKrAImyKNGie1dLU",
+    "prefix": "OaUHxd3A",
+    "expires_at": "2026-05-07T00:48:06.429785"
+  },
+  {
+    "plan": "partner",
+    "key": "BvOoBl8nBTFVvPNhB9gHRfmIQUNkQ7oNELolEkBEChg",
+    "prefix": "BvOoBl8n",
+    "expires_at": "2026-05-07T00:48:06.472973"
+  },
+  {
+    "plan": "admin",
+    "key": "T7V828zPqKWlFOBXSnwFchPNGu4aqvpUPRRPeShoNHE",
+    "prefix": "T7V828zP",
+    "expires_at": "2026-05-07T00:48:06.515169"
+  },
+  {
+    "plan": "free",
+    "key": "freekey123",
+    "prefix": "freekey1",
+    "name": "Free Test Key"
+  },
+  {
+    "plan": "pro",
+    "key": "prokey456",
+    "prefix": "prokey45",
+    "name": "Pro Test Key"
+  },
+  {
+    "plan": "partner",
+    "key": "partner789",
+    "prefix": "partner7",
+    "name": "Partner Test Key"
+  },
+  {
+    "plan": "admin",
+    "key": "supersecret123",
+    "prefix": "supersec",
+    "name": "Admin Master Key"
+  }
+]

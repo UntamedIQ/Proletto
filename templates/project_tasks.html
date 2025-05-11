@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Tasks - Proletto</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Project tasks styles */
+        .project-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .project-title h1 {
+            margin: 0;
+            color: #5d4037;
+            margin-bottom: 5px;
+        }
+        
+        .project-description {
+            color: #6c6c6c;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            max-width: 700px;
+        }
+        
+        .project-meta {
+            color: #757575;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .project-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .project-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #f8f3e6;
+            color: #5d4037;
+        }
+        
+        .project-btn.primary {
+            background-color: #8d6e63;
+            color: white;
+        }
+        
+        .project-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .tasks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .task-column {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .column-header {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #5d4037;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .task-count {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .to-do-column {
+            border-top: 3px solid #ffb74d;
+        }
+        
+        .in-progress-column {
+            border-top: 3px solid #64b5f6;
+        }
+        
+        .review-column {
+            border-top: 3px solid #9575cd;
+        }
+        
+        .completed-column {
+            border-top: 3px solid #81c784;
+        }
+        
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 100px;
+        }
+        
+        .task-card {
+            background-color: white;
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        }
+        
+        .task-title {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .task-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #777;
+        }
+        
+        .task-priority {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .priority-low {
+            background-color: #e0e0e0;
+            color: #616161;
+        }
+        
+        .priority-medium {
+            background-color: #bbdefb;
+            color: #1976d2;
+        }
+        
+        .priority-high {
+            background-color: #ffcc80;
+            color: #e65100;
+        }
+        
+        .priority-urgent {
+            background-color: #ef9a9a;
+            color: #c62828;
+        }
+        
+        .task-assignee {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .assignee-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #757575;
+            font-size: 0.7rem;
+        }
+        
+        .task-due-date {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 5px;
+        }
+        
+        .due-soon {
+            color: #f57c00;
+        }
+        
+        .overdue {
+            color: #d32f2f;
+        }
+        
+        .add-task-card {
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9e9e9e;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+        }
+        
+        .add-task-card:hover {
+            border-color: #8d6e63;
+            color: #8d6e63;
+        }
+        
+        /* Task detail modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #5d4037;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #5d4037;
+        }
+        
+        .modal-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #5d4037;
+            font-size: 0.9rem;
+        }
+        
+        .task-detail-description {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        
+        .task-detail-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .meta-label {
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 3px;
+        }
+        
+        .meta-value {
+            font-weight: 500;
+            color: #444;
+        }
+        
+        .task-status-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #444;
+        }
+        
+        .task-comments {
+            margin-top: 20px;
+        }
+        
+        .comment-item {
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .comment-author {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .comment-time {
+            font-size: 0.8rem;
+            color: #777;
+        }
+        
+        .comment-content {
+            color: #444;
+            line-height: 1.4;
+        }
+        
+        .comment-form {
+            margin-top: 15px;
+        }
+        
+        .comment-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #5d4037;
+        }
+        
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .cancel-btn {
+            background-color: #e0e0e0;
+            color: #5d4037;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .submit-btn {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .submit-btn:hover {
+            background-color: #6d4c41;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main navigation -->
+    <header>
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="/" class="logo-link">
+                    <img src="/assets/proletto-logo.svg" alt="Proletto" class="logo">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/opportunities">Opportunities</a></li>
+                    <li><a href="/workspace" class="active">Workspaces</a></li>
+                    <li><a href="/portfolio">Portfolio</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="user-menu">
+                    <a href="/profile" class="user-link">
+                        <span id="user-name">Account</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="project-container">
+            <div class="project-header">
+                <div class="project-title">
+                    <h1 id="project-name">Loading project...</h1>
+                    <p id="project-description" class="project-description"></p>
+                    <div class="project-meta">
+                        <div class="meta-item" id="workspace-name">
+                            <span>Workspace: </span>
+                        </div>
+                        <div class="meta-item" id="project-status">
+                            <span>Status: </span>
+                        </div>
+                        <div class="meta-item" id="project-deadline">
+                            <span>Deadline: </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <button id="back-to-workspace-btn" class="project-btn">Back to Workspace</button>
+                    <button id="create-task-btn" class="project-btn primary">Create Task</button>
+                </div>
+            </div>
+            
+            <div class="tasks-container">
+                <div class="task-column to-do-column">
+                    <div class="column-header">
+                        <span>To Do</span>
+                        <span class="task-count" id="to-do-count">0</span>
+                    </div>
+                    <div class="task-list" id="to-do-list">
+                        <div class="add-task-card" data-status="to_do">
+                            <span>+ Add Task</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="task-column in-progress-column">
+                    <div class="column-header">
+                        <span>In Progress</span>
+                        <span class="task-count" id="in-progress-count">0</span>
+                    </div>
+                    <div class="task-list" id="in-progress-list">
+                        <div class="add-task-card" data-status="in_progress">
+                            <span>+ Add Task</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="task-column review-column">
+                    <div class="column-header">
+                        <span>Review</span>
+                        <span class="task-count" id="review-count">0</span>
+                    </div>
+                    <div class="task-list" id="review-list">
+                        <div class="add-task-card" data-status="review">
+                            <span>+ Add Task</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="task-column completed-column">
+                    <div class="column-header">
+                        <span>Completed</span>
+                        <span class="task-count" id="completed-count">0</span>
+                    </div>
+                    <div class="task-list" id="completed-list">
+                        <div class="add-task-card" data-status="completed">
+                            <span>+ Add Task</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Task Modal -->
+    <div id="create-task-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Task</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="create-task-form">
+                <input type="hidden" id="task-status" name="status" value="to_do">
+                
+                <div class="form-group">
+                    <label for="task-title">Task Title*</label>
+                    <input type="text" id="task-title" name="title" required placeholder="Enter task title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-description">Description</label>
+                    <textarea id="task-description" name="description" placeholder="Describe the task"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-priority">Priority</label>
+                    <select id="task-priority" name="priority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-assigned-to">Assign To</label>
+                    <select id="task-assigned-to" name="assigned_to">
+                        <option value="">Unassigned</option>
+                        <!-- Member options will be populated dynamically -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-due-date">Due Date</label>
+                    <input type="datetime-local" id="task-due-date" name="due_date">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-task">Cancel</button>
+                    <button type="submit" class="submit-btn">Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div id="task-detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detail-task-title">Task Title</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            
+            <div class="task-detail-description" id="detail-task-description">
+                Task description will be displayed here.
+            </div>
+            
+            <div class="task-detail-meta">
+                <div>
+                    <div class="meta-label">Status</div>
+                    <div class="meta-value">
+                        <select id="detail-task-status" class="task-status-select">
+                            <option value="to_do">To Do</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="review">Review</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="meta-label">Priority</div>
+                    <div class="meta-value" id="detail-task-priority">Medium</div>
+                </div>
+                
+                <div>
+                    <div class="meta-label">Assigned To</div>
+                    <div class="meta-value" id="detail-task-assignee">Unassigned</div>
+                </div>
+                
+                <div>
+                    <div class="meta-label">Due Date</div>
+                    <div class="meta-value" id="detail-task-due-date">None</div>
+                </div>
+                
+                <div>
+                    <div class="meta-label">Created By</div>
+                    <div class="meta-value" id="detail-task-creator">User Name</div>
+                </div>
+                
+                <div>
+                    <div class="meta-label">Created At</div>
+                    <div class="meta-value" id="detail-task-created">Date</div>
+                </div>
+            </div>
+            
+            <div class="task-comments">
+                <div class="section-title">Comments</div>
+                <div id="detail-task-comments">
+                    <!-- Comments will be loaded here -->
+                    <div class="empty-comments" style="color: #757575; text-align: center; padding: 20px;">
+                        No comments yet
+                    </div>
+                </div>
+                
+                <div class="comment-form">
+                    <textarea id="comment-input" class="comment-input" placeholder="Add a comment..."></textarea>
+                    <div class="form-actions">
+                        <button type="button" id="submit-comment" class="submit-btn">Add Comment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables for storing state
+        let currentProject = {
+            id: null,
+            name: '',
+            description: '',
+            status: '',
+            created_at: '',
+            deadline: null,
+            workspace_id: null,
+            workspace_name: ''
+        };
+        
+        let currentTasks = [];
+        let workspaceMembers = [];
+        let currentUser = {
+            id: null,
+            name: '',
+            email: ''
+        };
+        
+        // On page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Extract project ID and workspace ID from URL
+            const ids = getIdsFromUrl();
+            
+            if (!ids.projectId || !ids.workspaceId) {
+                // No project ID or workspace ID in URL, redirect to workspaces list
+                window.location.href = '/workspace';
+                return;
+            }
+            
+            // Check if user is logged in
+            checkLoginStatus(ids.workspaceId, ids.projectId);
+            
+            // Set up event listeners
+            setupEventListeners(ids.workspaceId);
+        });
+        
+        // Check if user is logged in
+        function checkLoginStatus(workspaceId, projectId) {
+            // Check if there's a session cookie or token
+            const token = getCookie('session_token') || localStorage.getItem('auth_token');
+            
+            if (token) {
+                // User is logged in, update UI and fetch data
+                fetchUserProfile();
+                fetchProjectDetails(workspaceId, projectId);
+                fetchWorkspaceMembers(workspaceId);
+            } else {
+                // User is not logged in, redirect to login page
+                window.location.href = `/login?redirect=/workspace/${workspaceId}/project/${projectId}`;
+            }
+        }
+        
+        // Fetch user profile information
+        function fetchUserProfile() {
+            fetch('/api/user/profile')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch user profile');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        currentUser.id = data.user.id;
+                        currentUser.name = data.user.name || data.user.email;
+                        currentUser.email = data.user.email;
+                        
+                        // Update UI with user information
+                        document.getElementById('user-name').textContent = currentUser.name;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user profile:', error);
+                });
+        }
+        
+        // Fetch project details
+        function fetchProjectDetails(workspaceId, projectId) {
+            fetch(`/api/projects/${projectId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 403) {
+                            // User doesn't have access to this project
+                            window.location.href = `/workspace/${workspaceId}`;
+                            return null;
+                        }
+                        throw new Error('Failed to fetch project details');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data) return; // Redirect handled in the response check
+                    
+                    if (data.success) {
+                        // Store project data
+                        currentProject = data.project;
+                        currentProject.workspace_id = workspaceId;
+                        currentProject.workspace_name = data.workspace_name;
+                        
+                        // Update UI with project information
+                        updateProjectDetails();
+                        
+                        // Fetch tasks
+                        fetchTasks(projectId);
+                    } else {
+                        showError(data.error || 'Failed to load project');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching project details:', error);
+                    showError('Failed to load project. Please try again later.');
+                });
+        }
+        
+        // Fetch workspace members
+        function fetchWorkspaceMembers(workspaceId) {
+            fetch(`/api/workspaces/${workspaceId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch workspace members');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        workspaceMembers = data.workspace.members || [];
+                        
+                        // Populate the assign to dropdown
+                        populateAssigneeDropdown();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching workspace members:', error);
+                });
+        }
+        
+        // Fetch tasks for the project
+        function fetchTasks(projectId) {
+            fetch(`/api/projects/${projectId}/tasks`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch tasks');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        currentTasks = data.tasks || [];
+                        renderTasks();
+                    } else {
+                        showError(data.error || 'Failed to load tasks');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching tasks:', error);
+                    showError('Failed to load tasks. Please try again later.');
+                });
+        }
+        
+        // Update project details in the UI
+        function updateProjectDetails() {
+            document.getElementById('project-name').textContent = currentProject.name;
+            document.getElementById('project-description').textContent = currentProject.description || 'No description';
+            
+            // Update workspace link
+            const workspaceNameElement = document.getElementById('workspace-name');
+            workspaceNameElement.innerHTML = `<span>Workspace: </span><a href="/workspace/${currentProject.workspace_id}">${currentProject.workspace_name}</a>`;
+            
+            // Update status
+            document.getElementById('project-status').innerHTML = `<span>Status: </span>${currentProject.status}`;
+            
+            // Update deadline
+            const deadlineElement = document.getElementById('project-deadline');
+            if (currentProject.deadline) {
+                const deadline = new Date(currentProject.deadline);
+                deadlineElement.innerHTML = `<span>Deadline: </span>${deadline.toLocaleDateString()}`;
+            } else {
+                deadlineElement.innerHTML = `<span>Deadline: </span>None`;
+            }
+            
+            // Update page title
+            document.title = `${currentProject.name} - Proletto Project`;
+            
+            // Set up back button
+            const backBtn = document.getElementById('back-to-workspace-btn');
+            backBtn.addEventListener('click', () => {
+                window.location.href = `/workspace/${currentProject.workspace_id}`;
+            });
+        }
+        
+        // Populate the assignee dropdown
+        function populateAssigneeDropdown() {
+            const selectElement = document.getElementById('task-assigned-to');
+            
+            // Clear existing options except the first one (unassigned)
+            while (selectElement.options.length > 1) {
+                selectElement.remove(1);
+            }
+            
+            // Add workspace members as options
+            workspaceMembers.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = member.name;
+                selectElement.appendChild(option);
+            });
+        }
+        
+        // Render tasks in the UI
+        function renderTasks() {
+            // Clear task lists (except add task cards)
+            clearTaskLists();
+            
+            // Group tasks by status
+            const tasksByStatus = {
+                to_do: [],
+                in_progress: [],
+                review: [],
+                completed: []
+            };
+            
+            currentTasks.forEach(task => {
+                if (tasksByStatus[task.status]) {
+                    tasksByStatus[task.status].push(task);
+                } else {
+                    // If status doesn't match any column, add to to-do as fallback
+                    tasksByStatus.to_do.push(task);
+                }
+            });
+            
+            // Render tasks in each column
+            renderTaskColumn('to-do-list', tasksByStatus.to_do);
+            renderTaskColumn('in-progress-list', tasksByStatus.in_progress);
+            renderTaskColumn('review-list', tasksByStatus.review);
+            renderTaskColumn('completed-list', tasksByStatus.completed);
+            
+            // Update task counts
+            document.getElementById('to-do-count').textContent = tasksByStatus.to_do.length;
+            document.getElementById('in-progress-count').textContent = tasksByStatus.in_progress.length;
+            document.getElementById('review-count').textContent = tasksByStatus.review.length;
+            document.getElementById('completed-count').textContent = tasksByStatus.completed.length;
+        }
+        
+        // Clear task lists
+        function clearTaskLists() {
+            const columnIds = ['to-do-list', 'in-progress-list', 'review-list', 'completed-list'];
+            
+            columnIds.forEach(id => {
+                const column = document.getElementById(id);
+                // Keep only the add task card
+                const addTaskCard = column.querySelector('.add-task-card');
+                column.innerHTML = '';
+                column.appendChild(addTaskCard);
+            });
+        }
+        
+        // Render tasks in a column
+        function renderTaskColumn(columnId, tasks) {
+            const column = document.getElementById(columnId);
+            const addTaskCard = column.querySelector('.add-task-card');
+            
+            // Sort tasks by priority (urgent > high > medium > low)
+            // and then by due date (earliest first)
+            tasks.sort((a, b) => {
+                // Priority order: urgent > high > medium > low
+                const priorityOrder = { urgent: 0, high: 1, medium: 2, low: 3 };
+                const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+                
+                if (priorityDiff !== 0) {
+                    return priorityDiff;
+                }
+                
+                // If same priority, sort by due date (only if both have due dates)
+                if (a.due_date && b.due_date) {
+                    return new Date(a.due_date) - new Date(b.due_date);
+                }
+                
+                // If one has due date and other doesn't, the one with due date comes first
+                if (a.due_date) return -1;
+                if (b.due_date) return 1;
+                
+                // If both don't have due dates, sort by creation date
+                return new Date(a.created_at) - new Date(b.created_at);
+            });
+            
+            // Render each task
+            tasks.forEach(task => {
+                const taskCard = createTaskCard(task);
+                column.insertBefore(taskCard, addTaskCard);
+            });
+        }
+        
+        // Create a task card element
+        function createTaskCard(task) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.dataset.id = task.id;
+            
+            // Get assignee info if task is assigned
+            let assigneeHtml = '';
+            if (task.assigned_to) {
+                const assignee = workspaceMembers.find(m => m.id === task.assigned_to.id);
+                if (assignee) {
+                    const initials = assignee.name
+                        .split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .toUpperCase();
+                        
+                    assigneeHtml = `
+                        <div class="task-assignee">
+                            <div class="assignee-avatar">${initials}</div>
+                            <span>${escapeHtml(assignee.name)}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Format due date and determine if it's due soon or overdue
+            let dueDateHtml = '';
+            if (task.due_date) {
+                const dueDate = new Date(task.due_date);
+                const now = new Date();
+                const daysDiff = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+                
+                let dateClass = '';
+                if (daysDiff < 0) {
+                    dateClass = 'overdue';
+                } else if (daysDiff < 3) {
+                    dateClass = 'due-soon';
+                }
+                
+                dueDateHtml = `
+                    <div class="task-due-date ${dateClass}">
+                        Due: ${dueDate.toLocaleDateString()}
+                    </div>
+                `;
+            }
+            
+            // Truncate description if too long
+            const shortDescription = task.description 
+                ? task.description.length > 100 
+                    ? task.description.substring(0, 97) + '...' 
+                    : task.description
+                : '';
+            
+            card.innerHTML = `
+                <div class="task-title">${escapeHtml(task.title)}</div>
+                <div class="task-description">${escapeHtml(shortDescription)}</div>
+                ${dueDateHtml}
+                <div class="task-meta">
+                    <span class="task-priority priority-${task.priority}">${task.priority}</span>
+                    ${assigneeHtml}
+                </div>
+            `;
+            
+            // Add click event to open task detail modal
+            card.addEventListener('click', () => {
+                openTaskDetailModal(task);
+            });
+            
+            return card;
+        }
+        
+        // Open task detail modal
+        function openTaskDetailModal(task) {
+            const modal = document.getElementById('task-detail-modal');
+            
+            // Set task details
+            document.getElementById('detail-task-title').textContent = task.title;
+            document.getElementById('detail-task-description').textContent = task.description || 'No description';
+            document.getElementById('detail-task-status').value = task.status;
+            document.getElementById('detail-task-priority').textContent = task.priority;
+            
+            // Set assignee
+            const assigneeElement = document.getElementById('detail-task-assignee');
+            if (task.assigned_to) {
+                assigneeElement.textContent = task.assigned_to.name;
+            } else {
+                assigneeElement.textContent = 'Unassigned';
+            }
+            
+            // Set due date
+            const dueDateElement = document.getElementById('detail-task-due-date');
+            if (task.due_date) {
+                const dueDate = new Date(task.due_date);
+                dueDateElement.textContent = dueDate.toLocaleDateString();
+            } else {
+                dueDateElement.textContent = 'None';
+            }
+            
+            // Set creator
+            document.getElementById('detail-task-creator').textContent = task.assigned_by ? task.assigned_by.name : 'Unknown';
+            
+            // Set created date
+            const createdDate = new Date(task.created_at);
+            document.getElementById('detail-task-created').textContent = createdDate.toLocaleDateString();
+            
+            // Load comments
+            loadTaskComments(task.id);
+            
+            // Set up status change handler
+            const statusSelect = document.getElementById('detail-task-status');
+            statusSelect.removeEventListener('change', statusChangeHandler);
+            statusSelect.addEventListener('change', () => {
+                updateTaskStatus(task.id, statusSelect.value);
+            });
+            
+            // Set up comment submission handler
+            const commentBtn = document.getElementById('submit-comment');
+            commentBtn.removeEventListener('click', commentSubmitHandler);
+            commentBtn.addEventListener('click', () => {
+                submitTaskComment(task.id);
+            });
+            
+            // Show the modal
+            modal.style.display = 'flex';
+        }
+        
+        // Load task comments
+        function loadTaskComments(taskId) {
+            fetch(`/api/tasks/${taskId}/comments`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch comments');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        renderTaskComments(data.comments || []);
+                    } else {
+                        showError(data.error || 'Failed to load comments');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching comments:', error);
+                });
+        }
+        
+        // Render task comments
+        function renderTaskComments(comments) {
+            const commentsContainer = document.getElementById('detail-task-comments');
+            
+            if (comments.length === 0) {
+                commentsContainer.innerHTML = `
+                    <div class="empty-comments" style="color: #757575; text-align: center; padding: 20px;">
+                        No comments yet
+                    </div>
+                `;
+                return;
+            }
+            
+            commentsContainer.innerHTML = '';
+            
+            // Sort comments by creation date (newest first)
+            comments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            
+            comments.forEach(comment => {
+                const commentDate = new Date(comment.created_at);
+                
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment-item';
+                commentElement.innerHTML = `
+                    <div class="comment-header">
+                        <span class="comment-author">${escapeHtml(comment.user.name)}</span>
+                        <span class="comment-time">${commentDate.toLocaleDateString()} ${commentDate.toLocaleTimeString()}</span>
+                    </div>
+                    <div class="comment-content">${escapeHtml(comment.content)}</div>
+                `;
+                
+                commentsContainer.appendChild(commentElement);
+            });
+        }
+        
+        // Submit a task comment
+        function submitTaskComment(taskId) {
+            const commentInput = document.getElementById('comment-input');
+            const content = commentInput.value.trim();
+            
+            if (!content) {
+                return; // Don't submit empty comments
+            }
+            
+            fetch(`/api/tasks/${taskId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to add comment');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Clear input
+                    commentInput.value = '';
+                    
+                    // Reload comments
+                    loadTaskComments(taskId);
+                } else {
+                    showError(data.error || 'Failed to add comment');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding comment:', error);
+                showError('Failed to add comment. Please try again later.');
+            });
+        }
+        
+        // Update task status
+        function updateTaskStatus(taskId, newStatus) {
+            fetch(`/api/tasks/${taskId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update task status');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update task in local state
+                    const taskIndex = currentTasks.findIndex(t => t.id === taskId);
+                    if (taskIndex !== -1) {
+                        currentTasks[taskIndex].status = newStatus;
+                        
+                        // Re-render tasks
+                        renderTasks();
+                    }
+                } else {
+                    showError(data.error || 'Failed to update task status');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating task status:', error);
+                showError('Failed to update task status. Please try again later.');
+            });
+        }
+        
+        // Set up event listeners
+        function setupEventListeners(workspaceId) {
+            // Create task button
+            const createTaskBtn = document.getElementById('create-task-btn');
+            createTaskBtn.addEventListener('click', () => {
+                document.getElementById('task-status').value = 'to_do';
+                openCreateTaskModal();
+            });
+            
+            // Add task cards in each column
+            document.querySelectorAll('.add-task-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.getElementById('task-status').value = card.dataset.status;
+                    openCreateTaskModal();
+                });
+            });
+            
+            // Modal close buttons
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', closeAllModals);
+            });
+            
+            // Cancel buttons
+            document.getElementById('cancel-task').addEventListener('click', closeAllModals);
+            
+            // Create task form submission
+            document.getElementById('create-task-form').addEventListener('submit', event => {
+                event.preventDefault();
+                createTask(workspaceId);
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', event => {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Open create task modal
+        function openCreateTaskModal() {
+            const modal = document.getElementById('create-task-modal');
+            modal.style.display = 'flex';
+            
+            // Clear form
+            document.getElementById('create-task-form').reset();
+        }
+        
+        // Create a new task
+        function createTask(workspaceId) {
+            const form = document.getElementById('create-task-form');
+            const title = form.elements.title.value.trim();
+            const description = form.elements.description.value.trim();
+            const priority = form.elements.priority.value;
+            const assignedTo = form.elements.assigned_to.value;
+            const dueDate = form.elements.due_date.value;
+            const status = form.elements.status.value;
+            
+            if (!title) {
+                showError('Task title is required');
+                return;
+            }
+            
+            // Disable form submission to prevent multiple submissions
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+            
+            // Create task data
+            const taskData = {
+                title,
+                description,
+                priority,
+                status
+            };
+            
+            // Add optional fields if provided
+            if (assignedTo) {
+                taskData.assigned_to = assignedTo;
+            }
+            
+            if (dueDate) {
+                taskData.due_date = dueDate;
+            }
+            
+            // Create task via API
+            fetch(`/api/projects/${currentProject.id}/tasks`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(taskData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create task');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Add the new task to the list
+                    currentTasks.push(data.task);
+                    
+                    // Re-render tasks
+                    renderTasks();
+                    
+                    // Close the modal and reset form
+                    closeAllModals();
+                    form.reset();
+                    
+                    // Show success message
+                    showSuccess('Task created successfully');
+                } else {
+                    showError(data.error || 'Failed to create task');
+                }
+            })
+            .catch(error => {
+                console.error('Error creating task:', error);
+                showError('Failed to create task. Please try again later.');
+            })
+            .finally(() => {
+                // Re-enable the submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Task';
+            });
+        }
+        
+        // Close all modals
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+        
+        // Status change handler (will be properly bound when opening the detail modal)
+        function statusChangeHandler() {
+            // This is just a placeholder. The actual function will be created when opening the detail modal.
+        }
+        
+        // Comment submit handler (will be properly bound when opening the detail modal)
+        function commentSubmitHandler() {
+            // This is just a placeholder. The actual function will be created when opening the detail modal.
+        }
+        
+        // Helper function to get project and workspace IDs from URL
+        function getIdsFromUrl() {
+            const path = window.location.pathname;
+            const match = path.match(/\/workspace\/(\d+)\/project\/(\d+)/);
+            
+            if (match) {
+                return {
+                    workspaceId: match[1],
+                    projectId: match[2]
+                };
+            }
+            
+            return { workspaceId: null, projectId: null };
+        }
+        
+        // Helper function to show error messages
+        function showError(message) {
+            // Simplified error display - in a real app, you might use a toast or notification system
+            alert(message);
+        }
+        
+        // Helper function to show success messages
+        function showSuccess(message) {
+            // Simplified success display
+            alert(message);
+        }
+        
+        // Helper function to safely escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+        
+        // Helper function to get cookie value
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="176px" height="44px" viewBox="0 0 176 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Proletto Logo</title>
+    <g id="Proletto-Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M22,0 C34.1502645,0 44,9.84973545 44,22 C44,34.1502645 34.1502645,44 22,44 C9.84973545,44 0,34.1502645 0,22 C0,9.84973545 9.84973545,0 22,0 Z M22,4 C12.0588745,4 4,12.0588745 4,22 C4,31.9411255 12.0588745,40 22,40 C31.9411255,40 40,31.9411255 40,22 C40,12.0588745 31.9411255,4 22,4 Z" id="Oval" fill="#8A4D76" fill-rule="nonzero"></path>
+        <path d="M22,8 C29.7319865,8 36,14.2680135 36,22 C36,29.7319865 29.7319865,36 22,36 C14.2680135,36 8,29.7319865 8,22 C8,14.2680135 14.2680135,8 22,8 Z M22,12 C16.4771525,12 12,16.4771525 12,22 C12,27.5228475 16.4771525,32 22,32 C27.5228475,32 32,27.5228475 32,22 C32,16.4771525 27.5228475,12 22,12 Z" id="Oval-Copy" fill="#E27D60" fill-rule="nonzero"></path>
+        <path d="M22,16 C25.3137085,16 28,18.6862915 28,22 C28,25.3137085 25.3137085,28 22,28 C18.6862915,28 16,25.3137085 16,22 C16,18.6862915 18.6862915,16 22,16 Z" id="Oval-Copy-2" fill="#C38D5F" fill-rule="nonzero"></path>
+        <text id="PROLETTO" font-family="Georgia-Bold, Georgia" font-size="24" font-weight="bold" fill="#333333">
+            <tspan x="52" y="29">PROLETTO</tspan>
+        </text>
+    </g>
+</svg>

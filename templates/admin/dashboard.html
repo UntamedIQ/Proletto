@@ -1,0 +1,416 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+        </a>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Total Users Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Users</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ user_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Opportunities Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Opportunities</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ opportunity_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Engines Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Active Engines
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ active_engines if active_engines is defined else 0 }}</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-info" role="progressbar"
+                                            style="width: {{ (active_engines / (engines|length) * 100) if active_engines is defined and engines is defined and engines|length > 0 else 50 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-robot fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Users Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Premium Users</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ premium_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-crown fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- User Growth Chart -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">User Growth</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                            aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Time Range:</div>
+                            <a class="dropdown-item active" href="#">Last 14 Days</a>
+                            <a class="dropdown-item" href="#">Last 30 Days</a>
+                            <a class="dropdown-item" href="#">Last 90 Days</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Export Data</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opportunity Sources Pie Chart -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Opportunity Sources</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                            aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">View Options:</div>
+                            <a class="dropdown-item active" href="#">Top Sources</a>
+                            <a class="dropdown-item" href="#">All Sources</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Export Data</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="opportunitySourcesChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        {% for label in opportunity_source_labels if opportunity_source_labels is defined %}
+                        <span class="mr-2">
+                            <i class="fas fa-circle" style="color: 
+                            {% set colors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'] %}
+                            {{ colors[loop.index0 % colors|length] }}"></i> {{ label }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Engine Performance Table -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Engine Performance</h6>
+                    <a href="/simple-admin/engines" class="btn btn-sm btn-primary">
+                        View All Engines
+                    </a>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Engine</th>
+                                    <th>Health</th>
+                                    <th>Success Rate</th>
+                                    <th>Opportunities</th>
+                                    <th>Last Run</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if engines is defined and engines|length > 0 %}
+                                {% for engine in engines[:5] %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="mr-2" style="width: 20px; text-align: center;">
+                                                <i class="fas fa-{{ engine.icon }}" style="color: {{ engine.color }};"></i>
+                                            </div>
+                                            <div>{{ engine.name }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress mr-2" style="width: 70%; height: 8px;">
+                                                <div class="progress-bar bg-{{ 'success' if engine.health >= 80 else 'warning' if engine.health >= 50 else 'danger' }}"
+                                                    role="progressbar" style="width: {{ engine.health }}%"></div>
+                                            </div>
+                                            <div class="small text-gray-800">{{ engine.health }}%</div>
+                                        </div>
+                                    </td>
+                                    <td>{{ engine.success_rate }}%</td>
+                                    <td>{{ engine.opportunity_count }}</td>
+                                    <td>{{ engine.last_run }}</td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No engine data available. Visit the <a href="/simple-admin/engines">Engines</a> page for details.</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Recently Joined Users</h6>
+                    <a href="/simple-admin/users" class="btn btn-sm btn-primary">
+                        View All Users
+                    </a>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="list-group">
+                        {% if recent_users is defined and recent_users|length > 0 %}
+                        {% for user in recent_users %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    {% if user.avatar_url %}
+                                    <img src="{{ user.avatar_url }}" class="rounded-circle mr-2" width="32" height="32" alt="{{ user.name }}">
+                                    {% else %}
+                                    <div class="avatar-circle mr-2" style="background-color: #{{ user.avatar_color }}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+                                        {{ user.name[:1] }}
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ user.name }}</h6>
+                                        <small class="text-muted">{{ user.email }}</small>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ user.joined }}</small>
+                            </div>
+                            <div class="mt-2 d-flex justify-content-between">
+                                <span class="badge badge-{{ 'primary' if user.role == 'admin' else 'success' if user.membership_level == 'premium' else 'secondary' }}">
+                                    {{ user.role if user.role == 'admin' else user.membership_level|capitalize }}
+                                </span>
+                                <span class="badge badge-{{ 'success' if user.active else 'secondary' }}">
+                                    {{ 'Active' if user.active else 'Inactive' }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="text-center py-3">
+                            <p>No recent users found.</p>
+                            <a href="/simple-admin/users" class="btn btn-sm btn-primary">
+                                View All Users
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <!-- System Logs -->
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent System Logs</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                            aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Log Options:</div>
+                            <a class="dropdown-item active" href="#">All Logs</a>
+                            <a class="dropdown-item" href="#">Errors Only</a>
+                            <a class="dropdown-item" href="#">Info Only</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Clear Logs</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="logsTable">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Source</th>
+                                    <th>Level</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in logs if logs is defined else system_logs if system_logs is defined else [] %}
+                                <tr class="{{ 'table-danger' if log.level == 'ERROR' else 'table-warning' if log.level == 'WARNING' else '' }}">
+                                    <td class="text-nowrap">{{ log.timestamp }}</td>
+                                    <td>{{ log.source }}</td>
+                                    <td>
+                                        <span class="badge badge-{{ 'danger' if log.level == 'ERROR' else 'warning' if log.level == 'WARNING' else 'info' }}">
+                                            {{ log.level }}
+                                        </span>
+                                    </td>
+                                    <td>{{ log.message }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Dashboard JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // User Growth Chart
+    const userGrowthData = {
+        labels: {{ user_growth_labels|tojson if user_growth_labels is defined else '[]'|tojson }},
+        datasets: [{
+            label: 'New Users',
+            data: {{ user_growth_data|tojson if user_growth_data is defined else '[]'|tojson }},
+            backgroundColor: 'rgba(78, 115, 223, 0.05)',
+            borderColor: 'rgba(78, 115, 223, 1)',
+            pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+            tension: 0.3,
+            fill: true
+        }]
+    };
+
+    const userGrowthCtx = document.getElementById('userGrowthChart').getContext('2d');
+    const userGrowthChart = new Chart(userGrowthCtx, {
+        type: 'line',
+        data: userGrowthData,
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // Opportunity Sources Chart
+    const opportunitySourcesData = {
+        labels: {{ opportunity_source_labels|tojson if opportunity_source_labels is defined else '[]'|tojson }},
+        datasets: [{
+            data: {{ opportunity_source_data|tojson if opportunity_source_data is defined else '[]'|tojson }},
+            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'],
+            hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#f4b30d', '#e02d1b', '#6e707e'],
+            hoverBorderColor: "rgba(234, 236, 244, 1)",
+        }]
+    };
+
+    const opportunitySourcesCtx = document.getElementById('opportunitySourcesChart').getContext('2d');
+    const opportunitySourcesChart = new Chart(opportunitySourcesCtx, {
+        type: 'doughnut',
+        data: opportunitySourcesData,
+        options: {
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

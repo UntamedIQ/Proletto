@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proletto Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/static/css/tooltips.css" />
+  <link rel="stylesheet" href="/static/css/dashboard.css" />
+  <link rel="stylesheet" href="/static/css/profile-modal.css" />
+  <link rel="stylesheet" href="/static/css/art-tracker.css" />
+  <link rel="stylesheet" href="/static/css/mobile.css" />
+  <link rel="stylesheet" href="/static/css/dashboard-mobile.css" />
+</head>
+<body>
+  <!-- Sidebar Toggle Button -->
+  <button class="sidebar-toggle" onclick="toggleSidebar()">Menu</button>
+
+  <!-- Overlay for click-outside-to-close -->
+  <div id="sidebar-overlay" class="sidebar-overlay hidden" onclick="toggleSidebar()"></div>
+  
+  <!-- Sliding Sidebar -->
+  <aside id="sidebar" class="sidebar hidden">
+    <div class="sidebar-header">
+      <button class="close-sidebar" onclick="toggleSidebar()">&times;</button>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#" onclick="openEditModal()">Edit Profile</a></li>
+        <li><a href="#" onclick="openUpgradeModal()">Upgrade Account</a></li>
+        <li><a href="#" onclick="confirmDelete()">Delete Account</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+  
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <a href="/" class="text-logo">Proletto</a>
+        </div>
+        
+        <!-- Mobile menu toggle button -->
+        <button class="mobile-menu-toggle"></button>
+        
+        <!-- Welcome banner at the top of sidebar -->
+        <div class="welcome-banner">
+          <div class="user-avatar">
+            <img id="user-avatar" src="/assets/default-avatar.svg" alt="User Avatar">
+          </div>
+          <h2>Welcome back,</h2>
+          <h3 id="artist-name">Artist</h3>
+          <p>Your creative journey continues.</p>
+        </div>
+      </div>
+      
+      <!-- Navigation menu -->
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="active"><a href="/dashboard"><span class="nav-icon">Dashboard</span></a></li>
+          <li><a href="/portfolio"><span class="nav-icon">Portfolio</span></a></li>
+          <li><a href="/workspace"><span class="nav-icon">Workspace</span></a></li>
+          <li><a href="/membership"><span class="nav-icon">Membership</span></a></li>
+        </ul>
+      </nav>
+      
+      <!-- Settings at bottom of sidebar -->
+      <div class="sidebar-settings">
+        <h3>Settings</h3>
+        <ul>
+          <li><a href="/profile"><span class="nav-icon">Edit Profile</span></a></li>
+          <li><a href="/membership"><span class="nav-icon">Upgrade Account</span></a></li>
+          <li><a href="#" id="delete-account-btn"><span class="nav-icon">Delete Account</span></a></li>
+          <li><a href="/logout"><span class="nav-icon">Logout</span></a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main content area -->
+    <main class="dashboard-main">
+      <header class="dashboard-top-bar">
+        <h1>Your Dashboard</h1>
+        <div class="user-controls">
+          <div class="notification-bell">
+            <span class="bell-icon"></span>
+            <span class="notification-count">3</span>
+          </div>
+        </div>
+      </header>
+
+    <section class="dashboard-cards">
+      <div class="card opportunities-card">
+        <h2>Art Opportunities <span class="ai-tooltip" data-tooltip="Personalized opportunities based on your profile and interests">i</span></h2>
+        <div class="card-tabs">
+          <button class="card-tab active" data-tab="recommended">Recommended</button>
+          <button class="card-tab" data-tab="all">All Opportunities</button>
+          <button class="card-tab" data-tab="saved">Saved</button>
+        </div>
+        <div id="opportunities-container">
+          <p>Loading your personalized opportunities...</p>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="cta view-more-btn">View More Opportunities</a>
+          <a href="/how-it-works" class="text-link" target="_blank">How Our Matching Works</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Membership Tier <span class="ai-tooltip" data-tooltip="Your current membership level and benefits">i</span></h2>
+        <div id="membership-container">
+          <p>You are a <strong id="membership-tier">Supporter</strong></p>
+          <div class="membership-benefits">
+            <p><strong>Your Benefits:</strong></p>
+            <ul id="benefits-list">
+              <li>Access to all basic opportunities</li>
+              <li>State-specific opportunity engines</li>
+              <li>Weekly curated opportunities guide</li>
+            </ul>
+          </div>
+          <a href="/membership" class="cta">Upgrade Membership</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Artist Tip of the Week <span class="ai-tooltip" data-tooltip="Weekly advice to boost your success rate">i</span></h2>
+        <blockquote id="artist-tip">
+          "Apply early. Shorter deadlines often have less competition."
+        </blockquote>
+      </div>
+      
+      <div class="card">
+        <h2>Achievements <span class="ai-tooltip" data-tooltip="Badges and milestones you've unlocked">i</span></h2>
+        <div id="achievements-container" class="achievements-grid">
+          <div class="badge unlocked">
+            <span class="badge-icon"><i class="achievement-icon icon-rocket"></i></span>
+            <span class="badge-name">Getting Started</span>
+          </div>
+          <div class="badge unlocked">
+            <span class="badge-icon"><i class="achievement-icon icon-document"></i></span>
+            <span class="badge-name">First Application</span>
+          </div>
+          <div class="badge locked">
+            <span class="badge-icon"><i class="achievement-icon icon-trophy"></i></span>
+            <span class="badge-name">Opportunity Winner</span>
+          </div>
+          <div class="badge locked">
+            <span class="badge-icon"><i class="achievement-icon icon-search"></i></span>
+            <span class="badge-name">Portfolio Optimizer</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>Skill Tree <span class="ai-tooltip" data-tooltip="Visual representation of your artist skills development">i</span></h2>
+        <div id="skill-tree-container" class="skill-tree-preview">
+          <p>Track and visualize your growth as an artist</p>
+          <div class="skill-tree-placeholder">
+            <span class="coming-soon-badge">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>Art Tracker <span class="ai-tooltip" data-tooltip="Catalog your artwork with details and QR codes">i</span></h2>
+        <div id="art-tracker-container">
+          <!-- Art Entry Form -->
+          <div class="art-form">
+            <h3>Add New Art Piece</h3>
+            <form id="artForm">
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" placeholder="Artwork Title" required>
+              </div>
+              <div class="form-group">
+                <label for="year">Year</label>
+                <input type="text" id="year" name="year" placeholder="Year Created" required>
+              </div>
+              <div class="form-group">
+                <label for="medium">Medium</label>
+                <input type="text" id="medium" name="medium" placeholder="e.g. Oil on Canvas" required>
+              </div>
+              <div class="form-group">
+                <label for="image_url">Image URL</label>
+                <input type="url" id="image_url" name="image_url" placeholder="https://example.com/artwork.jpg">
+              </div>
+              <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" placeholder="Additional details about the artwork" rows="3"></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn primary-btn">Save Art</button>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Art Catalog Display -->
+          <div class="art-catalog">
+            <h3>Your Art Catalog</h3>
+            <div id="art-list">
+              <p>Loading your art pieces...</p>
+            </div>
+          </div>
+          
+          <!-- QR Code Display Modal -->
+          <div id="qrModal" class="modal hidden">
+            <div class="modal-content">
+              <h2>QR Code for <span id="qr-art-title"></span></h2>
+              <div class="qr-display">
+                <img id="qrImage" src="" alt="QR Code">
+              </div>
+              <p class="qr-instructions">
+                Print this QR code and place it next to your artwork in exhibitions.
+                Visitors can scan it to learn more about your piece.
+              </p>
+              <div class="form-actions">
+                <button type="button" class="btn primary-btn" onclick="printQRCode()">Print</button>
+                <button type="button" class="btn secondary-btn" onclick="closeQRModal()">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/portfolio">Portfolio</a>
+        <a href="/workspace">Workspace</a>
+      </div>
+      <div class="footer-social">
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+      </div>
+      <p>&copy; 2025 Proletto. Built by an artist, for all artists.</p>
+    </footer>
+    </main>
+  </div>
+
+  <!-- Include Mobile Navigation -->
+  {% include "includes/mobile_nav.html" %}
+
+  <!-- Mobile menu toggle button for smaller screens -->
+  <div class="menu-toggle"><span class="menu-icon"></span></div>
+
+  <!-- Beta Welcome Modal -->
+  <div id="betaModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Welcome to Beta!</h3>
+      <p>You're part of the Proletto Beta — enjoy early access pricing and premium features for just $5/month.</p>
+      <p>Upgrade now and lock in your status as a Founding Supporter.</p>
+      <button onclick="window.location='/membership'">Upgrade Now</button>
+      <button onclick="document.getElementById('betaModal').classList.add('hidden')">Later</button>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Edit Profile</h2>
+      <form id="editProfileForm">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" placeholder="Short artist bio..." rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" placeholder="City, State">
+        </div>
+        <div class="form-group">
+          <label for="avatar_url">Avatar URL</label>
+          <input type="url" id="avatar_url" name="avatar_url" placeholder="https://example.com/your-avatar.jpg">
+          <small class="form-helper">Enter a URL to your profile image (JPG, PNG or GIF)</small>
+        </div>
+        <div class="avatar-preview-container">
+          <div class="avatar-preview">
+            <img id="avatar-preview-img" src="/assets/default-avatar.svg" alt="Avatar Preview">
+          </div>
+          <p><small>Avatar Preview</small></p>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn primary-btn">Save Changes</button>
+          <button type="button" class="btn secondary-btn" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/ai-tooltips.js"></script>
+  <script>
+    // Functions for sidebar and modals
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      const body = document.body;
+      
+      // Toggle sidebar and overlay visibility
+      sidebar.classList.toggle('active');
+      sidebar.classList.toggle('hidden');
+      overlay.classList.toggle('active');
+      overlay.classList.toggle('hidden');
+      
+      // Prevent background scrolling when sidebar is open
+      if (sidebar.classList.contains('active')) {
+        body.style.overflow = 'hidden';
+      } else {
+        body.style.overflow = '';
+      }
+    }
+    
+    // Mobile menu functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Handle mobile menu toggle
+      const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+      const dashboardSidebar = document.querySelector('.dashboard-sidebar');
+      const sidebarOverlay = document.createElement('div');
+      
+      // Create overlay for mobile sidebar
+      sidebarOverlay.className = 'sidebar-overlay';
+      document.body.appendChild(sidebarOverlay);
+      
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function() {
+          // Toggle mobile menu
+          dashboardSidebar.classList.toggle('active');
+          mobileMenuToggle.classList.toggle('active');
+          sidebarOverlay.classList.toggle('active');
+          
+          // Prevent background scrolling when sidebar is open
+          if (dashboardSidebar.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+          } else {
+            document.body.style.overflow = '';
+          }
+        });
+        
+        // Close sidebar when clicking on overlay
+        sidebarOverlay.addEventListener('click', function() {
+          dashboardSidebar.classList.remove('active');
+          mobileMenuToggle.classList.remove('active');
+          sidebarOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      }
+    });
+    
+    function openEditModal() {
+      // Show the modal
+      const modal = document.getElementById('editModal');
+      modal.classList.remove('hidden');
+      
+      // Fetch current user profile data
+      fetchUserProfile();
+    }
+    
+    function closeEditModal() {
+      // Hide the modal
+      const modal = document.getElementById('editModal');
+      modal.classList.add('hidden');
+    }
+    
+    function fetchUserProfile() {
+      // Get token from localStorage
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert('Please log in to edit your profile');
+        window.location.href = '/login';
+        return;
+      }
+      
+      // Fetch user profile data from API
+      fetch('/auth/me', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            // Token expired or invalid
+            alert('Your session has expired. Please log in again.');
+            window.location.href = '/login';
+            return;
+          }
+          throw new Error('Failed to fetch profile');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Populate form fields with user data
+        document.getElementById('name').value = data.name || '';
+        document.getElementById('bio').value = data.bio || '';
+        document.getElementById('location').value = data.location || '';
+        document.getElementById('avatar_url').value = data.avatar_url || '';
+        
+        // Update avatar preview in the form
+        const avatarPreviewImg = document.getElementById('avatar-preview-img');
+        if (data.avatar_url) {
+          avatarPreviewImg.src = data.avatar_url;
+        } else {
+          avatarPreviewImg.src = '/assets/default-avatar.svg';
+        }
+        
+        // Update avatar in the sidebar
+        const userAvatar = document.getElementById('user-avatar');
+        if (data.avatar_url) {
+          userAvatar.src = data.avatar_url;
+        } else {
+          userAvatar.src = '/assets/default-avatar.svg';
+        }
+        
+        // Update dashboard display with user data as well
+        document.getElementById('artist-name').textContent = data.name || 'Artist';
+      })
+      .catch(error => {
+        console.error('Error fetching user profile:', error);
+        alert('Failed to load profile information. Please try again later.');
+      });
+    }
+    
+    // Function to update avatar preview when URL is changed
+    function updateAvatarPreview() {
+      const avatarUrl = document.getElementById('avatar_url').value;
+      const avatarPreviewImg = document.getElementById('avatar-preview-img');
+      
+      if (avatarUrl) {
+        avatarPreviewImg.src = avatarUrl;
+      } else {
+        avatarPreviewImg.src = '/assets/default-avatar.svg';
+      }
+    }
+    
+    function saveUserProfile(event) {
+      // Prevent default form submission
+      event.preventDefault();
+      
+      // Get token from localStorage
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert('Please log in to update your profile');
+        window.location.href = '/login';
+        return;
+      }
+      
+      // Get form data
+      const name = document.getElementById('name').value;
+      const bio = document.getElementById('bio').value;
+      const location = document.getElementById('location').value;
+      const avatar_url = document.getElementById('avatar_url').value;
+      
+      // Submit data to API
+      fetch('/auth/me', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name,
+          bio,
+          location,
+          avatar_url
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            // Token expired or invalid
+            alert('Your session has expired. Please log in again.');
+            window.location.href = '/login';
+            return;
+          }
+          throw new Error('Failed to update profile');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Update dashboard display with new data
+        document.getElementById('artist-name').textContent = data.name || 'Artist';
+        
+        // Update avatar in the sidebar if it was changed
+        const userAvatar = document.getElementById('user-avatar');
+        if (data.avatar_url) {
+          userAvatar.src = data.avatar_url;
+        } else {
+          userAvatar.src = '/assets/default-avatar.svg';
+        }
+        
+        // Close the modal
+        closeEditModal();
+        
+        // Show success message
+        alert('Profile updated successfully!');
+      })
+      .catch(error => {
+        console.error('Error updating user profile:', error);
+        alert('Failed to update profile information. Please try again later.');
+      });
+    }
+    
+    function openUpgradeModal() {
+      // Redirect to membership page for now
+      window.location.href = '/membership';
+    }
+    
+    function confirmDelete() {
+      const confirmed = confirm("Are you sure you want to delete your account?");
+      if (confirmed) {
+        // In a real implementation, we would send a request to the server
+        alert("Account deletion request submitted (demo)");
+      }
+    }
+    
+    // Check if the user should see the beta modal
+    function checkShowBetaModal() {
+      // In a real implementation, we would check the user's membership level
+      // For now, we'll just check localStorage to avoid showing it repeatedly
+      const hasSeenBetaModal = localStorage.getItem('hasSeenBetaModal');
+      
+      if (!hasSeenBetaModal) {
+        // Get the membership tier - for demo we'll just check if it's not 'Supporter'
+        const membershipTier = document.getElementById('membership-tier').textContent;
+        
+        if (membershipTier !== 'Supporter') {
+          // Show the beta modal if they're not already a supporter
+          document.getElementById('betaModal').classList.remove('hidden');
+          
+          // Set flag in localStorage so we don't show it again in this session
+          localStorage.setItem('hasSeenBetaModal', 'true');
+        }
+      }
+    }
+    
+    // Handle opportunities card tabs
+    function setupOpportunitiesTabs() {
+      const tabs = document.querySelectorAll('.card-tab');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          // Remove active class from all tabs
+          tabs.forEach(t => t.classList.remove('active'));
+          
+          // Add active class to clicked tab
+          this.classList.add('active');
+          
+          // Get the tab type
+          const tabType = this.getAttribute('data-tab');
+          
+          // Update content based on tab type
+          const container = document.getElementById('opportunities-container');
+          
+          // Show loading state
+          container.innerHTML = '<p>Loading ' + tabType + ' opportunities...</p>';
+          
+          // In a real app, this would fetch different opportunities based on the tab
+          // For demo purposes, we'll just simulate this with a timeout
+          setTimeout(() => {
+            if (tabType === 'recommended') {
+              container.innerHTML = `
+                <div class="opportunity-item">
+                  <h3>Artist Residency - New York Foundation</h3>
+                  <div class="opportunity-meta">
+                    <span class="opp-type">Residency</span>
+                    <span class="opp-location">New York, NY</span>
+                    <span class="opp-deadline">Deadline: June 15, 2025</span>
+                  </div>
+                  <p>3-month funded residency for emerging artists working in mixed media.</p>
+                  <div class="opp-actions">
+                    <button class="save-opp">Save</button>
+                    <button class="apply-opp">Apply Now</button>
+                  </div>
+                </div>
+                <div class="opportunity-item">
+                  <h3>Public Art Commission - Metro Transit</h3>
+                  <div class="opportunity-meta">
+                    <span class="opp-type">Commission</span>
+                    <span class="opp-location">Chicago, IL</span>
+                    <span class="opp-deadline">Deadline: July 1, 2025</span>
+                  </div>
+                  <p>$25,000 commission for a series of art pieces for new transit stations.</p>
+                  <div class="opp-actions">
+                    <button class="save-opp">Save</button>
+                    <button class="apply-opp">Apply Now</button>
+                  </div>
+                </div>
+              `;
+            } else if (tabType === 'all') {
+              container.innerHTML = `
+                <div class="opportunity-item">
+                  <h3>Summer Exhibition - Contemporary Gallery</h3>
+                  <div class="opportunity-meta">
+                    <span class="opp-type">Exhibition</span>
+                    <span class="opp-location">Los Angeles, CA</span>
+                    <span class="opp-deadline">Deadline: May 30, 2025</span>
+                  </div>
+                  <p>Group exhibition featuring works that explore themes of environment and sustainability.</p>
+                  <div class="opp-actions">
+                    <button class="save-opp">Save</button>
+                    <button class="apply-opp">Apply Now</button>
+                  </div>
+                </div>
+                <div class="opportunity-item">
+                  <h3>Annual Grant Program - Arts Foundation</h3>
+                  <div class="opportunity-meta">
+                    <span class="opp-type">Grant</span>
+                    <span class="opp-location">National</span>
+                    <span class="opp-deadline">Deadline: August 15, 2025</span>
+                  </div>
+                  <p>$5,000 grants available for artists working in all mediums.</p>
+                  <div class="opp-actions">
+                    <button class="save-opp">Save</button>
+                    <button class="apply-opp">Apply Now</button>
+                  </div>
+                </div>
+              `;
+            } else if (tabType === 'saved') {
+              container.innerHTML = `
+                <div class="opportunity-item">
+                  <h3>Public Art Commission - Metro Transit</h3>
+                  <div class="opportunity-meta">
+                    <span class="opp-type">Commission</span>
+                    <span class="opp-location">Chicago, IL</span>
+                    <span class="opp-deadline">Deadline: July 1, 2025</span>
+                  </div>
+                  <p>$25,000 commission for a series of art pieces for new transit stations.</p>
+                  <div class="opp-actions">
+                    <button class="save-opp saved">Saved</button>
+                    <button class="apply-opp">Apply Now</button>
+                  </div>
+                </div>
+              `;
+            }
+            
+            // Set up buttons
+            const saveButtons = document.querySelectorAll('.save-opp');
+            saveButtons.forEach(btn => {
+              btn.addEventListener('click', function() {
+                this.classList.toggle('saved');
+                this.textContent = this.classList.contains('saved') ? 'Saved' : 'Save';
+              });
+            });
+            
+            const applyButtons = document.querySelectorAll('.apply-opp');
+            applyButtons.forEach(btn => {
+              btn.addEventListener('click', function() {
+                alert('Application form will open here');
+              });
+            });
+          }, 500);
+        });
+      });
+      
+      // Trigger click on the first tab to initialize content
+      if (tabs.length > 0) {
+        tabs[0].click();
+      }
+    }
+    
+    // Fetch user data and update dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set up opportunities tabs
+      setupOpportunitiesTabs();
+      
+      // Set up form submission handling
+      const editProfileForm = document.getElementById('editProfileForm');
+      if (editProfileForm) {
+        editProfileForm.addEventListener('submit', saveUserProfile);
+        
+        // Add event listener for avatar URL changes
+        const avatarUrlInput = document.getElementById('avatar_url');
+        if (avatarUrlInput) {
+          avatarUrlInput.addEventListener('input', updateAvatarPreview);
+        }
+      }
+      
+      // Update sidebar links to use modal
+      const profileLinks = document.querySelectorAll('a[href="/profile"]');
+      profileLinks.forEach(link => {
+        link.href = '#';
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          openEditModal();
+        });
+      });
+      
+      // Handle mobile menu toggle
+      const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+      const menuToggle = document.querySelector('.menu-toggle');
+      const sidebarNav = document.querySelector('.sidebar-nav');
+      const sidebarSettings = document.querySelector('.sidebar-settings');
+      
+      function toggleMobileMenu() {
+        sidebarNav.classList.toggle('expanded');
+        sidebarSettings.classList.toggle('expanded');
+      }
+      
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+      }
+      
+      if (menuToggle) {
+        menuToggle.addEventListener('click', toggleMobileMenu);
+      }
+      
+      // Fetch user profile data on page load
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        fetchUserProfile();
+      }
+      // In a real implementation, we would fetch this data from the server
+      const mockUserData = {
+        name: 'Sofia Rodriguez',
+        membership: 'Supporter',
+        badges: [
+          { name: 'Getting Started', icon: 'icon-rocket', unlocked: true },
+          { name: 'First Application', icon: 'icon-document', unlocked: true },
+          { name: 'Opportunity Winner', icon: 'icon-trophy', unlocked: false },
+          { name: 'Portfolio Optimizer', icon: 'icon-search', unlocked: false }
+        ]
+      };
+      
+      // Update user name
+      document.getElementById('artist-name').textContent = mockUserData.name;
+      
+      // Update membership tier
+      document.getElementById('membership-tier').textContent = mockUserData.membership;
+      
+      // Fetch recommended opportunities
+      fetchRecommendedOpportunities();
+      
+      // Check if we should show the beta upgrade modal
+      setTimeout(checkShowBetaModal, 2000); // Show after a short delay
+      
+      // Handle delete account button
+      document.getElementById('delete-account-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+          // In a real implementation, we would send a request to the server
+          alert('Your account deletion request has been submitted. Our team will process it shortly.');
+        }
+      });
+    });
+    
+    function fetchRecommendedOpportunities() {
+      // In a real implementation, we would fetch from the server
+      // For now, we'll use the API endpoint to get real opportunities
+      fetch('/api/opportunities?limit=3')
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('opportunities-container');
+          
+          if (data.opportunities && data.opportunities.length > 0) {
+            container.innerHTML = '<ul class="opportunity-list">';
+            
+            data.opportunities.forEach(opp => {
+              container.innerHTML += `
+                <li class="opportunity-item">
+                  <h3>${opp.title}</h3>
+                  <p>${opp.description ? opp.description.substring(0, 100) + '...' : 'No description available'}</p>
+                  <div class="opportunity-meta">
+                    <span class="location">${opp.location || 'Location TBD'}</span>
+                    <span class="deadline">Deadline: ${opp.deadline || 'Open'}</span>
+                  </div>
+                  <a href="${opp.url}" target="_blank" class="cta-small">View Details</a>
+                </li>
+              `;
+            });
+            
+            container.innerHTML += '</ul>';
+          } else {
+            container.innerHTML = '<p>No opportunities found. Check back soon!</p>';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching opportunities:', error);
+          document.getElementById('opportunities-container').innerHTML = 
+            '<p>Unable to load opportunities. Please try again later.</p>';
+        });
+    }
+    
+    // Art Tracker Functions
+    function saveArtwork(event) {
+      event.preventDefault();
+      
+      // Get token from localStorage
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert('Please log in to add artwork');
+        window.location.href = '/login';
+        return;
+      }
+      
+      // Get form data
+      const form = event.target;
+      const data = {
+        title: form.title.value,
+        year: form.year.value,
+        medium: form.medium.value,
+        image_url: form.image_url.value || null,
+        notes: form.notes.value || null
+      };
+      
+      // Submit data to API
+      fetch('/api/art', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            alert('Your session has expired. Please log in again.');
+            window.location.href = '/login';
+            return;
+          }
+          throw new Error('Failed to add artwork');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Reset form
+        form.reset();
+        
+        // Show success message
+        alert('Artwork added successfully!');
+        
+        // Reload art catalog
+        loadArtCatalog();
+      })
+      .catch(error => {
+        console.error('Error adding artwork:', error);
+        alert('Failed to add artwork. Please try again later.');
+      });
+    }
+    
+    function loadArtCatalog() {
+      // Get token from localStorage
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        return;
+      }
+      
+      // Fetch art pieces from API
+      fetch('/api/art', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            // Don't redirect to login since this is part of initial page load
+            console.error('Authentication expired');
+            return;
+          }
+          throw new Error('Failed to load art catalog');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const artList = document.getElementById('art-list');
+        
+        if (!data || data.length === 0) {
+          artList.innerHTML = '<p>No artwork added yet. Use the form to add your first piece.</p>';
+          return;
+        }
+        
+        // Create HTML for art pieces
+        let html = '<div class="art-grid">';
+        
+        data.forEach(art => {
+          html += `
+            <div class="art-item">
+              <div class="art-image">
+                ${art.image_url ? `<img src="${art.image_url}" alt="${art.title}">` : '<div class="no-image">No Image</div>'}
+              </div>
+              <div class="art-details">
+                <h4>${art.title}</h4>
+                <p>${art.year} | ${art.medium}</p>
+                ${art.notes ? `<p class="art-notes">${art.notes}</p>` : ''}
+                <button class="btn secondary-btn qr-btn" onclick="showQRCode('${art.id}', '${art.title}')">Generate QR</button>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += '</div>';
+        artList.innerHTML = html;
+      })
+      .catch(error => {
+        console.error('Error loading art catalog:', error);
+        document.getElementById('art-list').innerHTML = '<p>Error loading artwork. Please try again later.</p>';
+      });
+    }
+    
+    function showQRCode(artId, artTitle) {
+      // Show QR modal
+      const modal = document.getElementById('qrModal');
+      modal.classList.remove('hidden');
+      
+      // Set art title
+      document.getElementById('qr-art-title').textContent = artTitle;
+      
+      // Generate QR code URL
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://myproletto.com/art/${artId}`;
+      document.getElementById('qrImage').src = qrUrl;
+    }
+    
+    function closeQRModal() {
+      // Hide QR modal
+      const modal = document.getElementById('qrModal');
+      modal.classList.add('hidden');
+    }
+    
+    function printQRCode() {
+      // Create a new window with just the QR code for printing
+      const qrImage = document.getElementById('qrImage').src;
+      const artTitle = document.getElementById('qr-art-title').textContent;
+      
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>QR Code for ${artTitle}</title>
+          <style>
+            body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+            .print-container { max-width: 300px; margin: 0 auto; }
+            h2 { font-size: 18px; margin-bottom: 10px; }
+            img { max-width: 100%; height: auto; margin-bottom: 10px; }
+            p { font-size: 12px; color: #555; }
+          </style>
+        </head>
+        <body>
+          <div class="print-container">
+            <h2>${artTitle}</h2>
+            <img src="${qrImage}" alt="QR Code">
+            <p>Scan to view artwork details</p>
+          </div>
+          <script>
+            // Print and close after loading
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            };
+          </script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+    
+    // Setup art form and initial data load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Setup art form
+      const artForm = document.getElementById('artForm');
+      if (artForm) {
+        artForm.addEventListener('submit', saveArtwork);
+        
+        // Load existing artwork
+        loadArtCatalog();
+      }
+    });
+  </script>
+  
+  <!-- Mobile Navigation -->
+  {% include "includes/mobile_nav.html" %}
+</body>
+</html>

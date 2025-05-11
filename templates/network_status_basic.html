@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Status Basic Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #333;
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .online {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .offline {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Network Status Basic Test</h1>
+        
+        <div id="status" class="status-indicator online">Online</div>
+        
+        <div>
+            <button onclick="checkConnection()">Check Connection</button>
+            <button onclick="simulateOffline()">Simulate Offline</button>
+            <button onclick="simulateOnline()">Simulate Online</button>
+        </div>
+        
+        <div id="log"></div>
+    </div>
+
+    <script>
+        // Simple log function
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'blue';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logElement.prepend(entry);
+        }
+        
+        // Update status indicator
+        function updateStatus(online) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = online ? 'Online' : 'Offline';
+            statusElement.className = 'status-indicator ' + (online ? 'online' : 'offline');
+        }
+        
+        // Check connection with server
+        async function checkConnection() {
+            log('Checking connection...');
+            try {
+                const response = await fetch('/healthz', {
+                    method: 'GET',
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    log('Connection successful!', 'success');
+                    updateStatus(true);
+                    return true;
+                } else {
+                    log(`Server error: ${response.status}`, 'error');
+                    updateStatus(false);
+                    return false;
+                }
+            } catch (error) {
+                log(`Connection error: ${error.message}`, 'error');
+                updateStatus(false);
+                return false;
+            }
+        }
+        
+        // Simulate offline and online events
+        function simulateOffline() {
+            log('Simulating offline event');
+            updateStatus(false);
+            window.dispatchEvent(new Event('offline'));
+        }
+        
+        function simulateOnline() {
+            log('Simulating online event');
+            updateStatus(true);
+            window.dispatchEvent(new Event('online'));
+        }
+        
+        // Listen for browser online/offline events
+        window.addEventListener('online', () => {
+            log('Browser went online', 'success');
+            updateStatus(true);
+        });
+        
+        window.addEventListener('offline', () => {
+            log('Browser went offline', 'error');
+            updateStatus(false);
+        });
+        
+        // Initial check
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded, checking connection');
+            checkConnection();
+        });
+    </script>
+</body>
+</html>

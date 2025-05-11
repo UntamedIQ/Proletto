@@ -1,0 +1,167 @@
+{% extends "public/base.html" %}
+
+{% block title %}Proletto - Built by an artist, for all artists{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Discover opportunities tailored for your artistic journey</h1>
+            <p>Proletto helps visual artists find grants, residencies, exhibitions, and public commissions personalized to your portfolio.</p>
+            <div class="hero-cta">
+                <a href="/start-trial" class="btn btn-primary">Start a Free Trial</a>
+                <a href="/how-it-works" class="btn btn-outline">See How It Works</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="/static/assets/hero-image.svg" alt="Artist working in studio">
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Why Artists Choose Proletto</h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Personalized Opportunities</h3>
+                <p>Our AI matches your portfolio with relevant opportunities for your specific artistic practice.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🖼️</div>
+                <h3>Portfolio Optimization</h3>
+                <p>Get AI-powered insights to optimize your portfolio for specific opportunities.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Application Assistance</h3>
+                <p>Save time with our auto-submit technology that helps complete applications quickly.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3>Collaborative Workspace</h3>
+                <p>Communicate with clients, galleries, and collaborators in a dedicated workspace.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+    <div class="container">
+        <h2 class="section-title">What Artists Say</h2>
+        
+        <div class="testimonial-slider">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Proletto helped me discover a grant opportunity that perfectly matched my work. I applied and received the funding which allowed me to complete my latest collection."</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="/static/assets/testimonial-1.svg" alt="Testimonial Author">
+                    <div>
+                        <h4>Sarah J.</h4>
+                        <p>Mixed Media Artist</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"The portfolio optimization feature gave me incredible insights. After making the suggested changes, I was accepted to a residency program I had been trying to get into for years."</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="/static/assets/testimonial-2.svg" alt="Testimonial Author">
+                    <div>
+                        <h4>Marco T.</h4>
+                        <p>Digital Artist</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"As a gallery owner, I use Proletto to find and connect with emerging artists. The platform has helped us discover incredible talent we wouldn't have found otherwise."</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="/static/assets/testimonial-2.svg" alt="Testimonial Author">
+                    <div>
+                        <h4>Elena R.</h4>
+                        <p>Gallery Director</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>2,500+</h3>
+                <p>Artists Using Proletto</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>250+</h3>
+                <p>New Opportunities Monthly</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>$1.2M+</h3>
+                <p>Grants Secured by Members</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>87%</h3>
+                <p>Application Success Rate</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Join Us Teaser -->
+<section class="join-teaser">
+    <div class="container">
+        <div class="join-content">
+            <h2>Ready to take your art career to the next level?</h2>
+            <p>Join thousands of artists who are discovering new opportunities with Proletto.</p>
+            <a href="/start-trial" class="btn btn-primary">Start a Free Trial</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Simple testimonial slider functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const testimonials = document.querySelectorAll('.testimonial-card');
+        let currentTestimonial = 0;
+        
+        // Show only the first testimonial initially
+        testimonials.forEach((testimonial, index) => {
+            if (index !== 0) {
+                testimonial.style.display = 'none';
+            }
+        });
+        
+        // Rotate testimonials every 5 seconds
+        setInterval(() => {
+            testimonials[currentTestimonial].style.display = 'none';
+            
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            
+            testimonials[currentTestimonial].style.display = 'block';
+        }, 5000);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Proletto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="minimal-header">
+      <div class="header-left">
+        <div class="logo">
+          <a href="/" aria-label="Proletto Home" class="text-logo">
+            Proletto
+          </a>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/how-it-works">How It Works</a></li>
+          <li><a href="/membership">Membership</a></li>
+        </ul>
+      </nav>
+      <div class="auth-nav">
+        <a href="/auth/login" class="login-register-link">Sign In / Register</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="auth-container">
+        <h1>Login to Proletto</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="auth-methods">
+          <div class="auth-method">
+            <form method="POST" action="{{ url_for('form_login.login') }}">
+              {{ form.hidden_tag() }}
+              
+              <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email(class="form-control") }}
+                {% if form.email.errors %}
+                  <div class="error-message">
+                    {% for error in form.email.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(class="form-control") }}
+                {% if form.password.errors %}
+                  <div class="error-message">
+                    {% for error in form.password.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="form-check">
+                {{ form.remember(class="form-check-input") }}
+                {{ form.remember.label(class="form-check-label") }}
+              </div>
+
+              <div class="forgot-password">
+                <a href="{{ url_for('email_auth.reset_password_request') }}">Forgot Password?</a>
+              </div>
+              
+              <button type="submit" class="auth-button">Login</button>
+            </form>
+          </div>
+
+          <div class="auth-divider">or</div>
+
+          <div class="auth-method">
+            <a href="{{ url_for('google_auth.login') }}" class="google-login-button">
+              <span>Continue with Google</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="auth-footer">
+          Don't have an account? <a href="{{ url_for('public_routes.membership') }}">Start your free trial</a>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Proletto. All rights reserved. Follow us <a href="https://instagram.com/proletto.app" target="_blank">@proletto.app</a></p>
+    </footer>
+  </div>
+</body>
+</html>

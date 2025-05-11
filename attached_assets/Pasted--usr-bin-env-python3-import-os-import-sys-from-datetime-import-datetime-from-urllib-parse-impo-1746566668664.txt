@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+import os
+import sys
+from datetime import datetime
+from urllib.parse import urlparse
+from your_app import app, db  # adjust import to match your project
+from models import User, Opportunity, Feedback, DigestEmail
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+
+def get_route_list():
+    routes = []
+    for rule in app.url_map.iter_rules():
+        routes.append((rule.rule, sorted(rule.methods)))
+    return routes
+
+def get_scheduler_jobs():
+    # Mirror your scheduler setup
+    jobstores = {'default': SQLAlchemyJobStore(url=os.getenv('DATABASE_URL', 'sqlite:///jobs.sqlite'))}
+    scheduler = BackgroundScheduler(jobstores=jobstores)
+    scheduler.start()
+    jobs = []
+    for job in scheduler.get_jobs():
+        jobs.append({
+            'id': job.id,
+            'next_run': job.next_run_time.isoformat() if job.next_run_time else None
+        })
+    scheduler.shutdown(wait=False)
+    return jobs
+
+def get_scraper_health():
+    # Example: you might have a scraper_health table
+    from scraper_health import db as sh_db, ScraperMetric
+    session = sh_db.session
+    data = session.query(
+        ScraperMetric.site,
+        db.func.sum(ScraperMetric.success_count).label('succ'),
+        db.func.sum(ScraperMetric.failure_count).label('fail')
+    ).group_by(ScraperMetric.site).all()
+    return [{'site': r.site, 'success': r.succ, 'failure': r.fail} for r in data]
+
+def main():
+    print("\n=== SYSTEM REPORT for Proletto ===\n")
+
+    # 1. Database counts
+    user_count    = User.query.count()
+    pro_count     = User.query.filter_by(is_pro=True).count()
+    opp_count     = Opportunity.query.count()
+    fb_count      = Feedback.query.count()
+    digest_count  = DigestEmail.query.count()
+
+    print(f"Users total:           {user_count}")
+    print(f"Pro subscribers:       {pro_count}")
+    print(f"Opportunities stored:  {opp_count}")
+    print(f"Feedback entries:      {fb_count}")
+    print(f"Weekly digests sent:   {digest_count}")
+
+    # 2. Routes
+    print("\nRegistered Routes:")
+    for rule, methods in sorted(get_route_list()):
+        print(f"  {rule:30} {','.join(methods)}")
+
+    # 3. Scheduled Jobs
+    print("\nScheduled APScheduler Jobs:")
+    for job in get_scheduler_jobs():
+        print(f"  {job['id']:20} Next run at {job['next_run']}")
+
+    # 4. Scraper Health
+    print("\nScraper Health Metrics:")
+    for row in get_scraper_health():
+        print(f"  {row['site']:20} Success={row['success']}  Failures={row['failure']}")
+
+    print("\nReport generated at", datetime.utcnow().isoformat(), "UTC\n")
+
+if __name__ == "__main__":
+    # Ensure Flask app context is available
+    with app.app_context():
+        main()

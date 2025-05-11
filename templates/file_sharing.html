@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Sharing - Proletto</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* File sharing styles */
+        .files-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .files-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .files-title h1 {
+            margin: 0;
+            color: #5d4037;
+            margin-bottom: 5px;
+        }
+        
+        .files-description {
+            color: #6c6c6c;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            max-width: 700px;
+        }
+        
+        .files-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .files-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #f8f3e6;
+            color: #5d4037;
+        }
+        
+        .files-btn.primary {
+            background-color: #8d6e63;
+            color: white;
+        }
+        
+        .files-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .files-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .files-sidebar {
+            width: 250px;
+            flex-shrink: 0;
+        }
+        
+        .files-main {
+            flex-grow: 1;
+        }
+        
+        .folder-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        
+        .folder-item {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .folder-item.active {
+            background-color: #f8f3e6;
+        }
+        
+        .folder-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .folder-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8d6e63;
+        }
+        
+        .folder-name {
+            flex-grow: 1;
+        }
+        
+        .file-count {
+            font-size: 0.8rem;
+            color: #9e9e9e;
+            background-color: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .view-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .view-toggle {
+            display: flex;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .view-toggle-btn {
+            padding: 8px 15px;
+            background-color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .view-toggle-btn.active {
+            background-color: #f8f3e6;
+            color: #5d4037;
+        }
+        
+        .search-files {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-files input {
+            width: 100%;
+            padding: 8px 15px 8px 35px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9e9e9e;
+        }
+        
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .file-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-preview {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .file-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .file-icon {
+            font-size: 2.5rem;
+            color: #9e9e9e;
+        }
+        
+        .file-info {
+            padding: 10px;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+        
+        .file-meta {
+            font-size: 0.8rem;
+            color: #9e9e9e;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .files-list {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .files-list th {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            color: #5d4037;
+        }
+        
+        .files-list td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .files-list tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .file-list-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .file-action-btn {
+            background: none;
+            border: none;
+            color: #8d6e63;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .file-action-btn:hover {
+            background-color: #f8f3e6;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #757575;
+        }
+        
+        .empty-state h3 {
+            margin-top: 15px;
+            color: #5d4037;
+        }
+        
+        .empty-state p {
+            margin-bottom: 20px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Upload modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #5d4037;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #5d4037;
+        }
+        
+        .upload-area {
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        
+        .upload-area:hover {
+            border-color: #8d6e63;
+        }
+        
+        .upload-icon {
+            font-size: 2rem;
+            color: #9e9e9e;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: #757575;
+        }
+        
+        .upload-input {
+            display: none;
+        }
+        
+        .upload-file-list {
+            margin-top: 20px;
+        }
+        
+        .upload-file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .upload-file-icon {
+            margin-right: 10px;
+            color: #8d6e63;
+        }
+        
+        .upload-file-name {
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .upload-file-size {
+            margin-left: 10px;
+            color: #9e9e9e;
+            font-size: 0.8rem;
+        }
+        
+        .upload-file-remove {
+            background: none;
+            border: none;
+            color: #e57373;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #5d4037;
+        }
+        
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .cancel-btn {
+            background-color: #e0e0e0;
+            color: #5d4037;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .submit-btn {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .submit-btn:hover {
+            background-color: #6d4c41;
+        }
+        
+        /* Create folder modal */
+        .folder-modal-content {
+            max-width: 400px;
+        }
+        
+        /* File preview modal */
+        .preview-modal-content {
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .file-preview-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-document {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        
+        .preview-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .preview-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .meta-item {
+            flex: 1 0 45%;
+        }
+        
+        .meta-label {
+            font-size: 0.85rem;
+            color: #757575;
+            margin-bottom: 5px;
+        }
+        
+        .meta-value {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .preview-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main navigation -->
+    <header>
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="/" class="logo-link">
+                    <img src="/assets/proletto-logo.svg" alt="Proletto" class="logo">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/opportunities">Opportunities</a></li>
+                    <li><a href="/workspace" class="active">Workspaces</a></li>
+                    <li><a href="/portfolio">Portfolio</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="user-menu">
+                    <a href="/profile" class="user-link">
+                        <span id="user-name">Account</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="files-container">
+            <div class="files-header">
+                <div class="files-title">
+                    <h1>Project Files</h1>
+                    <p class="files-description">
+                        Share and manage files with your team. Upload artwork, documents, and other project assets.
+                    </p>
+                </div>
+                <div class="files-actions">
+                    <button id="back-to-project-btn" class="files-btn">Back to Project</button>
+                    <button id="create-folder-btn" class="files-btn">Create Folder</button>
+                    <button id="upload-file-btn" class="files-btn primary">Upload Files</button>
+                </div>
+            </div>
+            
+            <div class="files-content">
+                <div class="files-sidebar">
+                    <h3>Folders</h3>
+                    <ul class="folder-list">
+                        <li class="folder-item active" data-folder="all">
+                            <div class="folder-icon">📁</div>
+                            <div class="folder-name">All Files</div>
+                            <div class="file-count" id="all-files-count">0</div>
+                        </li>
+                        <li class="folder-item" data-folder="images">
+                            <div class="folder-icon">🖼️</div>
+                            <div class="folder-name">Images</div>
+                            <div class="file-count" id="images-count">0</div>
+                        </li>
+                        <li class="folder-item" data-folder="documents">
+                            <div class="folder-icon">📄</div>
+                            <div class="folder-name">Documents</div>
+                            <div class="file-count" id="documents-count">0</div>
+                        </li>
+                        <li class="folder-item" data-folder="other">
+                            <div class="folder-icon">📦</div>
+                            <div class="folder-name">Other</div>
+                            <div class="file-count" id="other-count">0</div>
+                        </li>
+                        <!-- Custom folders will be added here -->
+                    </ul>
+                </div>
+                
+                <div class="files-main">
+                    <div class="view-options">
+                        <div class="search-files">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="search-input" placeholder="Search files...">
+                        </div>
+                        
+                        <div class="view-toggle">
+                            <button class="view-toggle-btn active" data-view="grid">Grid</button>
+                            <button class="view-toggle-btn" data-view="list">List</button>
+                        </div>
+                    </div>
+                    
+                    <div id="files-grid-view" class="files-grid">
+                        <!-- Empty state shown when no files are available -->
+                        <div id="empty-files-state" class="empty-state" style="display: none; grid-column: 1/-1;">
+                            <h3>No files yet</h3>
+                            <p>Upload files to share with your team members or create folders to organize your project assets.</p>
+                            <button id="empty-upload-btn" class="files-btn primary">Upload Your First File</button>
+                        </div>
+                        
+                        <!-- Files will be loaded here -->
+                    </div>
+                    
+                    <div id="files-list-view" class="files-list-container" style="display: none;">
+                        <table class="files-list">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Size</th>
+                                    <th>Uploaded By</th>
+                                    <th>Uploaded On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="files-list-body">
+                                <!-- Files will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Files Modal -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Files</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="upload-form">
+                <div class="upload-area" id="drop-area">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">
+                        <p>Drag and drop files here, or click to select files</p>
+                        <p><small>Maximum file size: 20MB</small></p>
+                    </div>
+                    <input type="file" id="file-input" class="upload-input" multiple>
+                </div>
+                
+                <div id="upload-file-list" class="upload-file-list">
+                    <!-- Selected files will be listed here -->
+                </div>
+                
+                <div class="form-group">
+                    <label for="upload-folder">Folder</label>
+                    <select id="upload-folder" name="folder">
+                        <option value="all">All Files</option>
+                        <option value="images">Images</option>
+                        <option value="documents">Documents</option>
+                        <option value="other">Other</option>
+                        <!-- Custom folders will be added here -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="upload-description">Description (optional)</label>
+                    <textarea id="upload-description" name="description" placeholder="Add a description for these files..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-upload">Cancel</button>
+                    <button type="submit" class="submit-btn" id="submit-upload">Upload Files</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Folder Modal -->
+    <div id="folder-modal" class="modal">
+        <div class="modal-content folder-modal-content">
+            <div class="modal-header">
+                <h2>Create Folder</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="folder-form">
+                <div class="form-group">
+                    <label for="folder-name">Folder Name</label>
+                    <input type="text" id="folder-name" name="name" required placeholder="Enter folder name">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-folder">Cancel</button>
+                    <button type="submit" class="submit-btn">Create Folder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- File Preview Modal -->
+    <div id="preview-modal" class="modal">
+        <div class="modal-content preview-modal-content">
+            <div class="modal-header">
+                <h2 id="preview-file-name">File Name</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            
+            <div class="file-preview-container" id="preview-container">
+                <!-- Preview content will be loaded here -->
+            </div>
+            
+            <div class="preview-info">
+                <div class="preview-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">File Type</div>
+                        <div class="meta-value" id="preview-file-type">Image</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">File Size</div>
+                        <div class="meta-value" id="preview-file-size">2.5 MB</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Uploaded By</div>
+                        <div class="meta-value" id="preview-uploader">John Doe</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Uploaded On</div>
+                        <div class="meta-value" id="preview-upload-date">May 1, 2025</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="preview-description">Description</label>
+                    <textarea id="preview-description" placeholder="No description" readonly></textarea>
+                </div>
+                
+                <div class="preview-actions">
+                    <button id="preview-download-btn" class="files-btn">Download</button>
+                    <button id="preview-delete-btn" class="files-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/file_sharing.js"></script>
+<!--
+    <script>
+        // Keeping this for reference only. All code moved to file_sharing.js
+        let currentProject = {
+            id: null,
+            name: '',
+            workspace_id: null
+        };
+        
+        let currentFiles = [];
+        let customFolders = [];
+        let currentFolder = 'all';
+        let currentView = 'grid';
+        let currentUser = {
+            id: null,
+            name: '',
+            email: ''
+        };
+        
+        // On page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Extract IDs from URL
+            const ids = getIdsFromUrl();
+            
+            if (!ids.projectId || !ids.workspaceId) {
+                // No IDs in URL, redirect to workspaces list
+                window.location.href = '/workspace';
+                return;
+            }
+            
+            // Store project info
+            currentProject.id = ids.projectId;
+            currentProject.workspace_id = ids.workspaceId;
+            
+            // Check if user is logged in
+            checkLoginStatus(ids.workspaceId, ids.projectId);
+            
+            // Set up event listeners
+            setupEventListeners(ids.workspaceId, ids.projectId);
+        });
+        
+        // Check if user is logged in
+        function checkLoginStatus(workspaceId, projectId) {
+            // Check if there's a session cookie or token
+            const token = getCookie('session_token') || localStorage.getItem('auth_token');
+            
+            if (token) {
+                // User is logged in, update UI and fetch data
+                fetchUserProfile();
+                fetchProjectDetails(projectId);
+                fetchFiles(projectId);
+            } else {
+                // User is not logged in, redirect to login page
+                window.location.href = `/login?redirect=/workspace/${workspaceId}/project/${projectId}/files`;
+            }
+        }
+        
+        // Fetch user profile information
+        function fetchUserProfile() {
+            fetch('/api/user/profile')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch user profile');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        currentUser.id = data.user.id;
+                        currentUser.name = data.user.name || data.user.email;
+                        currentUser.email = data.user.email;
+                        
+                        // Update UI with user information
+                        document.getElementById('user-name').textContent = currentUser.name;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user profile:', error);
+                });
+        }
+        
+        // Fetch project details
+        function fetchProjectDetails(projectId) {
+            fetch(`/api/projects/${projectId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 403) {
+                            // User doesn't have access to this project
+                            window.location.href = `/workspace/${currentProject.workspace_id}`;
+                            return null;
+                        }
+                        throw new Error('Failed to fetch project details');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data) return; // Redirect handled in the response check
+                    
+                    if (data.success) {
+                        // Store project data
+                        currentProject.name = data.project.name;
+                        
+                        // Update page title
+                        document.title = `${data.project.name} - Files - Proletto`;
+                        
+                        // Update back button
+                        const backBtn = document.getElementById('back-to-project-btn');
+                        backBtn.addEventListener('click', () => {
+                            window.location.href = `/workspace/${currentProject.workspace_id}/project/${currentProject.id}`;
+                        });
+                    } else {
+                        showError(data.error || 'Failed to load project');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching project details:', error);
+                    showError('Failed to load project. Please try again later.');
+                });
+        }
+        
+        // Fetch files for the project
+        function fetchFiles(projectId) {
+            fetch(`/api/projects/${projectId}/files`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch files');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Store files data
+                        currentFiles = data.files || [];
+                        customFolders = data.folders || [];
+                        
+                        // Add custom folders to UI
+                        updateFolderList();
+                        
+                        // Render files
+                        renderFiles();
+                    } else {
+                        showError(data.error || 'Failed to load files');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching files:', error);
+                    showError('Failed to load files. Please try again later.');
+                });
+        }
+        
+        // Update folder list with custom folders
+        function updateFolderList() {
+            const folderList = document.querySelector('.folder-list');
+            const defaultFolderCount = 4; // All Files, Images, Documents, Other
+            
+            // Remove existing custom folders
+            while (folderList.children.length > defaultFolderCount) {
+                folderList.removeChild(folderList.lastChild);
+            }
+            
+            // Add custom folders
+            customFolders.forEach(folder => {
+                const folderItem = document.createElement('li');
+                folderItem.className = 'folder-item';
+                folderItem.dataset.folder = folder.id;
+                
+                folderItem.innerHTML = `
+                    <div class="folder-icon">📁</div>
+                    <div class="folder-name">${escapeHtml(folder.name)}</div>
+                    <div class="file-count" id="folder-${folder.id}-count">0</div>
+                `;
+                
+                folderItem.addEventListener('click', () => {
+                    switchFolder(folder.id);
+                });
+                
+                folderList.appendChild(folderItem);
+            });
+            
+            // Add custom folders to upload selector
+            const uploadFolderSelect = document.getElementById('upload-folder');
+            
+            // Clear custom folder options
+            while (uploadFolderSelect.options.length > 4) {
+                uploadFolderSelect.remove(4);
+            }
+            
+            // Add custom folder options
+            customFolders.forEach(folder => {
+                const option = document.createElement('option');
+                option.value = folder.id;
+                option.textContent = folder.name;
+                uploadFolderSelect.appendChild(option);
+            });
+        }
+        
+        // Render files in the UI
+        function renderFiles() {
+            const gridView = document.getElementById('files-grid-view');
+            const listView = document.getElementById('files-list-body');
+            const emptyState = document.getElementById('empty-files-state');
+            
+            // Clear views
+            while (gridView.firstChild) {
+                if (gridView.firstChild.id === 'empty-files-state') {
+                    break;
+                }
+                gridView.removeChild(gridView.firstChild);
+            }
+            
+            listView.innerHTML = '';
+            
+            // Filter files by current folder
+            let filteredFiles = currentFiles;
+            
+            if (currentFolder === 'all') {
+                // No additional filtering needed for 'all'
+            } else if (currentFolder === 'images') {
+                filteredFiles = currentFiles.filter(file => 
+                    file.file_type && ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'].includes(file.file_type.toLowerCase())
+                );
+            } else if (currentFolder === 'documents') {
+                filteredFiles = currentFiles.filter(file => 
+                    file.file_type && ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'].includes(file.file_type.toLowerCase())
+                );
+            } else if (currentFolder === 'other') {
+                filteredFiles = currentFiles.filter(file => {
+                    if (!file.file_type) return true;
+                    
+                    const type = file.file_type.toLowerCase();
+                    return !['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 
+                             'application/pdf', 'application/msword', 
+                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                             'text/plain'].includes(type);
+                });
+            } else {
+                // Custom folder
+                filteredFiles = currentFiles.filter(file => file.folder_id === currentFolder);
+            }
+            
+            // Update file counts
+            updateFileCounts();
+            
+            // Check if there are any files
+            if (filteredFiles.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            // Hide empty state
+            emptyState.style.display = 'none';
+            
+            // Sort files by upload date (newest first)
+            filteredFiles.sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
+            
+            // Render files in grid view
+            filteredFiles.forEach(file => {
+                // Grid view
+                const card = createFileCard(file);
+                gridView.appendChild(card);
+                
+                // List view
+                const row = createFileRow(file);
+                listView.appendChild(row);
+            });
+        }
+        
+        // Create a file card for grid view
+        function createFileCard(file) {
+            const card = document.createElement('div');
+            card.className = 'file-card';
+            card.dataset.id = file.id;
+            
+            // Determine file icon/preview based on file type
+            let previewHtml = '';
+            
+            if (file.file_type && file.file_type.startsWith('image/')) {
+                previewHtml = `<img src="${file.file_path}" alt="${escapeHtml(file.filename)}">`;
+            } else {
+                // Display appropriate icon based on file type
+                let iconText = '📄';
+                
+                if (file.file_type) {
+                    const type = file.file_type.toLowerCase();
+                    if (type.includes('pdf')) {
+                        iconText = '📑';
+                    } else if (type.includes('word') || type.includes('document')) {
+                        iconText = '📝';
+                    } else if (type.includes('spreadsheet') || type.includes('excel')) {
+                        iconText = '📊';
+                    } else if (type.includes('presentation') || type.includes('powerpoint')) {
+                        iconText = '📽️';
+                    } else if (type.includes('audio')) {
+                        iconText = '🎵';
+                    } else if (type.includes('video')) {
+                        iconText = '🎬';
+                    } else if (type.includes('zip') || type.includes('archive')) {
+                        iconText = '📦';
+                    }
+                }
+                
+                previewHtml = `<div class="file-icon">${iconText}</div>`;
+            }
+            
+            // Format file size
+            const fileSize = formatFileSize(file.file_size);
+            
+            // Format upload date
+            const uploadDate = new Date(file.uploaded_at).toLocaleDateString();
+            
+            card.innerHTML = `
+                <div class="file-preview">
+                    ${previewHtml}
+                </div>
+                <div class="file-info">
+                    <div class="file-name">${escapeHtml(file.filename)}</div>
+                    <div class="file-meta">
+                        <span>${fileSize}</span>
+                        <span>${uploadDate}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Add click event to open file preview
+            card.addEventListener('click', () => {
+                openFilePreview(file);
+            });
+            
+            return card;
+        }
+        
+        // Create a file row for list view
+        function createFileRow(file) {
+            const row = document.createElement('tr');
+            row.dataset.id = file.id;
+            
+            // Determine file icon based on file type
+            let iconText = '📄';
+            
+            if (file.file_type) {
+                const type = file.file_type.toLowerCase();
+                if (type.startsWith('image/')) {
+                    iconText = '🖼️';
+                } else if (type.includes('pdf')) {
+                    iconText = '📑';
+                } else if (type.includes('word') || type.includes('document')) {
+                    iconText = '📝';
+                } else if (type.includes('spreadsheet') || type.includes('excel')) {
+                    iconText = '📊';
+                } else if (type.includes('presentation') || type.includes('powerpoint')) {
+                    iconText = '📽️';
+                } else if (type.includes('audio')) {
+                    iconText = '🎵';
+                } else if (type.includes('video')) {
+                    iconText = '🎬';
+                } else if (type.includes('zip') || type.includes('archive')) {
+                    iconText = '📦';
+                }
+            }
+            
+            // Format file size
+            const fileSize = formatFileSize(file.file_size);
+            
+            // Format upload date
+            const uploadDate = new Date(file.uploaded_at).toLocaleDateString();
+            
+            // Get uploader info
+            const uploaderName = file.uploader ? file.uploader.name : 'Unknown';
+            
+            row.innerHTML = `
+                <td>
+                    <div class="file-list-name">
+                        <span>${iconText}</span>
+                        <span>${escapeHtml(file.filename)}</span>
+                    </div>
+                </td>
+                <td>${fileSize}</td>
+                <td>${escapeHtml(uploaderName)}</td>
+                <td>${uploadDate}</td>
+                <td>
+                    <div class="file-actions">
+                        <button class="file-action-btn preview-btn" title="Preview">👁️</button>
+                        <button class="file-action-btn download-btn" title="Download">⬇️</button>
+                        <button class="file-action-btn delete-btn" title="Delete">🗑️</button>
+                    </div>
+                </td>
+            `;
+            
+            // Add event listeners for actions
+            const previewBtn = row.querySelector('.preview-btn');
+            const downloadBtn = row.querySelector('.download-btn');
+            const deleteBtn = row.querySelector('.delete-btn');
+            
+            previewBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openFilePreview(file);
+            });
+            
+            downloadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                downloadFile(file);
+            });
+            
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                confirmDeleteFile(file);
+            });
+            
+            // Add click event to row to open file preview
+            row.addEventListener('click', () => {
+                openFilePreview(file);
+            });
+            
+            return row;
+        }
+        
+        // Update file counts for folders
+        function updateFileCounts() {
+            // Count files in each category
+            const counts = {
+                all: currentFiles.length,
+                images: 0,
+                documents: 0,
+                other: 0
+            };
+            
+            // Count custom folder files
+            customFolders.forEach(folder => {
+                counts[folder.id] = 0;
+            });
+            
+            // Count files by type
+            currentFiles.forEach(file => {
+                // Count by folder
+                if (file.folder_id && counts[file.folder_id] !== undefined) {
+                    counts[file.folder_id]++;
+                }
+                
+                // Count by file type
+                if (file.file_type) {
+                    const type = file.file_type.toLowerCase();
+                    if (type.startsWith('image/')) {
+                        counts.images++;
+                    } else if (['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'].includes(type)) {
+                        counts.documents++;
+                    } else {
+                        counts.other++;
+                    }
+                } else {
+                    counts.other++;
+                }
+            });
+            
+            // Update UI with counts
+            document.getElementById('all-files-count').textContent = counts.all;
+            document.getElementById('images-count').textContent = counts.images;
+            document.getElementById('documents-count').textContent = counts.documents;
+            document.getElementById('other-count').textContent = counts.other;
+            
+            // Update custom folder counts
+            customFolders.forEach(folder => {
+                const countElement = document.getElementById(`folder-${folder.id}-count`);
+                if (countElement) {
+                    countElement.textContent = counts[folder.id] || 0;
+                }
+            });
+        }
+        
+        // Switch to a different folder
+        function switchFolder(folderId) {
+            // Update current folder
+            currentFolder = folderId;
+            
+            // Update active folder in UI
+            const folderItems = document.querySelectorAll('.folder-item');
+            folderItems.forEach(item => {
+                if (item.dataset.folder === folderId) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Re-render files
+            renderFiles();
+        }
+        
+        // Switch between grid and list view
+        function switchView(viewType) {
+            // Update current view
+            currentView = viewType;
+            
+            // Update active view in UI
+            const viewButtons = document.querySelectorAll('.view-toggle-btn');
+            viewButtons.forEach(btn => {
+                if (btn.dataset.view === viewType) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Show/hide views
+            const gridView = document.getElementById('files-grid-view');
+            const listView = document.getElementById('files-list-view');
+            
+            if (viewType === 'grid') {
+                gridView.style.display = 'grid';
+                listView.style.display = 'none';
+            } else {
+                gridView.style.display = 'none';
+                listView.style.display = 'block';
+            }
+        }
+        
+        // Open file preview modal
+        function openFilePreview(file) {
+            const modal = document.getElementById('preview-modal');
+            const container = document.getElementById('preview-container');
+            
+            // Set file name
+            document.getElementById('preview-file-name').textContent = file.filename;
+            
+            // Create preview content based on file type
+            let previewContent = '';
+            
+            if (file.file_type && file.file_type.startsWith('image/')) {
+                previewContent = `<img src="${file.file_path}" alt="${escapeHtml(file.filename)}" class="preview-image">`;
+            } else if (file.file_type && file.file_type === 'application/pdf') {
+                previewContent = `<iframe src="${file.file_path}" class="preview-document"></iframe>`;
+            } else {
+                // Files that can't be previewed
+                previewContent = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">📄</div>
+                        <p>Preview not available for this file type</p>
+                        <p>Download the file to view its contents</p>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = previewContent;
+            
+            // Set file info
+            document.getElementById('preview-file-type').textContent = file.file_type || 'Unknown';
+            document.getElementById('preview-file-size').textContent = formatFileSize(file.file_size);
+            document.getElementById('preview-uploader').textContent = file.uploader ? file.uploader.name : 'Unknown';
+            document.getElementById('preview-upload-date').textContent = new Date(file.uploaded_at).toLocaleDateString();
+            document.getElementById('preview-description').value = file.description || '';
+            
+            // Set up download button
+            const downloadBtn = document.getElementById('preview-download-btn');
+            downloadBtn.onclick = () => downloadFile(file);
+            
+            // Set up delete button
+            const deleteBtn = document.getElementById('preview-delete-btn');
+            deleteBtn.onclick = () => {
+                modal.style.display = 'none';
+                confirmDeleteFile(file);
+            };
+            
+            // Show the modal
+            modal.style.display = 'flex';
+        }
+        
+        // Download a file
+        function downloadFile(file) {
+            // Create a temporary link and click it to start download
+            const link = document.createElement('a');
+            link.href = file.file_path;
+            link.download = file.filename;
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Confirm file deletion
+        function confirmDeleteFile(file) {
+            if (confirm(`Are you sure you want to delete "${file.filename}"? This action cannot be undone.`)) {
+                deleteFile(file.id);
+            }
+        }
+        
+        // Delete a file
+        function deleteFile(fileId) {
+            fetch(`/api/files/${fileId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete file');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Remove file from local array
+                    const index = currentFiles.findIndex(f => f.id === fileId);
+                    if (index !== -1) {
+                        currentFiles.splice(index, 1);
+                    }
+                    
+                    // Re-render files
+                    renderFiles();
+                    
+                    // Show success message
+                    showSuccess('File deleted successfully');
+                } else {
+                    showError(data.error || 'Failed to delete file');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting file:', error);
+                showError('Failed to delete file. Please try again later.');
+            });
+        }
+        
+        // Handle file upload
+        function handleFileUpload(files, folderId, description) {
+            // Create FormData object
+            const formData = new FormData();
+            
+            // Add each file
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+            
+            // Add folder ID
+            formData.append('folder_id', folderId);
+            
+            // Add description if provided
+            if (description) {
+                formData.append('description', description);
+            }
+            
+            // Add project ID
+            formData.append('project_id', currentProject.id);
+            
+            // Upload files
+            fetch('/api/files/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to upload files');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Add new files to local array
+                    if (data.files && data.files.length > 0) {
+                        currentFiles = [...currentFiles, ...data.files];
+                    }
+                    
+                    // Re-render files
+                    renderFiles();
+                    
+                    // Show success message
+                    showSuccess('Files uploaded successfully');
+                    
+                    // Close the upload modal
+                    document.getElementById('upload-modal').style.display = 'none';
+                } else {
+                    showError(data.error || 'Failed to upload files');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading files:', error);
+                showError('Failed to upload files. Please try again later.');
+            });
+        }
+        
+        // Create a new folder
+        function createFolder(folderName) {
+            fetch('/api/folders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: folderName,
+                    project_id: currentProject.id
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create folder');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Add new folder to local array
+                    customFolders.push(data.folder);
+                    
+                    // Update folder list
+                    updateFolderList();
+                    
+                    // Switch to the new folder
+                    switchFolder(data.folder.id);
+                    
+                    // Show success message
+                    showSuccess('Folder created successfully');
+                    
+                    // Close the folder modal
+                    document.getElementById('folder-modal').style.display = 'none';
+                } else {
+                    showError(data.error || 'Failed to create folder');
+                }
+            })
+            .catch(error => {
+                console.error('Error creating folder:', error);
+                showError('Failed to create folder. Please try again later.');
+            });
+        }
+        
+        // Set up event listeners
+        function setupEventListeners(workspaceId, projectId) {
+            // Folder switching
+            document.querySelectorAll('.folder-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    switchFolder(item.dataset.folder);
+                });
+            });
+            
+            // View toggling
+            document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    switchView(btn.dataset.view);
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', () => {
+                // TODO: Implement search filtering
+            });
+            
+            // Upload button
+            document.getElementById('upload-file-btn').addEventListener('click', () => {
+                document.getElementById('upload-file-list').innerHTML = '';
+                document.getElementById('upload-modal').style.display = 'flex';
+            });
+            
+            // Empty state upload button
+            document.getElementById('empty-upload-btn').addEventListener('click', () => {
+                document.getElementById('upload-file-list').innerHTML = '';
+                document.getElementById('upload-modal').style.display = 'flex';
+            });
+            
+            // Create folder button
+            document.getElementById('create-folder-btn').addEventListener('click', () => {
+                document.getElementById('folder-form').reset();
+                document.getElementById('folder-modal').style.display = 'flex';
+            });
+            
+            // File input and drop area
+            const fileInput = document.getElementById('file-input');
+            const dropArea = document.getElementById('drop-area');
+            
+            fileInput.addEventListener('change', () => {
+                handleSelectedFiles(fileInput.files);
+            });
+            
+            dropArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // Drag and drop handling
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#8d6e63';
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.style.borderColor = '#e0e0e0';
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#e0e0e0';
+                handleSelectedFiles(e.dataTransfer.files);
+            });
+            
+            // Upload form submission
+            document.getElementById('upload-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const files = fileInput.files;
+                const folder = document.getElementById('upload-folder').value;
+                const description = document.getElementById('upload-description').value.trim();
+                
+                if (files.length === 0) {
+                    showError('Please select at least one file to upload');
+                    return;
+                }
+                
+                handleFileUpload(files, folder, description);
+            });
+            
+            // Folder form submission
+            document.getElementById('folder-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const folderName = document.getElementById('folder-name').value.trim();
+                
+                if (!folderName) {
+                    showError('Please enter a folder name');
+                    return;
+                }
+                
+                createFolder(folderName);
+            });
+            
+            // Modal close buttons
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.target.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // Cancel buttons
+            document.getElementById('cancel-upload').addEventListener('click', () => {
+                document.getElementById('upload-modal').style.display = 'none';
+            });
+            
+            document.getElementById('cancel-folder').addEventListener('click', () => {
+                document.getElementById('folder-modal').style.display = 'none';
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Handle selected files for upload
+        function handleSelectedFiles(files) {
+            const fileList = document.getElementById('upload-file-list');
+            fileList.innerHTML = '';
+            
+            // Display selected files
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // Check file size
+                if (file.size > 20 * 1024 * 1024) { // 20MB
+                    showError(`File "${file.name}" exceeds the 20MB size limit and will not be uploaded.`);
+                    continue;
+                }
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'upload-file-item';
+                
+                const fileSize = formatFileSize(file.size);
+                
+                fileItem.innerHTML = `
+                    <div class="upload-file-icon">📄</div>
+                    <div class="upload-file-name">${escapeHtml(file.name)}</div>
+                    <div class="upload-file-size">${fileSize}</div>
+                    <button type="button" class="upload-file-remove" data-index="${i}">&times;</button>
+                `;
+                
+                fileList.appendChild(fileItem);
+            }
+            
+            // Handle file removal
+            document.querySelectorAll('.upload-file-remove').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // TODO: Implement file removal from the file input
+                    btn.closest('.upload-file-item').remove();
+                });
+            });
+        }
+        
+        // Helper function to get IDs from URL
+        function getIdsFromUrl() {
+            const path = window.location.pathname;
+            const match = path.match(/\/workspace\/(\d+)\/project\/(\d+)\/files/);
+            
+            if (match) {
+                return {
+                    workspaceId: match[1],
+                    projectId: match[2]
+                };
+            }
+            
+            return { workspaceId: null, projectId: null };
+        }
+        
+        // Helper function to format file size
+        function formatFileSize(bytes) {
+            if (!bytes) return 'Unknown';
+            
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let size = bytes;
+            let unitIndex = 0;
+            
+            while (size >= 1024 && unitIndex < units.length - 1) {
+                size /= 1024;
+                unitIndex++;
+            }
+            
+            return `${size.toFixed(1)} ${units[unitIndex]}`;
+        }
+        
+        // Helper function to show error messages
+        function showError(message) {
+            // Simplified error display - in a real app, you might use a toast or notification system
+            alert(message);
+        }
+        
+        // Helper function to show success messages
+        function showSuccess(message) {
+            // Simplified success display
+            alert(message);
+        }
+        
+        // Helper function to safely escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+        
+        // Helper function to get cookie value
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+    </script>
+    <script src="/static/js/file_sharing.js"></script>
+</body>
+</html>

@@ -1,0 +1,502 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Engines Management</h1>
+    
+    <!-- Engines Toolbar -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Engines Controls</h6>
+                <button id="runAllEngines" class="btn btn-primary">
+                    <i class="fas fa-play-circle mr-1"></i> Run All Engines
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="engineFilterSelect">Filter Engines</label>
+                        <select class="form-control" id="engineFilterSelect">
+                            <option value="all">All Engines</option>
+                            <option value="active">Active Only</option>
+                            <option value="inactive">Inactive Only</option>
+                            <option value="state">State Engines</option>
+                            <option value="social">Social Engines</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="healthFilterSelect">Health Filter</label>
+                        <select class="form-control" id="healthFilterSelect">
+                            <option value="all">All Health Levels</option>
+                            <option value="good">Good Health (80-100%)</option>
+                            <option value="warning">Warning (50-79%)</option>
+                            <option value="critical">Critical (&lt; 50%)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Quick Stats</label>
+                        <div class="d-flex justify-content-between">
+                            <div class="text-center px-2">
+                                <h5 id="activeEngineCount">{{ active_count }}</h5>
+                                <span class="text-sm">Active</span>
+                            </div>
+                            <div class="text-center px-2">
+                                <h5 id="totalEngineCount">{{ engines|length }}</h5>
+                                <span class="text-sm">Total</span>
+                            </div>
+                            <div class="text-center px-2">
+                                <h5 id="healthyEngineCount">{{ healthy_count }}</h5>
+                                <span class="text-sm">Healthy</span>
+                            </div>
+                            <div class="text-center px-2">
+                                <h5 id="warningEngineCount">{{ warning_count }}</h5>
+                                <span class="text-sm">Warning</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Engines List -->
+    <div class="row" id="enginesContainer">
+        {% for engine in engines %}
+        <div class="col-xl-4 col-md-6 mb-4 engine-card" 
+             data-engine-id="{{ engine.id }}" 
+             data-engine-type="{% if 'social' in engine.name|lower %}social{% elif 'california' in engine.name|lower or 'texas' in engine.name|lower or 'newyork' in engine.name|lower %}state{% else %}general{% endif %}"
+             data-engine-health="{{ engine.health }}">
+            <div class="card border-left-{{ 'success' if engine.health >= 80 else 'warning' if engine.health >= 50 else 'danger' }} shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-{{ engine.icon }} mr-1" style="color: {{ engine.color }};"></i>
+                        {{ engine.name }}
+                    </h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                            aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item run-engine" href="#" data-engine-id="{{ engine.id }}">
+                                <i class="fas fa-play fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Run Engine
+                            </a>
+                            <a class="dropdown-item view-logs" href="#" data-engine-id="{{ engine.id }}">
+                                <i class="fas fa-file-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                View Logs
+                            </a>
+                            <a class="dropdown-item view-performance" href="#" data-engine-id="{{ engine.id }}">
+                                <i class="fas fa-chart-line fa-sm fa-fw mr-2 text-gray-400"></i>
+                                View Performance
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item toggle-engine" href="#" data-engine-id="{{ engine.id }}" data-status="{{ engine.status }}">
+                                <i class="fas fa-power-off fa-sm fa-fw mr-2 text-gray-400"></i>
+                                {% if engine.status == 'active' %}Disable{% else %}Enable{% endif %} Engine
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center mb-3">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                Health
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ engine.health }}%</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-{{ 'success' if engine.health >= 80 else 'warning' if engine.health >= 50 else 'danger' }}" 
+                                             role="progressbar" style="width: {{ engine.health }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-heartbeat fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Success Rate</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ engine.success_rate }}%</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Response Time</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ engine.response_time }}ms</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Opportunities Found</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ engine.opportunity_count }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-0">
+                        <div class="col-12">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Last Run</div>
+                            <div class="text-sm mb-0 text-gray-800">{{ engine.last_run }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-sm run-engine" data-engine-id="{{ engine.id }}">
+                        <i class="fas fa-play mr-1"></i> Run Now
+                    </button>
+                    <button class="btn btn-info btn-sm view-logs" data-engine-id="{{ engine.id }}">
+                        <i class="fas fa-file-alt mr-1"></i> Logs
+                    </button>
+                    <button class="btn btn-success btn-sm view-performance" data-engine-id="{{ engine.id }}">
+                        <i class="fas fa-chart-line mr-1"></i> Performance
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Engine Log Modal -->
+    <div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-labelledby="logModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logModalLabel">Engine Logs</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <pre id="logContent" class="bg-light p-3" style="max-height: 400px; overflow-y: auto;"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Engine Performance Modal -->
+    <div class="modal fade" id="performanceModal" tabindex="-1" role="dialog" aria-labelledby="performanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="performanceModalLabel">Engine Performance</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-area">
+                        <canvas id="enginePerformanceChart"></canvas>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="font-weight-bold">Performance Metrics</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="metric-card border rounded p-3 mb-3">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">Average Success Rate</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 avg-success-rate">85%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-card border rounded p-3 mb-3">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">Average Response Time</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 avg-response-time">230ms</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-card border rounded p-3 mb-3">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">Opportunities Found</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800 total-opportunities">487</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Engines JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize filters
+    const engineFilterSelect = document.getElementById('engineFilterSelect');
+    const healthFilterSelect = document.getElementById('healthFilterSelect');
+    const enginesContainer = document.getElementById('enginesContainer');
+    const engineCards = document.querySelectorAll('.engine-card');
+    
+    // Apply filters
+    function applyFilters() {
+        const engineType = engineFilterSelect.value;
+        const healthLevel = healthFilterSelect.value;
+        
+        engineCards.forEach(card => {
+            let showCard = true;
+            
+            // Engine type filter
+            if (engineType !== 'all') {
+                if (card.dataset.engineType !== engineType) {
+                    showCard = false;
+                }
+            }
+            
+            // Health level filter
+            if (healthLevel !== 'all') {
+                const health = parseInt(card.dataset.engineHealth);
+                if (healthLevel === 'good' && health < 80) {
+                    showCard = false;
+                } else if (healthLevel === 'warning' && (health < 50 || health >= 80)) {
+                    showCard = false;
+                } else if (healthLevel === 'critical' && health >= 50) {
+                    showCard = false;
+                }
+            }
+            
+            card.style.display = showCard ? 'block' : 'none';
+        });
+    }
+    
+    // Add event listeners for filters
+    engineFilterSelect.addEventListener('change', applyFilters);
+    healthFilterSelect.addEventListener('change', applyFilters);
+    
+    // Event listeners for engine actions
+    document.getElementById('runAllEngines').addEventListener('click', runAllEngines);
+    
+    document.querySelectorAll('.run-engine').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const engineId = this.dataset.engineId;
+            runEngine(engineId);
+        });
+    });
+    
+    document.querySelectorAll('.view-logs').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const engineId = this.dataset.engineId;
+            viewLogs(engineId);
+        });
+    });
+    
+    document.querySelectorAll('.view-performance').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const engineId = this.dataset.engineId;
+            viewPerformance(engineId);
+        });
+    });
+    
+    document.querySelectorAll('.toggle-engine').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const engineId = this.dataset.engineId;
+            const status = this.dataset.status;
+            toggleEngine(engineId, status);
+        });
+    });
+    
+    // Functions for engine actions
+    function runAllEngines() {
+        if (!confirm("Are you sure you want to run all engines? This may take some time.")) {
+            return;
+        }
+        
+        fetch('/simple-admin/api/run-all-engines', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("All engines started successfully");
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error running all engines:', error);
+            alert('An error occurred while running all engines');
+        });
+    }
+    
+    function runEngine(engineId) {
+        fetch(`/simple-admin/api/run-engine/${engineId}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Engine ${engineId} started successfully`);
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error(`Error running engine ${engineId}:`, error);
+            alert(`An error occurred while running engine ${engineId}`);
+        });
+    }
+    
+    function viewLogs(engineId) {
+        fetch(`/simple-admin/api/engine-logs/${engineId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.logs) {
+                document.getElementById('logContent').textContent = data.logs;
+                $('#logModal').modal('show');
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error(`Error getting logs for engine ${engineId}:`, error);
+            alert(`An error occurred while getting logs for engine ${engineId}`);
+        });
+    }
+    
+    function viewPerformance(engineId) {
+        fetch(`/simple-admin/api/engine-performance/${engineId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.dates) {
+                // Update the modal title with the engine name
+                const engineName = document.querySelector(`.engine-card[data-engine-id="${engineId}"] .text-primary`).textContent.trim();
+                document.getElementById('performanceModalLabel').textContent = `${engineName} Performance`;
+                
+                // Create or update the chart
+                const ctx = document.getElementById('enginePerformanceChart').getContext('2d');
+                
+                if (window.performanceChart) {
+                    window.performanceChart.destroy();
+                }
+                
+                window.performanceChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [
+                            {
+                                label: 'Success Rate (%)',
+                                data: data.success_rates,
+                                borderColor: 'rgba(78, 115, 223, 1)',
+                                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                                pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                                tension: 0.3,
+                                fill: true,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Response Time (ms)',
+                                data: data.response_times,
+                                borderColor: 'rgba(28, 200, 138, 1)',
+                                backgroundColor: 'rgba(28, 200, 138, 0.05)',
+                                pointBackgroundColor: 'rgba(28, 200, 138, 1)',
+                                tension: 0.3,
+                                fill: true,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                position: 'left',
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Success Rate (%)'
+                                }
+                            },
+                            y1: {
+                                position: 'right',
+                                beginAtZero: true,
+                                grid: {
+                                    drawOnChartArea: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Response Time (ms)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Calculate averages
+                const avgSuccessRate = data.success_rates.reduce((a, b) => a + b, 0) / data.success_rates.length;
+                const avgResponseTime = data.response_times.reduce((a, b) => a + b, 0) / data.response_times.length;
+                
+                // Update metrics
+                document.querySelector('.avg-success-rate').textContent = `${avgSuccessRate.toFixed(1)}%`;
+                document.querySelector('.avg-response-time').textContent = `${avgResponseTime.toFixed(0)}ms`;
+                
+                // Get opportunity count from the engine card
+                const opportunityCount = document.querySelector(`.engine-card[data-engine-id="${engineId}"] .h5`).textContent;
+                document.querySelector('.total-opportunities').textContent = opportunityCount;
+                
+                $('#performanceModal').modal('show');
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error(`Error getting performance for engine ${engineId}:`, error);
+            alert(`An error occurred while getting performance for engine ${engineId}`);
+        });
+    }
+    
+    function toggleEngine(engineId, status) {
+        const newStatus = status === 'active' ? 'inactive' : 'active';
+        
+        fetch(`/simple-admin/api/toggle-engine/${engineId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Engine ${engineId} ${newStatus === 'active' ? 'enabled' : 'disabled'} successfully`);
+                // Update the button text
+                const btn = document.querySelector(`.toggle-engine[data-engine-id="${engineId}"]`);
+                btn.textContent = newStatus === 'active' ? 'Disable Engine' : 'Enable Engine';
+                btn.dataset.status = newStatus;
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error(`Error toggling engine ${engineId}:`, error);
+            alert(`An error occurred while toggling engine ${engineId}`);
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Status Test Page</title>
+    <link rel="stylesheet" href="/static/css/network-status.css">
+    <script src="/static/js/network-status.js" defer></script>
+</head>
+<body>
+    <h1>Network Status Indicator Test</h1>
+    <p>This is a simple test page for the network status indicator.</p>
+    
+    <div class="header-container">
+        <div class="header-right">
+            <!-- Network status indicator -->
+            <div id="network-status-indicator" class="network-status network-status-online">
+                <span class="status-icon"></span>
+                <span class="status-text">Connected</span>
+                <div class="network-status-popup" id="network-status-details">
+                    <div class="popup-header">Network Status</div>
+                    <div class="current-status">
+                        <span class="status-badge">Online</span>
+                        <span class="ping-time">Last check: Just now</span>
+                    </div>
+                    <div class="connection-log">
+                        <div class="log-header">Recent activity</div>
+                        <div class="log-entries"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 40px; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
+        <h2>Test Controls</h2>
+        <button onclick="window.networkStatus.checkNow()">Check Connection</button>
+        <button onclick="document.dispatchEvent(new Event('offline'))">Simulate Offline</button>
+        <button onclick="document.dispatchEvent(new Event('online'))">Simulate Online</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Testing | Proletto</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .preview-container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #f1f1f1;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .tab-button.active {
+            background-color: #8A634A;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #8A634A;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #71523d;
+        }
+        .status {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">Proletto</a>
+            <nav>
+                <ul>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/opportunities">Opportunities</a></li>
+                    <li><a href="/portfolio">Portfolio</a></li>
+                    <li><a href="/membership">Membership</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Email Testing Interface</h1>
+        <p>This interface allows you to test the email service functionality and preview email templates.</p>
+        
+        <div class="card">
+            <h2>Email Service Status</h2>
+            <div id="serviceStatus">Checking email service status...</div>
+            <button id="testServiceBtn">Test Email Service</button>
+        </div>
+        
+        <div class="card">
+            <h2>Test Email Templates</h2>
+            <div class="form-group">
+                <label for="templateSelect">Select Template:</label>
+                <select id="templateSelect">
+                    <option value="WELCOME_EMAIL">Welcome Email</option>
+                    <option value="SUPPORTER_UPGRADE_CONFIRMATION">Supporter Upgrade Confirmation</option>
+                    <option value="REFERRAL_CREDIT_EARNED">Referral Credit Earned</option>
+                    <option value="EMAIL_TEST">Email Test</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="emailInput">Recipient Email:</label>
+                <input type="email" id="emailInput" placeholder="Enter email address">
+            </div>
+            
+            <div class="form-group">
+                <label for="replacementsInput">Replacements (JSON):</label>
+                <textarea id="replacementsInput" rows="4" placeholder='{"name": "Example User", "referral_code": "ABC123"}'></textarea>
+            </div>
+            
+            <button id="previewBtn">Preview Template</button>
+            <button id="sendBtn">Send Test Email</button>
+            
+            <div id="emailStatus" class="status" style="display: none;"></div>
+            
+            <div class="tab-buttons">
+                <button class="tab-button active" data-format="html">HTML</button>
+                <button class="tab-button" data-format="text">Text</button>
+            </div>
+            
+            <div class="preview-container" id="previewContainer">
+                <div id="htmlPreview"></div>
+                <pre id="textPreview" style="display: none;"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check email service status on page load
+            checkEmailServiceStatus();
+            
+            // Button event listeners
+            document.getElementById('testServiceBtn').addEventListener('click', testEmailService);
+            document.getElementById('previewBtn').addEventListener('click', previewTemplate);
+            document.getElementById('sendBtn').addEventListener('click', sendTestEmail);
+            
+            // Tab switching for preview format
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show/hide appropriate preview container
+                    const format = this.getAttribute('data-format');
+                    if (format === 'html') {
+                        document.getElementById('htmlPreview').style.display = 'block';
+                        document.getElementById('textPreview').style.display = 'none';
+                    } else {
+                        document.getElementById('htmlPreview').style.display = 'none';
+                        document.getElementById('textPreview').style.display = 'block';
+                    }
+                    
+                    // Re-preview with the new format
+                    if (document.getElementById('htmlPreview').innerHTML || document.getElementById('textPreview').innerText) {
+                        previewTemplate(format);
+                    }
+                });
+            });
+        });
+        
+        // Check if email service is available
+        async function checkEmailServiceStatus() {
+            const statusDiv = document.getElementById('serviceStatus');
+            statusDiv.innerHTML = 'Checking email service status...';
+            
+            try {
+                const response = await fetch('/api/test-template-email/service', {
+                    method: 'HEAD'
+                });
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '<span style="color: green;">✓ Email service is available</span>';
+                } else {
+                    statusDiv.innerHTML = '<span style="color: red;">✗ Email service is not available. Check API key configuration.</span>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<span style="color: red;">✗ Error checking email service: ' + error.message + '</span>';
+            }
+        }
+        
+        // Test the email service by sending a test email
+        async function testEmailService() {
+            const statusDiv = document.getElementById('serviceStatus');
+            const button = document.getElementById('testServiceBtn');
+            const originalText = button.innerText;
+            
+            button.innerHTML = '<span class="loading"></span> Testing...';
+            button.disabled = true;
+            
+            try {
+                const email = document.getElementById('emailInput').value || 'support@myproletto.com';
+                const response = await fetch(`/api/test-template-email/service?email=${encodeURIComponent(email)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.innerHTML = '<span style="color: green;">✓ ' + data.message + '</span>';
+                } else {
+                    statusDiv.innerHTML = '<span style="color: red;">✗ ' + data.message + '</span>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<span style="color: red;">✗ Error testing email service: ' + error.message + '</span>';
+            } finally {
+                button.innerText = originalText;
+                button.disabled = false;
+            }
+        }
+        
+        // Preview the selected template
+        async function previewTemplate(forcedFormat) {
+            const template = document.getElementById('templateSelect').value;
+            const format = forcedFormat || document.querySelector('.tab-button.active').getAttribute('data-format');
+            const htmlPreview = document.getElementById('htmlPreview');
+            const textPreview = document.getElementById('textPreview');
+            
+            try {
+                const response = await fetch(`/api/preview-template?template=${template}&format=${format}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (format === 'html') {
+                        htmlPreview.innerHTML = data.content;
+                    } else {
+                        textPreview.innerText = data.content;
+                    }
+                } else {
+                    const previewElement = format === 'html' ? htmlPreview : textPreview;
+                    previewElement.innerText = 'Error: ' + data.message;
+                }
+            } catch (error) {
+                const previewElement = format === 'html' ? htmlPreview : textPreview;
+                previewElement.innerText = 'Error: ' + error.message;
+            }
+        }
+        
+        // Send a test email using the selected template
+        async function sendTestEmail() {
+            const template = document.getElementById('templateSelect').value;
+            const email = document.getElementById('emailInput').value;
+            const replacementsText = document.getElementById('replacementsInput').value;
+            const statusDiv = document.getElementById('emailStatus');
+            const button = document.getElementById('sendBtn');
+            const originalText = button.innerText;
+            
+            if (!email) {
+                statusDiv.className = 'status error';
+                statusDiv.innerText = 'Please enter a recipient email address.';
+                statusDiv.style.display = 'block';
+                return;
+            }
+            
+            button.innerHTML = '<span class="loading"></span> Sending...';
+            button.disabled = true;
+            statusDiv.style.display = 'none';
+            
+            try {
+                // Parse replacements JSON or use empty object if invalid
+                let replacements = {};
+                if (replacementsText) {
+                    try {
+                        replacements = JSON.parse(replacementsText);
+                    } catch (e) {
+                        throw new Error('Invalid JSON in replacements field');
+                    }
+                }
+                
+                const response = await fetch('/api/test-template-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        template: template,
+                        replacements: replacements
+                    })
+                });
+                
+                const data = await response.json();
+                
+                statusDiv.className = data.success ? 'status success' : 'status error';
+                statusDiv.innerText = data.message;
+                statusDiv.style.display = 'block';
+                
+                if (data.success) {
+                    // Clear input fields on success if desired
+                    // document.getElementById('emailInput').value = '';
+                    // document.getElementById('replacementsInput').value = '';
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerText = 'Error: ' + error.message;
+                statusDiv.style.display = 'block';
+            } finally {
+                button.innerText = originalText;
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

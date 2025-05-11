@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Optimizer | Proletto</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    /* Custom styles for Portfolio Optimizer */
+    .optimizer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .optimizer-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .optimizer-header h1 {
+      color: #a86a3e;
+      font-size: 2.4rem;
+      margin-bottom: 15px;
+    }
+    
+    .optimizer-header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #555;
+    }
+    
+    .optimizer-steps {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+    
+    .step-item {
+      padding: 10px 20px;
+      background-color: #f8f3e6;
+      border-radius: 20px;
+      font-weight: 500;
+      color: #8c562e;
+      position: relative;
+    }
+    
+    .step-item.active {
+      background-color: #a86a3e;
+      color: white;
+    }
+    
+    .step-item:not(:last-child):after {
+      content: "→";
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a86a3e;
+      font-weight: bold;
+    }
+    
+    .optimizer-form-container, 
+    .analysis-results-container,
+    .optimization-results-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .optimizer-form-container h2,
+    .analysis-results-container h2,
+    .optimization-results-container h2 {
+      color: #a86a3e;
+      margin-bottom: 20px;
+      font-size: 1.6rem;
+    }
+    
+    .form-section {
+      margin-bottom: 30px;
+    }
+    
+    .form-section h3 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      border-color: #a86a3e;
+      outline: none;
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .portfolio-item {
+      background-color: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    
+    .remove-item {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    
+    .remove-item:hover {
+      color: #d94c4c;
+    }
+    
+    .add-item-btn {
+      display: inline-block;
+      background-color: #f8f3e6;
+      border: 1px dashed #a86a3e;
+      color: #a86a3e;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .add-item-btn:hover {
+      background-color: #f0e6d1;
+    }
+    
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(135deg, #a76fff 0%, #7e31ff 100%);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    
+    .ai-badge::before {
+      content: "✦";
+      margin-right: 5px;
+    }
+    
+    .analysis-section {
+      margin-bottom: 30px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+    }
+    
+    .analysis-section:last-child {
+      border-bottom: none;
+    }
+    
+    .analysis-section h3 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+    
+    .analysis-content {
+      line-height: 1.6;
+    }
+    
+    .recommendation-item {
+      background-color: #f8f3e6;
+      border-left: 4px solid #a86a3e;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 0 4px 4px 0;
+    }
+    
+    .progress-container {
+      width: 100%;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      margin-top: 5px;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background: linear-gradient(to right, #a86a3e, #d4a977);
+      border-radius: 10px;
+      transition: width 0.5s;
+    }
+    
+    .score-display {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+    
+    .score-label {
+      min-width: 150px;
+      font-weight: 500;
+    }
+    
+    .score-value {
+      font-weight: bold;
+      color: #a86a3e;
+      margin-left: 10px;
+    }
+    
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    .btn {
+      padding: 12px 25px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background-color: #a86a3e;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #8c562e;
+    }
+    
+    .btn-secondary {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid #a86a3e;
+      color: #a86a3e;
+    }
+    
+    .btn-outline:hover {
+      background-color: #f8f3e6;
+    }
+    
+    /* Loading spinner */
+    .loader {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 4px solid #a86a3e;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .optimizer-steps {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+      
+      .step-item:not(:last-child):after {
+        content: "↓";
+        right: 50%;
+        top: auto;
+        bottom: -15px;
+        transform: translateX(50%);
+      }
+      
+      .btn-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+    
+    /* Added styles for opportunity targets */
+    .opportunity-targets {
+      margin-top: 20px;
+    }
+    
+    .target-item {
+      background-color: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .match-card {
+      background-color: #fff;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: transform 0.3s;
+    }
+    
+    .match-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .match-score {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #a86a3e;
+      margin-bottom: 10px;
+    }
+    
+    .match-title {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .match-details {
+      color: #666;
+      margin-bottom: 15px;
+    }
+    
+    .match-rationale {
+      background-color: #f8f3e6;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    
+    .match-strategy {
+      background-color: #f0f7ff;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 4px solid #4e7cff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="page-nav">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo">Proletto</a>
+      <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/opportunities">Opportunities</a>
+        <a href="/portfolio">Portfolio</a>
+        <a href="/logout">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="optimizer-container">
+    <!-- Header Section -->
+    <header class="optimizer-header">
+      <h1>AI Portfolio Optimizer <span class="ai-badge">AI Powered</span></h1>
+      <p>Get personalized recommendations to strengthen your portfolio and increase your chances of success with grants, residencies, and exhibitions.</p>
+    </header>
+    
+    <!-- Process Steps -->
+    <div class="optimizer-steps">
+      <div class="step-item active" id="step-1">1. Enter Portfolio</div>
+      <div class="step-item" id="step-2">2. AI Analysis</div>
+      <div class="step-item" id="step-3">3. Optimization Plan</div>
+    </div>
+    
+    <!-- Portfolio Entry Form -->
+    <div class="optimizer-form-container" id="portfolio-form">
+      <h2>Tell Us About Your Work</h2>
+      
+      <form id="portfolio-entry-form">
+        <div class="form-section">
+          <h3>Artist Information</h3>
+          
+          <div class="form-group">
+            <label for="artist-name">Your Name</label>
+            <input type="text" id="artist-name" class="form-control" placeholder="Enter your full name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="art-type">Primary Medium/Art Type</label>
+            <input type="text" id="art-type" class="form-control" placeholder="e.g., Oil painting, Digital art, Sculpture, Mixed media" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="portfolio-description">Portfolio Description / Artist Statement</label>
+            <textarea id="portfolio-description" class="form-control" placeholder="Describe your work, themes, approach, and artistic philosophy..." required></textarea>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3>Portfolio Items</h3>
+          <p>Add your most significant works (3-5 is recommended)</p>
+          
+          <div id="portfolio-items-container">
+            <!-- Portfolio items will be added here -->
+            <div class="portfolio-item">
+              <button type="button" class="remove-item">&times;</button>
+              
+              <div class="form-group">
+                <label>Title</label>
+                <input type="text" class="form-control item-title" placeholder="Artwork title" required>
+              </div>
+              
+              <div class="form-group">
+                <label>Year</label>
+                <input type="number" class="form-control item-year" placeholder="Year created" required>
+              </div>
+              
+              <div class="form-group">
+                <label>Medium</label>
+                <input type="text" class="form-control item-medium" placeholder="e.g., Oil on canvas, Digital print" required>
+              </div>
+              
+              <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control item-description" placeholder="Describe this work, its concept, technique, etc." required></textarea>
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" id="add-portfolio-item" class="add-item-btn">+ Add Another Artwork</button>
+        </div>
+        
+        <div class="form-section">
+          <h3>Past Exhibitions (Optional)</h3>
+          
+          <div id="exhibitions-container">
+            <!-- Exhibition items will be added here -->
+            <div class="portfolio-item">
+              <button type="button" class="remove-item">&times;</button>
+              
+              <div class="form-group">
+                <label>Exhibition Title</label>
+                <input type="text" class="form-control exhibition-title" placeholder="Exhibition name">
+              </div>
+              
+              <div class="form-group">
+                <label>Venue</label>
+                <input type="text" class="form-control exhibition-venue" placeholder="Gallery or venue name">
+              </div>
+              
+              <div class="form-group">
+                <label>Location</label>
+                <input type="text" class="form-control exhibition-location" placeholder="City, State, Country">
+              </div>
+              
+              <div class="form-group">
+                <label>Year</label>
+                <input type="number" class="form-control exhibition-year" placeholder="Year of exhibition">
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" id="add-exhibition" class="add-item-btn">+ Add Exhibition</button>
+        </div>
+        
+        <div class="form-section">
+          <h3>Target Opportunities (Optional)</h3>
+          <p>Add specific opportunities you're interested in applying to for tailored recommendations</p>
+          
+          <div id="opportunities-container">
+            <!-- Opportunity items will be added here -->
+          </div>
+          
+          <button type="button" id="load-opportunities" class="btn btn-outline">Search Opportunities</button>
+        </div>
+        
+        <div class="form-section">
+          <h3>Optimization Goals</h3>
+          <p>What specific aspects of your portfolio would you like to improve?</p>
+          
+          <div class="form-group">
+            <textarea id="optimization-goals" class="form-control" placeholder="e.g., Prepare for museum exhibition applications, Emphasize conceptual depth, Develop more cohesive narrative"></textarea>
+          </div>
+        </div>
+        
+        <div class="btn-container">
+          <button type="button" class="btn btn-secondary" id="save-draft">Save as Draft</button>
+          <button type="submit" class="btn btn-primary" id="analyze-portfolio">Analyze My Portfolio</button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div class="loader" id="analysis-loader">
+      <div class="spinner"></div>
+      <p>Our AI is analyzing your portfolio...</p>
+      <p class="small">This may take up to 30 seconds.</p>
+    </div>
+    
+    <!-- Analysis Results -->
+    <div class="analysis-results-container" id="analysis-results" style="display: none;">
+      <h2>Portfolio Analysis <span class="ai-badge">AI Powered</span></h2>
+      
+      <div class="analysis-section">
+        <h3>Overview and First Impressions</h3>
+        <div class="analysis-content" id="analysis-overview"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Portfolio Strengths</h3>
+        <div class="analysis-content" id="analysis-strengths"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Areas for Improvement</h3>
+        <div class="analysis-content" id="analysis-improvements"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Coherence and Narrative</h3>
+        <div class="analysis-content" id="analysis-coherence"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Technical Skill Assessment</h3>
+        <div class="analysis-content" id="analysis-technical"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Market Positioning</h3>
+        <div class="analysis-content" id="analysis-market"></div>
+      </div>
+      
+      <div class="btn-container">
+        <button type="button" class="btn btn-secondary" id="back-to-form">Edit Portfolio</button>
+        <button type="button" class="btn btn-primary" id="get-optimization">Get Optimization Plan</button>
+      </div>
+    </div>
+    
+    <!-- Optimization Plan -->
+    <div class="optimization-results-container" id="optimization-results" style="display: none;">
+      <h2>Portfolio Optimization Plan <span class="ai-badge">AI Powered</span></h2>
+      
+      <div class="analysis-section">
+        <h3>Executive Summary</h3>
+        <div class="analysis-content" id="optimization-summary"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Priority Changes</h3>
+        <div class="analysis-content" id="optimization-priorities"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Content Recommendations</h3>
+        <div class="analysis-content" id="optimization-content"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Presentation Improvements</h3>
+        <div class="analysis-content" id="optimization-presentation"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Narrative Development</h3>
+        <div class="analysis-content" id="optimization-narrative"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Technical Skill Focus</h3>
+        <div class="analysis-content" id="optimization-technical"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Strategic Additions</h3>
+        <div class="analysis-content" id="optimization-additions"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Implementation Timeline</h3>
+        <div class="analysis-content" id="optimization-timeline"></div>
+      </div>
+      
+      <div class="analysis-section">
+        <h3>Opportunity Matches</h3>
+        <div class="analysis-content" id="opportunity-matches">
+          <p>No target opportunities were specified.</p>
+        </div>
+      </div>
+      
+      <div class="btn-container">
+        <button type="button" class="btn btn-secondary" id="view-analysis">View Analysis</button>
+        <button type="button" class="btn btn-primary" id="download-plan">Download PDF</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM Elements
+      const portfolioForm = document.getElementById('portfolio-form');
+      const analysisResults = document.getElementById('analysis-results');
+      const optimizationResults = document.getElementById('optimization-results');
+      const analysisLoader = document.getElementById('analysis-loader');
+      
+      const portfolioItemsContainer = document.getElementById('portfolio-items-container');
+      const exhibitionsContainer = document.getElementById('exhibitions-container');
+      const opportunitiesContainer = document.getElementById('opportunities-container');
+      
+      const addPortfolioItemBtn = document.getElementById('add-portfolio-item');
+      const addExhibitionBtn = document.getElementById('add-exhibition');
+      const loadOpportunitiesBtn = document.getElementById('load-opportunities');
+      
+      const analyzePortfolioBtn = document.getElementById('analyze-portfolio');
+      const saveDraftBtn = document.getElementById('save-draft');
+      const backToFormBtn = document.getElementById('back-to-form');
+      const getOptimizationBtn = document.getElementById('get-optimization');
+      const viewAnalysisBtn = document.getElementById('view-analysis');
+      const downloadPlanBtn = document.getElementById('download-plan');
+      
+      const stepItems = document.querySelectorAll('.step-item');
+      
+      // State variables
+      let portfolioData = {};
+      let analysisResult = {};
+      let optimizationPlan = {};
+      
+      // Event Listeners
+      addPortfolioItemBtn.addEventListener('click', addPortfolioItem);
+      addExhibitionBtn.addEventListener('click', addExhibition);
+      loadOpportunitiesBtn.addEventListener('click', loadOpportunities);
+      
+      document.getElementById('portfolio-entry-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        analyzePortfolio();
+      });
+      
+      saveDraftBtn.addEventListener('click', saveDraft);
+      backToFormBtn.addEventListener('click', showPortfolioForm);
+      getOptimizationBtn.addEventListener('click', getOptimizationPlan);
+      viewAnalysisBtn.addEventListener('click', function() {
+        optimizationResults.style.display = 'none';
+        analysisResults.style.display = 'block';
+        
+        // Update steps
+        updateSteps(2);
+      });
+      downloadPlanBtn.addEventListener('click', downloadPDF);
+      
+      // Initialize remove buttons
+      initRemoveButtons();
+      
+      // Functions
+      function addPortfolioItem() {
+        const newItem = document.createElement('div');
+        newItem.className = 'portfolio-item';
+        newItem.innerHTML = `
+          <button type="button" class="remove-item">&times;</button>
+          
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" class="form-control item-title" placeholder="Artwork title" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Year</label>
+            <input type="number" class="form-control item-year" placeholder="Year created" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Medium</label>
+            <input type="text" class="form-control item-medium" placeholder="e.g., Oil on canvas, Digital print" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control item-description" placeholder="Describe this work, its concept, technique, etc." required></textarea>
+          </div>
+        `;
+        
+        portfolioItemsContainer.appendChild(newItem);
+        initRemoveButtons();
+      }
+      
+      function addExhibition() {
+        const newExhibition = document.createElement('div');
+        newExhibition.className = 'portfolio-item';
+        newExhibition.innerHTML = `
+          <button type="button" class="remove-item">&times;</button>
+          
+          <div class="form-group">
+            <label>Exhibition Title</label>
+            <input type="text" class="form-control exhibition-title" placeholder="Exhibition name">
+          </div>
+          
+          <div class="form-group">
+            <label>Venue</label>
+            <input type="text" class="form-control exhibition-venue" placeholder="Gallery or venue name">
+          </div>
+          
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" class="form-control exhibition-location" placeholder="City, State, Country">
+          </div>
+          
+          <div class="form-group">
+            <label>Year</label>
+            <input type="number" class="form-control exhibition-year" placeholder="Year of exhibition">
+          </div>
+        `;
+        
+        exhibitionsContainer.appendChild(newExhibition);
+        initRemoveButtons();
+      }
+      
+      function initRemoveButtons() {
+        document.querySelectorAll('.remove-item').forEach(button => {
+          button.addEventListener('click', function() {
+            this.parentElement.remove();
+          });
+        });
+      }
+      
+      function loadOpportunities() {
+        // In a real implementation, this would fetch from the API
+        // Get the JWT token from local storage or cookies
+        const token = localStorage.getItem('access_token') || getCookie('access_token');
+        
+        fetch('/api/opportunities?limit=5', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.opportunities && data.opportunities.length > 0) {
+              opportunitiesContainer.innerHTML = '<div class="opportunity-targets">';
+              
+              data.opportunities.forEach(opp => {
+                opportunitiesContainer.innerHTML += `
+                  <div class="target-item">
+                    <div class="form-group">
+                      <label>
+                        <input type="checkbox" class="target-opportunity" data-id="${opp.id || ''}" data-title="${opp.title || ''}" data-org="${opp.organization || ''}" data-location="${opp.location || ''}" data-deadline="${opp.deadline || ''}">
+                        <strong>${opp.title || 'Untitled Opportunity'}</strong>
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <p>${opp.description ? opp.description.substring(0, 200) + (opp.description.length > 200 ? '...' : '') : 'No description available'}</p>
+                      <p><small><strong>Organization:</strong> ${opp.organization || 'Unknown'} | <strong>Location:</strong> ${opp.location || 'Not specified'} | <strong>Deadline:</strong> ${opp.deadline || 'Open'}</small></p>
+                    </div>
+                  </div>
+                `;
+              });
+              
+              opportunitiesContainer.innerHTML += '</div>';
+            } else {
+              opportunitiesContainer.innerHTML = '<p>No opportunities found. Please check back later.</p>';
+            }
+          })
+          .catch(error => {
+            console.error('Error loading opportunities:', error);
+            opportunitiesContainer.innerHTML = '<p>Unable to load opportunities. Please try again later.</p>';
+          });
+      }
+      
+      function collectFormData() {
+        // Collect basic artist info
+        const artistName = document.getElementById('artist-name').value;
+        const artType = document.getElementById('art-type').value;
+        const portfolioDescription = document.getElementById('portfolio-description').value;
+        
+        // Collect portfolio items
+        const portfolioItems = [];
+        document.querySelectorAll('#portfolio-items-container .portfolio-item').forEach(item => {
+          portfolioItems.push({
+            title: item.querySelector('.item-title').value,
+            year: parseInt(item.querySelector('.item-year').value),
+            medium: item.querySelector('.item-medium').value,
+            description: item.querySelector('.item-description').value
+          });
+        });
+        
+        // Collect exhibitions (optional)
+        const pastExhibitions = [];
+        document.querySelectorAll('#exhibitions-container .portfolio-item').forEach(exhibition => {
+          const title = exhibition.querySelector('.exhibition-title').value;
+          // Only add if title is provided
+          if (title) {
+            pastExhibitions.push({
+              title: title,
+              venue: exhibition.querySelector('.exhibition-venue').value,
+              location: exhibition.querySelector('.exhibition-location').value,
+              year: parseInt(exhibition.querySelector('.exhibition-year').value) || new Date().getFullYear()
+            });
+          }
+        });
+        
+        // Collect target opportunities (optional)
+        const targetOpportunities = [];
+        document.querySelectorAll('.target-opportunity:checked').forEach(checkbox => {
+          targetOpportunities.push({
+            id: checkbox.dataset.id,
+            title: checkbox.dataset.title,
+            organization: checkbox.dataset.org,
+            location: checkbox.dataset.location,
+            deadline: checkbox.dataset.deadline
+          });
+        });
+        
+        // Collect optimization goals (optional)
+        const optimizationGoals = document.getElementById('optimization-goals').value;
+        const goalsList = optimizationGoals ? optimizationGoals.split('\n').filter(goal => goal.trim()) : [];
+        
+        // Compile all data
+        portfolioData = {
+          artist_name: artistName,
+          art_type: artType,
+          portfolio_description: portfolioDescription,
+          portfolio_items: portfolioItems,
+          past_exhibitions: pastExhibitions
+        };
+        
+        // Add optional data if provided
+        if (targetOpportunities.length > 0) {
+          portfolioData.target_opportunities = targetOpportunities;
+        }
+        
+        if (goalsList.length > 0) {
+          portfolioData.optimization_goals = goalsList;
+        }
+        
+        return portfolioData;
+      }
+      
+      function analyzePortfolio() {
+        // Collect form data
+        collectFormData();
+        
+        // Show loading indicator
+        portfolioForm.style.display = 'none';
+        analysisLoader.style.display = 'block';
+        
+        // Update steps
+        updateSteps(2);
+        
+        // Get the JWT token from local storage or cookies
+        const token = localStorage.getItem('access_token') || getCookie('access_token');
+        
+        // Send data to the API
+        fetch('/api/portfolio/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(portfolioData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Store analysis result
+          analysisResult = data;
+          
+          // Hide loader, show results
+          analysisLoader.style.display = 'none';
+          analysisResults.style.display = 'block';
+          
+          // Populate analysis sections
+          if (data.success && data.analysis) {
+            document.getElementById('analysis-overview').innerHTML = data.analysis.overview || 'No overview provided.';
+            document.getElementById('analysis-strengths').innerHTML = formatListContent(data.analysis.strengths);
+            document.getElementById('analysis-improvements').innerHTML = formatListContent(data.analysis.areas_for_improvement);
+            document.getElementById('analysis-coherence').innerHTML = data.analysis.coherence_and_narrative || 'No coherence analysis provided.';
+            document.getElementById('analysis-technical').innerHTML = data.analysis.technical_skill_assessment || 'No technical assessment provided.';
+            document.getElementById('analysis-market').innerHTML = data.analysis.market_positioning || 'No market positioning analysis provided.';
+          } else {
+            showError('Failed to analyze portfolio. Please try again.');
+            showPortfolioForm();
+          }
+        })
+        .catch(error => {
+          console.error('Error analyzing portfolio:', error);
+          showError('Error connecting to the analysis service. Please try again later.');
+          showPortfolioForm();
+        });
+      }
+      
+      function getOptimizationPlan() {
+        // Show loading indicator
+        analysisResults.style.display = 'none';
+        analysisLoader.style.display = 'block';
+        
+        // Update steps
+        updateSteps(3);
+        
+        // Get the JWT token from local storage or cookies
+        const token = localStorage.getItem('access_token') || getCookie('access_token');
+        
+        // Send data to the API
+        fetch('/api/portfolio/optimize', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            portfolio_data: portfolioData,
+            analysis_result: analysisResult.analysis
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Store optimization plan
+          optimizationPlan = data;
+          
+          // Hide loader, show results
+          analysisLoader.style.display = 'none';
+          optimizationResults.style.display = 'block';
+          
+          // Populate optimization sections
+          if (data.success && data.optimization_plan) {
+            const plan = data.optimization_plan;
+            
+            document.getElementById('optimization-summary').innerHTML = plan.executive_summary || 'No summary provided.';
+            document.getElementById('optimization-priorities').innerHTML = formatListContent(plan.priority_changes);
+            document.getElementById('optimization-content').innerHTML = formatListContent(plan.content_recommendations);
+            document.getElementById('optimization-presentation').innerHTML = formatListContent(plan.presentation_improvements);
+            document.getElementById('optimization-narrative').innerHTML = plan.narrative_development || 'No narrative recommendations provided.';
+            document.getElementById('optimization-technical').innerHTML = formatListContent(plan.technical_skill_focus);
+            document.getElementById('optimization-additions').innerHTML = formatListContent(plan.strategic_additions);
+            document.getElementById('optimization-timeline').innerHTML = plan.implementation_timeline || 'No timeline provided.';
+            
+            // Populate opportunity matches if available
+            if (data.opportunity_matches && data.opportunity_matches.matches) {
+              const matchesContent = document.getElementById('opportunity-matches');
+              matchesContent.innerHTML = '';
+              
+              data.opportunity_matches.matches.forEach(match => {
+                matchesContent.innerHTML += `
+                  <div class="match-card">
+                    <div class="match-score">${match.match_score}% Match</div>
+                    <h3 class="match-title">${match.title}</h3>
+                    <div class="match-details">
+                      <p><strong>Organization:</strong> ${match.organization || 'Not specified'}</p>
+                      <p><strong>Location:</strong> ${match.location || 'Not specified'}</p>
+                      <p><strong>Deadline:</strong> ${match.deadline || 'Open'}</p>
+                    </div>
+                    <div class="match-rationale">
+                      <h4>Why This Matches Your Work:</h4>
+                      <p>${match.match_rationale}</p>
+                    </div>
+                    <div class="match-strategy">
+                      <h4>Application Strategy:</h4>
+                      <p>${match.application_strategy}</p>
+                    </div>
+                  </div>
+                `;
+              });
+            }
+          } else {
+            showError('Failed to generate optimization plan. Please try again.');
+            analysisResults.style.display = 'block';
+            optimizationResults.style.display = 'none';
+            updateSteps(2);
+          }
+        })
+        .catch(error => {
+          console.error('Error getting optimization plan:', error);
+          showError('Error connecting to the optimization service. Please try again later.');
+          analysisResults.style.display = 'block';
+          optimizationResults.style.display = 'none';
+          updateSteps(2);
+        });
+      }
+      
+      function saveDraft() {
+        const portfolioData = collectFormData();
+        
+        // Get the JWT token from local storage or cookies
+        const token = localStorage.getItem('access_token') || getCookie('access_token');
+        
+        // Save locally first as a backup
+        localStorage.setItem('portfolioDraft', JSON.stringify(portfolioData));
+        
+        // Could also save to server for cloud storage
+        // fetch('/api/portfolio/draft', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': `Bearer ${token}`
+        //   },
+        //   body: JSON.stringify(portfolioData)
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //   if (data.success) {
+        //     alert('Portfolio draft saved to your account!');
+        //   } else {
+        //     alert('Portfolio draft saved locally!');
+        //   }
+        // })
+        // .catch(error => {
+        //   console.error('Error saving draft:', error);
+        //   alert('Portfolio draft saved locally!');
+        // });
+        
+        alert('Portfolio draft saved!');
+      }
+      
+      function showPortfolioForm() {
+        analysisResults.style.display = 'none';
+        optimizationResults.style.display = 'none';
+        portfolioForm.style.display = 'block';
+        
+        // Update steps
+        updateSteps(1);
+      }
+      
+      function downloadPDF() {
+        // In a real implementation, this would generate a PDF
+        alert('PDF download functionality will be implemented in a future update.');
+      }
+      
+      function updateSteps(activeStep) {
+        stepItems.forEach((step, index) => {
+          if (index + 1 <= activeStep) {
+            step.classList.add('active');
+          } else {
+            step.classList.remove('active');
+          }
+        });
+      }
+      
+      function showError(message) {
+        alert(message);
+      }
+      
+      function formatListContent(items) {
+        if (!items || items.length === 0) {
+          return 'No information provided.';
+        }
+        
+        if (typeof items === 'string') {
+          return items;
+        }
+        
+        let html = '<ul>';
+        items.forEach(item => {
+          if (typeof item === 'object' && item.recommendation) {
+            html += `<li class="recommendation-item">${item.recommendation}</li>`;
+          } else {
+            html += `<li>${item}</li>`;
+          }
+        });
+        html += '</ul>';
+        
+        return html;
+      }
+      
+      // Helper function to get cookies (for JWT token)
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+      
+      // Load any saved draft
+      const savedDraft = localStorage.getItem('portfolioDraft');
+      if (savedDraft) {
+        try {
+          const draft = JSON.parse(savedDraft);
+          if (confirm('We found a saved portfolio draft. Would you like to load it?')) {
+            // Populate form with saved data
+            document.getElementById('artist-name').value = draft.artist_name || '';
+            document.getElementById('art-type').value = draft.art_type || '';
+            document.getElementById('portfolio-description').value = draft.portfolio_description || '';
+            
+            // Clear existing items
+            portfolioItemsContainer.innerHTML = '';
+            
+            // Add portfolio items
+            if (draft.portfolio_items && draft.portfolio_items.length > 0) {
+              draft.portfolio_items.forEach(item => {
+                const newItem = document.createElement('div');
+                newItem.className = 'portfolio-item';
+                newItem.innerHTML = `
+                  <button type="button" class="remove-item">&times;</button>
+                  
+                  <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" class="form-control item-title" value="${item.title || ''}" placeholder="Artwork title" required>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Year</label>
+                    <input type="number" class="form-control item-year" value="${item.year || ''}" placeholder="Year created" required>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Medium</label>
+                    <input type="text" class="form-control item-medium" value="${item.medium || ''}" placeholder="e.g., Oil on canvas, Digital print" required>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Description</label>
+                    <textarea class="form-control item-description" placeholder="Describe this work, its concept, technique, etc." required>${item.description || ''}</textarea>
+                  </div>
+                `;
+                
+                portfolioItemsContainer.appendChild(newItem);
+              });
+            } else {
+              // Add at least one blank item
+              addPortfolioItem();
+            }
+            
+            // Clear existing exhibitions
+            exhibitionsContainer.innerHTML = '';
+            
+            // Add exhibitions
+            if (draft.past_exhibitions && draft.past_exhibitions.length > 0) {
+              draft.past_exhibitions.forEach(exhibition => {
+                const newExhibition = document.createElement('div');
+                newExhibition.className = 'portfolio-item';
+                newExhibition.innerHTML = `
+                  <button type="button" class="remove-item">&times;</button>
+                  
+                  <div class="form-group">
+                    <label>Exhibition Title</label>
+                    <input type="text" class="form-control exhibition-title" value="${exhibition.title || ''}" placeholder="Exhibition name">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Venue</label>
+                    <input type="text" class="form-control exhibition-venue" value="${exhibition.venue || ''}" placeholder="Gallery or venue name">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" class="form-control exhibition-location" value="${exhibition.location || ''}" placeholder="City, State, Country">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Year</label>
+                    <input type="number" class="form-control exhibition-year" value="${exhibition.year || ''}" placeholder="Year of exhibition">
+                  </div>
+                `;
+                
+                exhibitionsContainer.appendChild(newExhibition);
+              });
+            } else {
+              // Add at least one blank exhibition
+              addExhibition();
+            }
+            
+            // Add optimization goals if available
+            if (draft.optimization_goals && draft.optimization_goals.length > 0) {
+              document.getElementById('optimization-goals').value = draft.optimization_goals.join('\n');
+            }
+            
+            initRemoveButtons();
+          }
+        } catch (error) {
+          console.error('Error loading draft:', error);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

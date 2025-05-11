@@ -1,0 +1,70 @@
+name: Route Verification
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'main.py'
+      - 'email_auth.py'
+      - 'auth_router_fix.py'
+      - 'google_auth.py'
+      - '**/*.html'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'main.py'
+      - 'email_auth.py'
+      - 'auth_router_fix.py'
+      - 'google_auth.py'
+      - '**/*.html'
+
+jobs:
+  verify-routes:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: proletto_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+          
+      - name: Start Flask app for testing
+        run: |
+          FLASK_APP=main.py python -m flask run &
+          sleep 3  # Allow time for the app to start
+          
+      - name: Check routes
+        run: |
+          echo "Listing all registered routes:"
+          FLASK_APP=main.py python -m flask routes
+          
+          echo "Running route verification:"
+          python scripts/verify_auth.py http://localhost:5000
+          
+          # If any route check fails, the verify_auth.py script should exit with non-zero
+          # which will cause this step to fail
+        env:
+          FLASK_APP: main.py
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/proletto_test
+          FLASK_SECRET_KEY: test_secret_key_for_ci

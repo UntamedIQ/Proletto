@@ -1,0 +1,63 @@
+modules = ["python-3.11"]
+# ──────────────────────────────────────────────────────────────────────────────
+# WORKFLOWS
+# ──────────────────────────────────────────────────────────────────────────────
+
+# API Backend (optional)
+[[workflows.workflow]]
+name = "Proletto API Backend"
+author = "agent"
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python api.py"
+waitForPort = 5001
+
+# Main App (for local dev)
+[[workflows.workflow]]
+name = "Proletto App"
+author = "agent"
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+waitForPort = 5008
+
+# ──────────────────────────────────────────────────────────────────────────────
+# DEPLOY PROLETTO (production)
+# ──────────────────────────────────────────────────────────────────────────────
+[[workflows.workflow]]
+name = "Deploy Proletto"
+author = "agent"
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./flask_deploy.sh"
+# ← change this from 80 to 5000
+waitForPort = 5000
+
+[deployment]
+# ensure we're using your production entrypoint
+run = ["sh", "-c", "./flask_deploy.sh"]
+# No special build step needed for this application
+buildCommand = "echo 'No build command needed, using runtime deployment'"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PORT MAPPINGS
+# ──────────────────────────────────────────────────────────────────────────────
+[[ports]]
+# your app listens on 5000 internally…
+localPort = 5000
+# …and is exposed externally on port 80
+externalPort = 80
+
+# other service mappings (leave only what you need)
+# e.g. api backend if you want direct testing
+[[ports]]
+localPort = 5001
+externalPort = 3001
+
+[[ports]]
+localPort = 5008
+externalPort = 3000
+
+[nix]
+channel = "stable-24_05"
+packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "gitFull", "glibcLocales", "gobject-introspection", "gtk3", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "ocl-icd", "opencl-headers", "openjpeg", "pkg-config", "playwright-driver", "qhull", "tcl", "tk", "zlib"]

@@ -1,0 +1,100 @@
+{% extends "member/base.html" %}
+
+{% block title %}Proletto Dashboard{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-welcome">
+        <h2>Welcome, {{ current_user.username }}!</h2>
+        <p class="last-login">Last login: {{ current_user.last_login|default('First time here? Welcome!', true) }}</p>
+    </div>
+    
+    <div class="dashboard-metrics">
+        <div class="metric-card">
+            <div class="metric-icon">🔍</div>
+            <div class="metric-content">
+                <h3>New Opportunities</h3>
+                <div class="metric-value">{{ opportunity_count|default('12', true) }}</div>
+                <p>Recent opportunities matching your profile</p>
+            </div>
+            <a href="/dashboard/feed" class="metric-action">View All</a>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-icon">✨</div>
+            <div class="metric-content">
+                <h3>Top Picks</h3>
+                <div class="metric-value">5</div>
+                <p>AI-curated opportunities for you</p>
+            </div>
+            <a href="/dashboard/curation" class="metric-action">View Picks</a>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-icon">📊</div>
+            <div class="metric-content">
+                <h3>Portfolio Score</h3>
+                <div class="metric-value">{{ portfolio_score|default('72', true) }}/100</div>
+                <p>Your current portfolio rating</p>
+            </div>
+            <a href="/dashboard/portfolio-optimizer" class="metric-action">Optimize</a>
+        </div>
+    </div>
+    
+    <div class="dashboard-sections">
+        <div class="dashboard-section">
+            <h3>Recent Activity</h3>
+            <div class="activity-feed">
+                {% for activity in activities|default([
+                    {'type': 'opportunity', 'text': 'New opportunity for digital artists in New York', 'time': '2 hours ago'},
+                    {'type': 'portfolio', 'text': 'Your portfolio was viewed by 3 new galleries', 'time': '1 day ago'},
+                    {'type': 'recommendation', 'text': 'New AI recommendation: "Add more sculptural work to your portfolio"', 'time': '3 days ago'}
+                ], true) %}
+                <div class="activity-item activity-{{ activity.type }}">
+                    <div class="activity-icon">
+                        {% if activity.type == 'opportunity' %}🔍
+                        {% elif activity.type == 'portfolio' %}🖼️
+                        {% elif activity.type == 'recommendation' %}🧠
+                        {% else %}📝
+                        {% endif %}
+                    </div>
+                    <div class="activity-content">
+                        <p>{{ activity.text }}</p>
+                        <span class="activity-time">{{ activity.time }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="dashboard-section">
+            <h3>Your Membership</h3>
+            <div class="membership-card">
+                <div class="membership-header">
+                    <h4>{{ current_user.membership_plan|default('Essentials Plan', true) }}</h4>
+                    <span class="membership-badge">{{ current_user.membership_status|default('Active', true) }}</span>
+                </div>
+                <div class="membership-details">
+                    <p>Renews: {{ current_user.membership_renewal|default('June 10, 2025', true) }}</p>
+                    <div class="membership-features">
+                        <span class="feature-item">✓ Opportunity Notifications</span>
+                        <span class="feature-item">✓ Portfolio Storage</span>
+                        <span class="feature-item">✓ Basic AI Tools</span>
+                    </div>
+                </div>
+                <a href="/membership" class="btn btn-outline">Manage Membership</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Dashboard loaded');
+    });
+</script>
+{% endblock %}

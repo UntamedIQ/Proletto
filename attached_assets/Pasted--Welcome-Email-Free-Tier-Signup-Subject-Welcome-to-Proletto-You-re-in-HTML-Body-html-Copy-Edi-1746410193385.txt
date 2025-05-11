@@ -1,0 +1,72 @@
+ Welcome Email (Free Tier Signup)
+Subject:
+Welcome to Proletto – You’re in
+
+HTML Body:
+html
+Copy
+Edit
+<p>Hi {{name}},</p>
+
+<p>Welcome to <strong>Proletto</strong> — a smarter way for artists to find real opportunities.</p>
+
+<p>Here’s what you can do right now:</p>
+<ul>
+  <li>Track your art pieces with QR labels</li>
+  <li>Access curated artist calls updated weekly</li>
+  <li>Preview features like AI matching and portfolio tools</li>
+</ul>
+
+<p>Upgrade to the Supporter Tier to unlock full benefits during beta for just $5/month.</p>
+
+<p><a href="https://myproletto.com/upgrade" style="padding:10px 20px; background:#000; color:#fff; text-decoration:none;">Upgrade Now</a></p>
+
+<p>— The Proletto Team</p>
+✅ 2. Referral Credit Earned
+Subject:
+You just earned a referral credit on Proletto
+
+HTML Body:
+html
+Copy
+Edit
+<p>Hi {{name}},</p>
+
+<p>Someone signed up using your referral code — nice work!</p>
+
+<p>You’ve earned <strong>1 free month</strong> of the Supporter Tier. It will be automatically applied at your next billing cycle.</p>
+
+<p>Keep sharing your code to unlock more perks:</p>
+<p><strong>{{referral_code}}</strong></p>
+
+<p><a href="https://myproletto.com/dashboard" style="padding:10px 20px; background:#000; color:#fff; text-decoration:none;">Go to Dashboard</a></p>
+
+<p>— The Proletto Team</p>
+✅ 3. Supporter Upgrade Confirmation
+Subject:
+Thank you for upgrading to Supporter
+
+HTML Body:
+html
+Copy
+Edit
+<p>Hi {{name}},</p>
+
+<p>Thanks for supporting the mission. You’ve officially unlocked:</p>
+<ul>
+  <li>Early access to new opportunities</li>
+  <li>Weekly email + SMS digests</li>
+  <li>Access to 3 state-specific AI engines</li>
+  <li>Your “Supporter” badge</li>
+</ul>
+
+<p>Let’s go build something great.</p>
+
+<p><a href="https://myproletto.com/dashboard" style="padding:10px 20px; background:#000; color:#fff; text-decoration:none;">View Your Dashboard</a></p>
+
+<p>— The Proletto Team</p>
+🛠️ Optional Placeholder Replacements (if dynamic):
+Variable	What it Should Contain
+{{name}}	User's first name
+{{referral_code}}	User's personal referral code
+

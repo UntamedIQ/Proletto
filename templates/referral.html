@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Refer a Friend - Proletto{% endblock %}
+
+{% block content %}
+<div class="container referral-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card referral-card">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Invite an Artist, Earn Free Months</h1>
+                    
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="referral-info">
+                                <p class="lead">Invite fellow artists to join Proletto. When they sign up using your referral code and become a Supporter, you'll both get a free month.</p>
+                                
+                                <div class="referral-benefits mt-4">
+                                    <h4>How it works:</h4>
+                                    <ol>
+                                        <li>Share your unique referral link with artists in your network</li>
+                                        <li>When they sign up and upgrade to Supporter, you'll both receive a free month</li>
+                                        <li>You can invite up to 5 artists during beta</li>
+                                    </ol>
+                                </div>
+                                
+                                <div class="referral-link-section mt-4">
+                                    <h4>Your Referral Link:</h4>
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="referral-link" class="form-control" value="{{ referral_url }}" readonly>
+                                        <div class="input-group-append">
+                                            <button class="btn copy-btn" id="copy-btn" onclick="copyReferralLink()">Copy</button>
+                                        </div>
+                                    </div>
+                                    <div id="copy-success" class="text-success" style="display: none;">Link copied to clipboard!</div>
+                                </div>
+                                
+                                <div class="referral-code-section mt-3">
+                                    <h4>Your Referral Code:</h4>
+                                    <span class="referral-code">{{ referral_code }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-5">
+                            <div class="referral-qr-section text-center">
+                                <h4>Scan with a mobile device:</h4>
+                                <div class="qr-code-container">
+                                    <img src="{{ url_for('referral_routes.get_referral_qr_code') }}" alt="Referral QR Code" class="img-fluid qr-code">
+                                </div>
+                                <a href="{{ url_for('referral_routes.get_referral_qr_code') }}?size=300" download="proletto-referral-qr.png" class="btn download-qr-btn mt-2">Download QR Code</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card referral-stats-card mt-4">
+                <div class="card-body">
+                    <h2 class="card-title">Your Referral Stats</h2>
+                    
+                    <div class="row text-center stat-boxes">
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h3>{{ referral_count }}</h3>
+                                <p>Artists Invited</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h3>{{ referral_credits }}</h3>
+                                <p>Free Months Earned</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <h3>5</h3>
+                                <p>Max Beta Invites</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if referred_users %}
+                    <div class="referred-users-section mt-4">
+                        <h4>Artists You've Invited:</h4>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Joined On</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in referred_users %}
+                                    <tr>
+                                        <td>{{ user.name }}</td>
+                                        <td>{{ user.created_at.strftime('%b %d, %Y') }}</td>
+                                        <td>
+                                            {% if user.membership_level == 'free' %}
+                                            <span class="badge bg-secondary">Free Tier</span>
+                                            {% elif user.membership_level == 'supporter' %}
+                                            <span class="badge bg-success">Supporter</span>
+                                            {% elif user.membership_level == 'premium' %}
+                                            <span class="badge bg-primary">Premium</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="no-referrals-yet mt-4 text-center">
+                        <p>You haven't invited any artists yet. Share your referral link to get started!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="sharing-section mt-4 mb-5">
+                <div class="row">
+                    <div class="col text-center">
+                        <h3>Share with your network</h3>
+                        <div class="social-share-buttons mt-3">
+                            <a href="mailto:?subject=Join%20me%20on%20Proletto&body=Hey!%20I%20found%20this%20great%20platform%20for%20artists%20called%20Proletto.%20Use%20my%20referral%20link%20to%20join%20and%20we'll%20both%20get%20a%20free%20month:%20{{ referral_url|urlencode }}" class="btn email-share-btn">
+                                <i class="fas fa-envelope"></i> Email
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?text=Join%20me%20on%20Proletto,%20a%20platform%20for%20artists%20to%20find%20opportunities.%20Use%20my%20link%20for%20a%20free%20month:%20{{ referral_url|urlencode }}" target="_blank" class="btn twitter-share-btn">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ referral_url|urlencode }}" target="_blank" class="btn facebook-share-btn">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </a>
+                            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ referral_url|urlencode }}" target="_blank" class="btn linkedin-share-btn">
+                                <i class="fab fa-linkedin-in"></i> LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .referral-container {
+        margin-top: 2rem;
+    }
+    
+    .referral-card, .referral-stats-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    
+    .card-title {
+        color: #a86a3e;
+        font-family: 'Playfair Display', serif;
+    }
+    
+    .referral-code {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #a86a3e;
+        background-color: #f9f5f0;
+        padding: 8px 16px;
+        border-radius: 4px;
+    }
+    
+    .copy-btn {
+        background-color: #a86a3e;
+        color: white;
+        border: none;
+    }
+    
+    .copy-btn:hover {
+        background-color: #8a5632;
+        color: white;
+    }
+    
+    .download-qr-btn {
+        background-color: #a86a3e;
+        color: white;
+    }
+    
+    .download-qr-btn:hover {
+        background-color: #8a5632;
+        color: white;
+    }
+    
+    .qr-code-container {
+        background-color: white;
+        padding: 15px;
+        display: inline-block;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 1px solid #eee;
+    }
+    
+    .qr-code {
+        max-width: 200px;
+    }
+    
+    .stat-boxes {
+        margin-top: 1.5rem;
+    }
+    
+    .stat-box {
+        padding: 1rem;
+        background-color: #f9f5f0;
+        border-radius: 8px;
+    }
+    
+    .stat-box h3 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #a86a3e;
+    }
+    
+    .social-share-buttons .btn {
+        margin: 0 5px;
+        border-radius: 50px;
+        padding: 8px 15px;
+        color: white;
+    }
+    
+    .email-share-btn {
+        background-color: #6c757d;
+    }
+    
+    .twitter-share-btn {
+        background-color: #1da1f2;
+    }
+    
+    .facebook-share-btn {
+        background-color: #4267B2;
+    }
+    
+    .linkedin-share-btn {
+        background-color: #0e76a8;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function copyReferralLink() {
+        var copyText = document.getElementById("referral-link");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        
+        var copySuccess = document.getElementById("copy-success");
+        copySuccess.style.display = "block";
+        
+        setTimeout(function() {
+            copySuccess.style.display = "none";
+        }, 2000);
+    }
+</script>
+{% endblock %}

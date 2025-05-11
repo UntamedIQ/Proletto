@@ -1,0 +1,21 @@
+<!-- 
+Native Lazy-Loading Image Component
+Usage example:
+{% include "includes/lazy_image.html" with 
+   image_src="/static/img/example.jpg",
+   image_alt="Example image",
+   image_width="300",
+   image_height="200",
+   css_class="rounded shadow"
+%}
+-->
+<img
+  src="{{ image_src }}"
+  alt="{{ image_alt|default('Image') }}"
+  width="{{ image_width|default('auto') }}"
+  height="{{ image_height|default('auto') }}"
+  loading="lazy"
+  class="{{ css_class|default('') }}"
+  {% if image_srcset %}srcset="{{ image_srcset }}"{% endif %}
+  {% if image_sizes %}sizes="{{ image_sizes }}"{% endif %}
+>

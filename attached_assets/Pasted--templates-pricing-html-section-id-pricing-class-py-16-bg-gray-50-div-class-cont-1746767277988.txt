@@ -1,0 +1,73 @@
+<!-- templates/pricing.html -->
+<section id="pricing" class="py-16 bg-gray-50">
+  <div class="container mx-auto text-center">
+    <h2 class="text-3xl font-serif mb-8">Choose Your Plan</h2>
+    <div class="grid md:grid-cols-4 gap-6">
+
+      <!-- Essentials -->
+      <div class="card p-6 bg-white rounded-lg shadow">
+        <h3 class="text-2xl font-semibold mb-2">Essentials</h3>
+        <p class="text-4xl font-bold mb-1">$5</p>
+        <p class="mb-4 text-gray-600">per month</p>
+        <button data-price-id="{{ STRIPE_PRICE_ESSENTIALS }}"
+                class="btn btn-primary w-full mb-4">
+          Start Trial
+        </button>
+        <ul class="text-left list-disc list-inside space-y-2">
+          <li>Unlimited organic calls</li>
+          <li>In-app & email alerts</li>
+          <li>Basic AI portfolio tips</li>
+        </ul>
+      </div>
+
+      <!-- Pro (Intro Offer) -->
+      <div class="card p-6 bg-white rounded-lg shadow border-2 border-blue-600">
+        <div class="badge absolute top-0 right-0 bg-blue-600 text-white px-2 py-1 rounded-bl">Most Popular</div>
+        <h3 class="text-2xl font-semibold mb-2">Proletto Insider</h3>
+        <p class="text-3xl font-bold mb-1">$5 <span class="text-lg font-normal">first month</span></p>
+        <p class="mb-4 text-gray-600">$15 / month thereafter</p>
+        <button data-price-id="{{ STRIPE_PRICE_PRO }}"
+                class="btn btn-secondary w-full mb-4">
+          Start Trial
+        </button>
+        <ul class="text-left list-disc list-inside space-y-2">
+          <li>Everything in Essentials</li>
+          <li>Early ad-driven listings</li>
+          <li>Advanced analytics & API access</li>
+        </ul>
+      </div>
+
+      <!-- Gallery/Event -->
+      <div class="card p-6 bg-white rounded-lg shadow">
+        <h3 class="text-2xl font-semibold mb-2">Gallery / Event</h3>
+        <p class="text-4xl font-bold mb-1">$50</p>
+        <p class="mb-4 text-gray-600">per month</p>
+        <button data-price-id="{{ STRIPE_PRICE_GALLERY }}"
+                class="btn btn-primary w-full mb-4">
+          Start Trial
+        </button>
+        <ul class="text-left list-disc list-inside space-y-2">
+          <li>10 gallery/event posts per month</li>
+          <li>Featured carousel slots</li>
+          <li>Detailed click-through reports</li>
+        </ul>
+      </div>
+
+      <!-- Pay-Per-Post -->
+      <div class="card p-6 bg-white rounded-lg shadow">
+        <h3 class="text-2xl font-semibold mb-2">Pay-Per-Post</h3>
+        <p class="text-4xl font-bold mb-1">$10</p>
+        <p class="mb-4 text-gray-600">per listing</p>
+        <button data-price-id="{{ STRIPE_PRICE_POST }}"
+                class="btn btn-secondary w-full mb-4">
+          Create Listing
+        </button>
+        <ul class="text-left list-disc list-inside space-y-2">
+          <li>One-off gallery/event listing</li>
+          <li>Lifetime listing (no monthly fee)</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>

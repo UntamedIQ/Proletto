@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fetchWithRetry Test</title>
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #8B4513;
+            margin-bottom: 1rem;
+        }
+        .test-controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            background-color: #8B4513;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #a0522d;
+        }
+        .result-area {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .log-entry.error {
+            color: #e53935;
+        }
+        .log-entry.success {
+            color: #43a047;
+        }
+        .log-entry.info {
+            color: #1e88e5;
+        }
+        .log-entry.retry {
+            color: #ff9800;
+            font-weight: bold;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .status-indicator.running {
+            background-color: #ff9800;
+            animation: pulse 1s infinite;
+        }
+        .status-indicator.success {
+            background-color: #43a047;
+        }
+        .status-indicator.failure {
+            background-color: #e53935;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        .test-status {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .test-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            background-color: #f0f0f0;
+            margin-right: 5px;
+        }
+        .test-badge.success {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .test-badge.failure {
+            background-color: #ffcdd2;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <h1>fetchWithRetry Function Test</h1>
+    <p>This page tests the fetchWithRetry function's ability to handle connection failures and retry requests with exponential backoff.</p>
+    
+    <div class="test-controls">
+        <button id="run-all">Run All Tests</button>
+        <button id="test-success">Test Success</button>
+        <button id="test-retry-success">Test Retry → Success</button>
+        <button id="test-permanent-failure">Test Permanent Failure</button>
+        <button id="test-timeout">Test Timeout</button>
+        <button id="clear-log">Clear Log</button>
+    </div>
+    
+    <div class="test-status" id="test-status">
+        <div>Status: <span id="status-text">Ready</span> <span class="status-indicator" id="status-indicator"></span></div>
+        <div id="test-results">
+            <!-- Test result badges will appear here -->
+        </div>
+    </div>
+    
+    <div class="result-area" id="results">
+        Welcome to the fetchWithRetry test page.
+        
+        This test verifies:
+        1. Successful requests
+        2. Requests that fail initially but succeed after retries
+        3. Requests that fail permanently
+        4. Requests that time out
+        5. Custom retry events for UI updates
+        
+        Click any of the test buttons above to begin.
+    </div>
+    
+    <script src="/static/js/test_fetch_retry.js"></script>
+    <script>
+        // Override the console methods to also display in our results area
+        const resultsEl = document.getElementById('results');
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+        const testResults = document.getElementById('test-results');
+        
+        // Store original console methods
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+        };
+        
+        // Override console methods
+        console.log = function(...args) {
+            originalConsole.log.apply(console, args);
+            appendToResults('log', args);
+        };
+        
+        console.error = function(...args) {
+            originalConsole.error.apply(console, args);
+            appendToResults('error', args);
+        };
+        
+        console.warn = function(...args) {
+            originalConsole.warn.apply(console, args);
+            appendToResults('warn', args);
+        };
+        
+        console.info = function(...args) {
+            originalConsole.info.apply(console, args);
+            appendToResults('info', args);
+        };
+        
+        // Utility to append to results
+        function appendToResults(type, args) {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            
+            // Special formatting for retry notifications
+            const message = args.join(' ');
+            if (message.includes('Retrying fetch') || message.includes('[Event] fetchRetry')) {
+                entry.className = 'log-entry retry';
+            } else if (message.includes('Success!')) {
+                entry.className = 'log-entry success';
+            }
+            
+            entry.textContent = args.join(' ');
+            resultsEl.appendChild(entry);
+            resultsEl.scrollTop = resultsEl.scrollHeight;
+        }
+        
+        // Helper to update status
+        function updateStatus(status, isSuccess) {
+            statusText.textContent = status;
+            statusIndicator.className = 'status-indicator';
+            if (status === 'Running') {
+                statusIndicator.classList.add('running');
+            } else if (isSuccess) {
+                statusIndicator.classList.add('success');
+            } else {
+                statusIndicator.classList.add('failure');
+            }
+        }
+        
+        // Add test result badge
+        function addTestResult(testName, success) {
+            const badge = document.createElement('span');
+            badge.className = `test-badge ${success ? 'success' : 'failure'}`;
+            badge.textContent = testName + (success ? ' ✓' : ' ✗');
+            testResults.appendChild(badge);
+        }
+        
+        // Clear test results
+        function clearTestResults() {
+            testResults.innerHTML = '';
+        }
+        
+        // Wire up button handlers
+        document.getElementById('run-all').addEventListener('click', async () => {
+            updateStatus('Running', true);
+            clearTestResults();
+            await runAllTests();
+            updateStatus('Completed', true);
+        });
+        
+        document.getElementById('test-success').addEventListener('click', async () => {
+            updateStatus('Running', true);
+            const success = await testSuccessfulFetch();
+            updateStatus('Completed', success);
+            addTestResult('Success', success);
+        });
+        
+        document.getElementById('test-retry-success').addEventListener('click', async () => {
+            updateStatus('Running', true);
+            const success = await testRetryWithSuccess();
+            updateStatus('Completed', success);
+            addTestResult('Retry→Success', success);
+        });
+        
+        document.getElementById('test-permanent-failure').addEventListener('click', async () => {
+            updateStatus('Running', true);
+            const success = await testRetryWithFailure();
+            updateStatus('Completed', success);
+            addTestResult('Perm Failure', success);
+        });
+        
+        document.getElementById('test-timeout').addEventListener('click', async () => {
+            updateStatus('Running', true);
+            const success = await testTimeout();
+            updateStatus('Completed', success);
+            addTestResult('Timeout', success);
+        });
+        
+        document.getElementById('clear-log').addEventListener('click', () => {
+            resultsEl.innerHTML = 'Log cleared.';
+            clearTestResults();
+            updateStatus('Ready', true);
+        });
+    </script>
+</body>
+</html>

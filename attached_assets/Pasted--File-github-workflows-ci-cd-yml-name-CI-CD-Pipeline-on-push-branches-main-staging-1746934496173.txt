@@ -1,0 +1,100 @@
+# File: .github/workflows/ci-cd.yml
+
+name: CI/CD Pipeline
+
+on:
+push:
+branches: \[main, staging]
+pull\_request:
+branches: \[main, staging]
+
+jobs:
+test:
+name: Run Tests
+runs-on: ubuntu-latest
+steps:
+\- name: Checkout code
+uses: actions/checkout\@v3
+
+```
+  - name: Set up Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: '3.10'
+
+  - name: Install dependencies
+    run: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+      pip install -r dev-requirements.txt
+
+  - name: Run lint
+    run: |
+      flake8 .
+
+  - name: Run unit tests
+    run: |
+      pytest --maxfail=1 --disable-warnings -q
+```
+
+deploy\_replit:
+name: Deploy to Replit (Production)
+needs: test
+if: github.ref == 'refs/heads/main' && github.event\_name == 'push'
+runs-on: ubuntu-latest
+steps:
+\- name: Checkout code
+uses: actions/checkout\@v3
+
+```
+  - name: Set up Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: '3.10'
+
+  - name: Install dependencies
+    run: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+
+  - name: Run pre-deploy checks
+    run: python pre_deploy_check.py
+
+  - name: Deploy to Replit
+    env:
+      REPLIT_API_KEY: ${{ secrets.REPLIT_API_KEY }}
+      REPLIT_PROJECT_ID: ${{ secrets.REPLIT_PROJECT_ID }}
+    run: |
+      bash deploy_replit.sh
+```
+
+deploy\_staging:
+name: Deploy to Replit (Staging)
+needs: test
+if: github.ref == 'refs/heads/staging' && github.event\_name == 'push'
+runs-on: ubuntu-latest
+steps:
+\- name: Checkout code
+uses: actions/checkout\@v3
+
+```
+  - name: Set up Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: '3.10'
+
+  - name: Install dependencies
+    run: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+
+  - name: Run pre-deploy checks
+    run: python pre_deploy_check.py --env staging
+
+  - name: Deploy to Replit Staging
+    env:
+      REPLIT_API_KEY: ${{ secrets.REPLIT_STAGING_API_KEY }}
+      REPLIT_PROJECT_ID: ${{ secrets.REPLIT_STAGING_PROJECT_ID }}
+    run: |
+      bash deploy_replit.sh --staging
+```

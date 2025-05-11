@@ -1,0 +1,976 @@
+{% extends "public/base.html" %}
+
+{% block title %}Search Opportunities | Proletto{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Search Page Styles */
+    .search-hero {
+        background-color: #f8f3e6;
+        padding: 4rem 0;
+        text-align: center;
+    }
+    
+    .search-hero h1 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--gray-900);
+    }
+    
+    .search-hero p {
+        font-size: 1.1rem;
+        color: var(--gray-700);
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .main-search-form {
+        max-width: 800px;
+        margin: 0 auto 2rem;
+    }
+    
+    .search-input-container {
+        position: relative;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        padding-left: 3rem;
+        font-size: 1.1rem;
+        border: 2px solid var(--gray-300);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+    
+    .search-input:focus {
+        border-color: #8B5A2B;
+        box-shadow: 0 4px 12px rgba(139, 90, 43, 0.1);
+        outline: none;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-500);
+        font-size: 1.2rem;
+    }
+    
+    .search-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid var(--gray-300);
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: none;
+    }
+    
+    .search-suggestion {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid var(--gray-200);
+        transition: background-color 0.2s;
+    }
+    
+    .search-suggestion:last-child {
+        border-bottom: none;
+    }
+    
+    .search-suggestion:hover {
+        background-color: var(--gray-100);
+    }
+    
+    .suggestion-title {
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 0.25rem;
+    }
+    
+    .suggestion-subtitle {
+        font-size: 0.9rem;
+        color: var(--gray-600);
+    }
+    
+    .suggestion-type {
+        font-size: 0.8rem;
+        background-color: var(--gray-200);
+        color: var(--gray-700);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        margin-left: 0.5rem;
+    }
+    
+    .search-filters {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .filter-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--gray-900);
+    }
+    
+    .filter-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .filter-group:last-child {
+        margin-bottom: 0;
+    }
+    
+    .filter-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--gray-700);
+    }
+    
+    .filter-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 6px;
+        background-color: white;
+        font-size: 0.95rem;
+        color: var(--gray-900);
+    }
+    
+    .filter-select:focus {
+        border-color: #8B5A2B;
+        box-shadow: 0 0 0 2px rgba(139, 90, 43, 0.1);
+        outline: none;
+    }
+    
+    .date-inputs {
+        display: flex;
+        gap: 0.75rem;
+    }
+    
+    .date-input {
+        flex: 1;
+    }
+    
+    .filter-reset {
+        font-size: 0.9rem;
+        color: var(--gray-600);
+        background: none;
+        border: none;
+        padding: 0;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    
+    .filter-reset:hover {
+        color: #8B5A2B;
+    }
+    
+    .filter-apply-btn {
+        display: block;
+        width: 100%;
+        background-color: #8B5A2B;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .filter-apply-btn:hover {
+        background-color: #704626;
+    }
+    
+    .search-results {
+        padding: 3rem 0;
+    }
+    
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .results-count {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--gray-700);
+    }
+    
+    .results-sort {
+        display: flex;
+        align-items: center;
+    }
+    
+    .sort-label {
+        font-size: 0.9rem;
+        margin-right: 0.75rem;
+        color: var(--gray-600);
+    }
+    
+    .sort-select {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 6px;
+        background-color: white;
+    }
+    
+    .opportunity-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s, box-shadow 0.3s;
+        overflow: hidden;
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .opportunity-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-deadline {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #8B5A2B;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0 8px 0 8px;
+        z-index: 1;
+    }
+    
+    .card-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--gray-900);
+    }
+    
+    .card-organization {
+        font-size: 0.95rem;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-location {
+        font-size: 0.9rem;
+        color: var(--gray-600);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .card-location i {
+        margin-right: 0.4rem;
+    }
+    
+    .card-description {
+        font-size: 0.95rem;
+        color: var(--gray-700);
+        margin-bottom: 1.25rem;
+        flex: 1;
+    }
+    
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+    
+    .card-type {
+        font-size: 0.85rem;
+        color: white;
+        background-color: #8B5A2B;
+        padding: 0.35rem 0.75rem;
+        border-radius: 4px;
+    }
+    
+    .card-link {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #8B5A2B;
+        text-decoration: none;
+    }
+    
+    .card-link:hover {
+        text-decoration: underline;
+    }
+    
+    .loading-indicator {
+        text-align: center;
+        padding: 2rem;
+        display: none;
+    }
+    
+    .search-pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    
+    .pagination-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        margin: 0 0.25rem;
+        border-radius: 4px;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-700);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .pagination-link:hover {
+        background-color: var(--gray-100);
+        border-color: var(--gray-400);
+    }
+    
+    .pagination-link.active {
+        background-color: #8B5A2B;
+        border-color: #8B5A2B;
+        color: white;
+    }
+    
+    .pagination-link.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    
+    .empty-results {
+        text-align: center;
+        padding: 3rem 0;
+    }
+    
+    .empty-results-icon {
+        font-size: 4rem;
+        color: var(--gray-300);
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-results h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--gray-900);
+    }
+    
+    .empty-results p {
+        font-size: 1.1rem;
+        color: var(--gray-700);
+        max-width: 600px;
+        margin: 0 auto 1.5rem;
+    }
+    
+    .empty-results .btn {
+        background-color: #8B5A2B;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: background-color 0.2s;
+    }
+    
+    .empty-results .btn:hover {
+        background-color: #704626;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .search-hero {
+            padding: 3rem 0;
+        }
+        
+        .search-hero h1 {
+            font-size: 2rem;
+        }
+        
+        .search-input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            font-size: 1rem;
+        }
+        
+        .date-inputs {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .results-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .search-pagination {
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            justify-content: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Search Hero Section -->
+<section class="search-hero">
+    <div class="container">
+        <h1>Search Art Opportunities</h1>
+        <p>Search through thousands of grants, residencies, exhibitions, and more to find the perfect opportunities for your artistic practice.</p>
+        
+        <!-- Main Search Form -->
+        <div class="main-search-form">
+            <form id="search-form" action="/search" method="get">
+                <div class="search-input-container">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="search-input" id="search-input" name="q" placeholder="Search for opportunities..." value="{{ query }}" autocomplete="off">
+                    <div class="search-suggestions" id="search-suggestions"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results Section -->
+<section class="search-results">
+    <div class="container">
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="search-filters">
+                    <h3 class="filter-title">Filters</h3>
+                    <form id="filters-form">
+                        <!-- Art Medium Filter -->
+                        <div class="filter-group">
+                            <label for="medium-filter" class="filter-label">Art Medium</label>
+                            <select id="medium-filter" name="medium" class="filter-select">
+                                <option value="">All Mediums</option>
+                                {% for medium_option in filter_options.mediums %}
+                                <option value="{{ medium_option }}" {% if medium == medium_option %}selected{% endif %}>{{ medium_option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Location Filter -->
+                        <div class="filter-group">
+                            <label for="location-filter" class="filter-label">Location</label>
+                            <select id="location-filter" name="location" class="filter-select">
+                                <option value="">All Locations</option>
+                                {% for location_option in filter_options.locations %}
+                                <option value="{{ location_option }}" {% if location == location_option %}selected{% endif %}>{{ location_option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Deadline Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Deadline Range</label>
+                            <div class="date-inputs">
+                                <div class="date-input">
+                                    <input type="date" id="deadline-start" name="deadline_start" class="filter-select" placeholder="From">
+                                </div>
+                                <div class="date-input">
+                                    <input type="date" id="deadline-end" name="deadline_end" class="filter-select" placeholder="To">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Filter Actions -->
+                        <div class="filter-group">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <button type="button" id="reset-filters" class="filter-reset">Reset Filters</button>
+                            </div>
+                            <button type="submit" class="filter-apply-btn">Apply Filters</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Search Results -->
+            <div class="col-lg-9">
+                <div class="results-header">
+                    <div class="results-count" id="results-count">Loading results...</div>
+                    <div class="results-sort">
+                        <label for="sort-select" class="sort-label">Sort by:</label>
+                        <select id="sort-select" class="sort-select">
+                            <option value="deadline_asc">Deadline (Soonest)</option>
+                            <option value="deadline_desc">Deadline (Latest)</option>
+                            <option value="title_asc">Title (A-Z)</option>
+                            <option value="relevance">Relevance</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Results Grid -->
+                <div class="row" id="results-container">
+                    <!-- Results will be loaded here via JavaScript -->
+                </div>
+                
+                <!-- Loading Indicator -->
+                <div class="loading-indicator" id="loading-indicator">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading results...</p>
+                </div>
+                
+                <!-- Empty Results State -->
+                <div class="empty-results" id="empty-results" style="display: none;">
+                    <div class="empty-results-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h3>No results found</h3>
+                    <p>We couldn't find any opportunities matching your search. Try adjusting your search terms or filters.</p>
+                    <button class="btn" id="clear-search-btn">Clear Search</button>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="search-pagination" id="pagination-container">
+                    <!-- Pagination links will be added via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Current search state
+    const searchState = {
+        query: '{{ query }}',
+        medium: '{{ medium }}',
+        location: '{{ location }}',
+        deadlineStart: '',
+        deadlineEnd: '',
+        page: 1,
+        perPage: 20,
+        sort: 'deadline_asc',
+        total: 0,
+        totalPages: 0
+    };
+    
+    // DOM elements
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const searchSuggestions = document.getElementById('search-suggestions');
+    const filtersForm = document.getElementById('filters-form');
+    const resetFilters = document.getElementById('reset-filters');
+    const resultsContainer = document.getElementById('results-container');
+    const resultsCount = document.getElementById('results-count');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const emptyResults = document.getElementById('empty-results');
+    const paginationContainer = document.getElementById('pagination-container');
+    const sortSelect = document.getElementById('sort-select');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+    const mediumFilter = document.getElementById('medium-filter');
+    const locationFilter = document.getElementById('location-filter');
+    const deadlineStart = document.getElementById('deadline-start');
+    const deadlineEnd = document.getElementById('deadline-end');
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load initial results
+        loadResults();
+        
+        // Set up event listeners
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            searchState.query = searchInput.value;
+            searchState.page = 1;
+            updateUrl();
+            loadResults();
+        });
+        
+        filtersForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            searchState.medium = mediumFilter.value;
+            searchState.location = locationFilter.value;
+            searchState.deadlineStart = deadlineStart.value;
+            searchState.deadlineEnd = deadlineEnd.value;
+            searchState.page = 1;
+            updateUrl();
+            loadResults();
+        });
+        
+        resetFilters.addEventListener('click', function() {
+            mediumFilter.value = '';
+            locationFilter.value = '';
+            deadlineStart.value = '';
+            deadlineEnd.value = '';
+            searchState.medium = '';
+            searchState.location = '';
+            searchState.deadlineStart = '';
+            searchState.deadlineEnd = '';
+            updateUrl();
+            loadResults();
+        });
+        
+        sortSelect.addEventListener('change', function() {
+            searchState.sort = this.value;
+            loadResults();
+        });
+        
+        clearSearchBtn.addEventListener('click', function() {
+            window.location.href = '/search';
+        });
+        
+        // Search suggestions
+        let suggestionTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(suggestionTimeout);
+            
+            if (this.value.length < 2) {
+                searchSuggestions.style.display = 'none';
+                return;
+            }
+            
+            suggestionTimeout = setTimeout(function() {
+                fetchSuggestions(searchInput.value);
+            }, 300);
+        });
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                searchSuggestions.style.display = 'none';
+            }
+        });
+        
+        // Focus input when clicking on suggestions container
+        searchSuggestions.addEventListener('click', function() {
+            searchInput.focus();
+        });
+    });
+    
+    // Fetch and display search suggestions
+    function fetchSuggestions(query) {
+        fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(suggestions => {
+                if (suggestions.length === 0) {
+                    searchSuggestions.style.display = 'none';
+                    return;
+                }
+                
+                searchSuggestions.innerHTML = '';
+                
+                suggestions.forEach(suggestion => {
+                    const suggestionEl = document.createElement('div');
+                    suggestionEl.className = 'search-suggestion';
+                    
+                    let html = `<div class="suggestion-title">${suggestion.title}`;
+                    
+                    if (suggestion.type) {
+                        html += `<span class="suggestion-type">${formatSuggestionType(suggestion.type)}</span>`;
+                    }
+                    
+                    html += `</div>`;
+                    
+                    if (suggestion.subtitle) {
+                        html += `<div class="suggestion-subtitle">${suggestion.subtitle}</div>`;
+                    }
+                    
+                    suggestionEl.innerHTML = html;
+                    
+                    suggestionEl.addEventListener('click', function() {
+                        window.location.href = suggestion.url;
+                    });
+                    
+                    searchSuggestions.appendChild(suggestionEl);
+                });
+                
+                searchSuggestions.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching suggestions:', error);
+                searchSuggestions.style.display = 'none';
+            });
+    }
+    
+    // Format suggestion type for display
+    function formatSuggestionType(type) {
+        switch (type) {
+            case 'opportunity':
+                return 'Opportunity';
+            case 'organization':
+                return 'Organization';
+            case 'location':
+                return 'Location';
+            default:
+                return type.charAt(0).toUpperCase() + type.slice(1);
+        }
+    }
+    
+    // Load search results
+    function loadResults() {
+        // Show loading indicator
+        loadingIndicator.style.display = 'block';
+        resultsContainer.innerHTML = '';
+        paginationContainer.innerHTML = '';
+        emptyResults.style.display = 'none';
+        
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (searchState.query) params.append('q', searchState.query);
+        if (searchState.medium) params.append('medium', searchState.medium);
+        if (searchState.location) params.append('location', searchState.location);
+        if (searchState.deadlineStart) params.append('deadline_start', searchState.deadlineStart);
+        if (searchState.deadlineEnd) params.append('deadline_end', searchState.deadlineEnd);
+        params.append('page', searchState.page);
+        params.append('per_page', searchState.perPage);
+        
+        // Fetch results
+        fetch(`/api/search?${params.toString()}`)
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
+                
+                if (data.success) {
+                    // Update search state
+                    searchState.total = data.total;
+                    searchState.totalPages = data.total_pages;
+                    
+                    // Update results count
+                    resultsCount.textContent = `${data.total} result${data.total !== 1 ? 's' : ''} found`;
+                    
+                    // Display results or empty state
+                    if (data.results.length === 0) {
+                        emptyResults.style.display = 'block';
+                    } else {
+                        // Sort results if needed
+                        const sortedResults = sortResults(data.results, searchState.sort);
+                        
+                        // Render results
+                        renderResults(sortedResults);
+                        
+                        // Render pagination
+                        renderPagination(data.page, data.total_pages);
+                    }
+                } else {
+                    // Handle error
+                    console.error('Error loading results:', data.message);
+                    emptyResults.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching results:', error);
+                loadingIndicator.style.display = 'none';
+                emptyResults.style.display = 'block';
+            });
+    }
+    
+    // Render search results
+    function renderResults(results) {
+        resultsContainer.innerHTML = '';
+        
+        results.forEach(result => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4 mb-4';
+            
+            const deadline = result.deadline ? new Date(result.deadline) : null;
+            const deadlineStr = deadline ? formatDate(deadline) : 'No Deadline';
+            
+            const description = result.description ? 
+                (result.description.length > 150 ? 
+                result.description.substring(0, 150) + '...' : 
+                result.description) : 
+                'No description available.';
+            
+            col.innerHTML = `
+                <div class="opportunity-card">
+                    <div class="card-deadline">${deadlineStr}</div>
+                    <div class="card-content">
+                        <h3 class="card-title">${result.title}</h3>
+                        <div class="card-organization">${result.organization || 'Unknown Organization'}</div>
+                        <div class="card-location"><i class="bi bi-geo-alt"></i> ${result.location || 'Remote/Various'}</div>
+                        <div class="card-description">${description}</div>
+                        <div class="card-footer">
+                            <span class="card-type">${result.type || 'Opportunity'}</span>
+                            <a href="/opportunity/${result.id}" class="card-link">View Details <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultsContainer.appendChild(col);
+        });
+    }
+    
+    // Render pagination
+    function renderPagination(currentPage, totalPages) {
+        if (totalPages <= 1) return;
+        
+        paginationContainer.innerHTML = '';
+        
+        // Previous button
+        const prevLink = document.createElement('a');
+        prevLink.href = '#';
+        prevLink.className = `pagination-link ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLink.innerHTML = '<i class="bi bi-chevron-left"></i>';
+        
+        if (currentPage > 1) {
+            prevLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                searchState.page = currentPage - 1;
+                updateUrl();
+                loadResults();
+                window.scrollTo(0, 0);
+            });
+        }
+        
+        paginationContainer.appendChild(prevLink);
+        
+        // Page numbers
+        const maxPagesToShow = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+        
+        if (endPage - startPage + 1 < maxPagesToShow) {
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageLink = document.createElement('a');
+            pageLink.href = '#';
+            pageLink.className = `pagination-link ${i === currentPage ? 'active' : ''}`;
+            pageLink.textContent = i;
+            
+            if (i !== currentPage) {
+                pageLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchState.page = i;
+                    updateUrl();
+                    loadResults();
+                    window.scrollTo(0, 0);
+                });
+            }
+            
+            paginationContainer.appendChild(pageLink);
+        }
+        
+        // Next button
+        const nextLink = document.createElement('a');
+        nextLink.href = '#';
+        nextLink.className = `pagination-link ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLink.innerHTML = '<i class="bi bi-chevron-right"></i>';
+        
+        if (currentPage < totalPages) {
+            nextLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                searchState.page = currentPage + 1;
+                updateUrl();
+                loadResults();
+                window.scrollTo(0, 0);
+            });
+        }
+        
+        paginationContainer.appendChild(nextLink);
+    }
+    
+    // Sort results based on selected option
+    function sortResults(results, sortOption) {
+        const sortedResults = [...results];
+        
+        switch (sortOption) {
+            case 'deadline_asc':
+                return sortedResults.sort((a, b) => {
+                    if (!a.deadline) return 1;
+                    if (!b.deadline) return -1;
+                    return new Date(a.deadline) - new Date(b.deadline);
+                });
+                
+            case 'deadline_desc':
+                return sortedResults.sort((a, b) => {
+                    if (!a.deadline) return 1;
+                    if (!b.deadline) return -1;
+                    return new Date(b.deadline) - new Date(a.deadline);
+                });
+                
+            case 'title_asc':
+                return sortedResults.sort((a, b) => a.title.localeCompare(b.title));
+                
+            case 'relevance':
+                // For now, just return the original order (server-side relevance)
+                return sortedResults;
+                
+            default:
+                return sortedResults;
+        }
+    }
+    
+    // Update URL with current search state
+    function updateUrl() {
+        const params = new URLSearchParams();
+        if (searchState.query) params.append('q', searchState.query);
+        if (searchState.medium) params.append('medium', searchState.medium);
+        if (searchState.location) params.append('location', searchState.location);
+        if (searchState.deadlineStart) params.append('deadline_start', searchState.deadlineStart);
+        if (searchState.deadlineEnd) params.append('deadline_end', searchState.deadlineEnd);
+        if (searchState.page > 1) params.append('page', searchState.page);
+        
+        const newUrl = `/search${params.toString() ? '?' + params.toString() : ''}`;
+        history.pushState(searchState, '', newUrl);
+    }
+    
+    // Format date for display
+    function formatDate(date) {
+        const now = new Date();
+        const diffTime = date - now;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays < 0) {
+            return 'Expired';
+        } else if (diffDays === 0) {
+            return 'Today';
+        } else if (diffDays === 1) {
+            return 'Tomorrow';
+        } else if (diffDays < 7) {
+            return `${diffDays} days left`;
+        } else {
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: '2-digit' 
+            });
+        }
+    }
+</script>
+{% endblock %}

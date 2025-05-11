@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace - Proletto</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Workspace detail styles */
+        .workspace-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .workspace-title h1 {
+            margin: 0;
+            color: #5d4037;
+            margin-bottom: 5px;
+        }
+        
+        .workspace-description {
+            color: #6c6c6c;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            max-width: 700px;
+        }
+        
+        .workspace-meta {
+            color: #757575;
+            font-size: 0.9rem;
+        }
+        
+        .workspace-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .workspace-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #f8f3e6;
+            color: #5d4037;
+        }
+        
+        .workspace-btn.primary {
+            background-color: #8d6e63;
+            color: white;
+        }
+        
+        .workspace-btn.success {
+            background-color: #81c784;
+            color: white;
+        }
+        
+        .workspace-btn.warning {
+            background-color: #ffb74d;
+            color: white;
+        }
+        
+        .workspace-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .workspace-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .workspace-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-right: 5px;
+            border-bottom: 3px solid transparent;
+            color: #757575;
+        }
+        
+        .workspace-tab.active {
+            border-bottom-color: #8d6e63;
+            color: #5d4037;
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Projects tab */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .project-card {
+            padding: 20px;
+            background-color: #f8f3e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .project-card h3 {
+            margin-top: 0;
+            color: #5d4037;
+            margin-bottom: 10px;
+        }
+        
+        .project-description {
+            color: #6c6c6c;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .project-meta {
+            color: #757575;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        
+        .project-progress {
+            margin-top: 15px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #81c784;
+            border-radius: 4px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #757575;
+            margin-top: 5px;
+        }
+        
+        /* Members tab */
+        .members-list {
+            margin-top: 20px;
+        }
+        
+        .member-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .member-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #757575;
+            margin-right: 15px;
+        }
+        
+        .member-details h4 {
+            margin: 0;
+            color: #5d4037;
+        }
+        
+        .member-email {
+            color: #757575;
+            font-size: 0.9rem;
+        }
+        
+        .member-role {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            background-color: #e0e0e0;
+            margin-right: 10px;
+        }
+        
+        .role-owner {
+            background-color: #ffd8b1;
+            color: #bf360c;
+        }
+        
+        .role-admin {
+            background-color: #d1c4e9;
+            color: #4527a0;
+        }
+        
+        .role-editor {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        /* Messages tab */
+        .messages-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        .messages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .message-item {
+            margin-bottom: 15px;
+            max-width: 80%;
+        }
+        
+        .message-sender {
+            font-weight: 500;
+            margin-bottom: 3px;
+            color: #5d4037;
+        }
+        
+        .message-content {
+            padding: 10px;
+            background-color: #f8f3e6;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .message-item.self {
+            margin-left: auto;
+        }
+        
+        .message-item.self .message-content {
+            background-color: #e8f5e9;
+        }
+        
+        .message-time {
+            font-size: 0.8rem;
+            color: #757575;
+            margin-top: 3px;
+            text-align: right;
+        }
+        
+        .message-form {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            resize: none;
+        }
+        
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #5d4037;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #5d4037;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #5d4037;
+        }
+        
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .cancel-btn {
+            background-color: #e0e0e0;
+            color: #5d4037;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .submit-btn {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .submit-btn:hover {
+            background-color: #6d4c41;
+        }
+        
+        /* Empty states */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #757575;
+        }
+        
+        .empty-state h3 {
+            margin-top: 15px;
+            color: #5d4037;
+        }
+        
+        .empty-state p {
+            margin-bottom: 20px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main navigation -->
+    <header>
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="/" class="logo-link">
+                    <img src="/assets/proletto-logo.svg" alt="Proletto" class="logo">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/opportunities">Opportunities</a></li>
+                    <li><a href="/workspace" class="active">Workspaces</a></li>
+                    <li><a href="/portfolio">Portfolio</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="user-menu">
+                    <a href="/profile" class="user-link">
+                        <span id="user-name">Account</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="workspace-container">
+            <div class="workspace-header">
+                <div class="workspace-title">
+                    <h1 id="workspace-name">Loading workspace...</h1>
+                    <p id="workspace-description" class="workspace-description"></p>
+                    <div class="workspace-meta">
+                        <span id="workspace-created-at"></span>
+                    </div>
+                </div>
+                <div class="workspace-actions">
+                    <button id="invite-member-btn" class="workspace-btn">Invite Member</button>
+                    <button id="create-project-btn" class="workspace-btn primary">Create Project</button>
+                </div>
+            </div>
+            
+            <div class="workspace-tabs">
+                <div class="workspace-tab active" data-tab="projects">Projects</div>
+                <div class="workspace-tab" data-tab="members">Members</div>
+                <div class="workspace-tab" data-tab="messages">Messages</div>
+            </div>
+            
+            <div id="projects-tab" class="tab-content active">
+                <div id="projects-grid" class="projects-grid">
+                    <!-- Projects will be loaded here -->
+                    <!-- Empty state shown when no projects are available -->
+                    <div id="projects-empty-state" class="empty-state" style="display: none; grid-column: 1/-1;">
+                        <h3>No projects yet</h3>
+                        <p>Create your first project to start collaborating with your team.</p>
+                        <button id="create-first-project-btn" class="workspace-btn primary">Create Your First Project</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="members-tab" class="tab-content">
+                <div id="members-list" class="members-list">
+                    <!-- Members will be loaded here -->
+                    <!-- Empty state shown when no members are available (unlikely) -->
+                    <div id="members-empty-state" class="empty-state" style="display: none;">
+                        <h3>No members yet</h3>
+                        <p>Invite team members to collaborate in this workspace.</p>
+                        <button id="invite-first-member-btn" class="workspace-btn">Invite Members</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="messages-tab" class="tab-content">
+                <div class="messages-container">
+                    <div id="messages-list" class="messages-list">
+                        <!-- Messages will be loaded here -->
+                        <!-- Empty state shown when no messages are available -->
+                        <div id="messages-empty-state" class="empty-state" style="display: none;">
+                            <h3>No messages yet</h3>
+                            <p>Start the conversation by sending a message.</p>
+                        </div>
+                    </div>
+                    <form id="message-form" class="message-form">
+                        <textarea id="message-input" class="message-input" placeholder="Type your message here..." rows="2"></textarea>
+                        <button type="submit" class="workspace-btn primary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Project Modal -->
+    <div id="create-project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Project</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="create-project-form">
+                <div class="form-group">
+                    <label for="project-name">Project Name*</label>
+                    <input type="text" id="project-name" name="name" required placeholder="Enter project name">
+                </div>
+                <div class="form-group">
+                    <label for="project-description">Description</label>
+                    <textarea id="project-description" name="description" placeholder="Describe the project"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="project-deadline">Deadline</label>
+                    <input type="datetime-local" id="project-deadline" name="deadline">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-project">Cancel</button>
+                    <button type="submit" class="submit-btn">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Invite Member Modal -->
+    <div id="invite-member-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Invite Member</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="invite-member-form">
+                <div class="form-group">
+                    <label for="member-email">Member Email*</label>
+                    <input type="email" id="member-email" name="email" required placeholder="Enter member email">
+                </div>
+                <div class="form-group">
+                    <label for="member-role">Role</label>
+                    <select id="member-role" name="role">
+                        <option value="viewer">Viewer (can view only)</option>
+                        <option value="editor">Editor (can edit projects)</option>
+                        <option value="admin">Admin (can invite members, manage workspace)</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-invite">Cancel</button>
+                    <button type="submit" class="submit-btn">Send Invitation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Variables for storing state
+        let currentWorkspace = {
+            id: null,
+            name: '',
+            description: '',
+            created_at: '',
+            projects: [],
+            members: [],
+            messages: [],
+            is_owner: false
+        };
+        
+        let currentUser = {
+            id: null,
+            name: '',
+            email: ''
+        };
+        
+        // On page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Extract workspace ID from URL
+            const workspaceId = getWorkspaceIdFromUrl();
+            
+            if (!workspaceId) {
+                // No workspace ID in URL, redirect to workspaces list
+                window.location.href = '/workspace';
+                return;
+            }
+            
+            // Check if user is logged in
+            checkLoginStatus(workspaceId);
+            
+            // Set up tab switching
+            setupTabs();
+            
+            // Set up modal event listeners
+            setupModals();
+            
+            // Set up form submissions
+            setupForms(workspaceId);
+        });
+        
+        // Check if user is logged in
+        function checkLoginStatus(workspaceId) {
+            // Check if there's a session cookie or token
+            const token = getCookie('session_token') || localStorage.getItem('auth_token');
+            
+            if (token) {
+                // User is logged in, update UI and fetch workspace
+                fetchUserProfile();
+                fetchWorkspaceDetails(workspaceId);
+            } else {
+                // User is not logged in, redirect to login page
+                window.location.href = `/login?redirect=/workspace/${workspaceId}`;
+            }
+        }
+        
+        // Fetch user profile information
+        function fetchUserProfile() {
+            fetch('/api/user/profile')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch user profile');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        currentUser.id = data.user.id;
+                        currentUser.name = data.user.name || data.user.email;
+                        currentUser.email = data.user.email;
+                        
+                        // Update UI with user information
+                        document.getElementById('user-name').textContent = currentUser.name;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user profile:', error);
+                });
+        }
+        
+        // Fetch workspace details
+        function fetchWorkspaceDetails(workspaceId) {
+            fetch(`/api/workspaces/${workspaceId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 403) {
+                            // User doesn't have access to this workspace
+                            window.location.href = '/workspace';
+                            return null;
+                        }
+                        throw new Error('Failed to fetch workspace details');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data) return; // Redirect handled in the response check
+                    
+                    if (data.success) {
+                        // Store workspace data
+                        currentWorkspace = data.workspace;
+                        
+                        // Update UI with workspace information
+                        updateWorkspaceDetails();
+                        renderProjects();
+                        renderMembers();
+                        renderMessages();
+                        
+                        // Update permissions UI
+                        updatePermissionsUI();
+                    } else {
+                        showError(data.error || 'Failed to load workspace');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching workspace details:', error);
+                    showError('Failed to load workspace. Please try again later.');
+                });
+        }
+        
+        // Update workspace details in the UI
+        function updateWorkspaceDetails() {
+            document.getElementById('workspace-name').textContent = currentWorkspace.name;
+            document.getElementById('workspace-description').textContent = currentWorkspace.description || 'No description';
+            
+            // Format and display created date
+            const createdDate = new Date(currentWorkspace.created_at);
+            document.getElementById('workspace-created-at').textContent = `Created on ${createdDate.toLocaleDateString()}`;
+            
+            // Update page title
+            document.title = `${currentWorkspace.name} - Proletto Workspace`;
+        }
+        
+        // Render projects in the UI
+        function renderProjects() {
+            const projectsGrid = document.getElementById('projects-grid');
+            const emptyState = document.getElementById('projects-empty-state');
+            
+            // Clear previous content (except empty state)
+            Array.from(projectsGrid.children).forEach(child => {
+                if (child.id !== 'projects-empty-state') {
+                    child.remove();
+                }
+            });
+            
+            if (!currentWorkspace.projects || currentWorkspace.projects.length === 0) {
+                // Show empty state if no projects
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            // Hide empty state
+            emptyState.style.display = 'none';
+            
+            // Render each project
+            currentWorkspace.projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.dataset.id = project.id;
+                
+                // Calculate progress percentage
+                const progressPercent = project.task_count > 0 
+                    ? Math.round((project.completed_tasks / project.task_count) * 100) 
+                    : 0;
+                
+                let deadlineHtml = '';
+                if (project.deadline) {
+                    const deadline = new Date(project.deadline);
+                    deadlineHtml = `<div class="project-meta">Deadline: ${deadline.toLocaleDateString()}</div>`;
+                }
+                
+                card.innerHTML = `
+                    <h3>${escapeHtml(project.name)}</h3>
+                    <p class="project-description">${escapeHtml(project.description || 'No description')}</p>
+                    ${deadlineHtml}
+                    <div class="project-meta">Status: ${project.status}</div>
+                    <div class="project-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                        <div class="progress-label">
+                            <span>${project.completed_tasks} of ${project.task_count} tasks completed</span>
+                            <span>${progressPercent}%</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click event to navigate to project detail page
+                card.addEventListener('click', () => {
+                    window.location.href = `/workspace/${currentWorkspace.id}/project/${project.id}`;
+                });
+                
+                projectsGrid.appendChild(card);
+            });
+        }
+        
+        // Render members in the UI
+        function renderMembers() {
+            const membersList = document.getElementById('members-list');
+            const emptyState = document.getElementById('members-empty-state');
+            
+            // Clear previous content (except empty state)
+            Array.from(membersList.children).forEach(child => {
+                if (child.id !== 'members-empty-state') {
+                    child.remove();
+                }
+            });
+            
+            if (!currentWorkspace.members || currentWorkspace.members.length === 0) {
+                // Show empty state if no members (unlikely)
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            // Hide empty state
+            emptyState.style.display = 'none';
+            
+            // Render each member
+            currentWorkspace.members.forEach(member => {
+                const item = document.createElement('div');
+                item.className = 'member-item';
+                
+                // Create initials for avatar
+                const nameInitials = member.name
+                    .split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase();
+                
+                // Get role class
+                const roleClass = `role-${member.role}`;
+                
+                item.innerHTML = `
+                    <div class="member-info">
+                        <div class="member-avatar">${nameInitials}</div>
+                        <div class="member-details">
+                            <h4>${escapeHtml(member.name)}</h4>
+                            <span class="member-email">${escapeHtml(member.email)}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="member-role ${roleClass}">${member.role}</span>
+                    </div>
+                `;
+                
+                membersList.appendChild(item);
+            });
+        }
+        
+        // Render messages in the UI
+        function renderMessages() {
+            const messagesList = document.getElementById('messages-list');
+            const emptyState = document.getElementById('messages-empty-state');
+            
+            // Clear previous content (except empty state)
+            Array.from(messagesList.children).forEach(child => {
+                if (child.id !== 'messages-empty-state') {
+                    child.remove();
+                }
+            });
+            
+            if (!currentWorkspace.recent_messages || currentWorkspace.recent_messages.length === 0) {
+                // Show empty state if no messages
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            // Hide empty state
+            emptyState.style.display = 'none';
+            
+            // Render each message (in reverse order - newest first)
+            currentWorkspace.recent_messages.forEach(message => {
+                const isSelf = message.sender.id === currentUser.id;
+                const messageDate = new Date(message.created_at);
+                
+                const item = document.createElement('div');
+                item.className = `message-item ${isSelf ? 'self' : ''}`;
+                
+                item.innerHTML = `
+                    <div class="message-sender">${isSelf ? 'You' : escapeHtml(message.sender.name)}</div>
+                    <div class="message-content">${escapeHtml(message.content)}</div>
+                    <div class="message-time">${formatMessageTime(messageDate)}</div>
+                `;
+                
+                messagesList.appendChild(item);
+            });
+            
+            // Scroll to the bottom of the messages list
+            messagesList.scrollTop = messagesList.scrollHeight;
+        }
+        
+        // Update UI based on user permissions
+        function updatePermissionsUI() {
+            const inviteMemberBtn = document.getElementById('invite-member-btn');
+            
+            // Only show invite button for owners and admins
+            const canInvite = currentWorkspace.is_owner || 
+                currentWorkspace.members.some(m => 
+                    m.id === currentUser.id && m.role === 'admin'
+                );
+            
+            inviteMemberBtn.style.display = canInvite ? 'block' : 'none';
+        }
+        
+        // Setup tab switching
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.workspace-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabName = tab.dataset.tab;
+                    document.getElementById(`${tabName}-tab`).classList.add('active');
+                });
+            });
+        }
+        
+        // Setup modals
+        function setupModals() {
+            // Create project modal
+            const createProjectBtn = document.getElementById('create-project-btn');
+            const createFirstProjectBtn = document.getElementById('create-first-project-btn');
+            const createProjectModal = document.getElementById('create-project-modal');
+            const closeProjectModal = document.querySelector('#create-project-modal .close-modal');
+            const cancelProjectBtn = document.getElementById('cancel-project');
+            
+            // Invite member modal
+            const inviteMemberBtn = document.getElementById('invite-member-btn');
+            const inviteFirstMemberBtn = document.getElementById('invite-first-member-btn');
+            const inviteMemberModal = document.getElementById('invite-member-modal');
+            const closeInviteModal = document.querySelector('#invite-member-modal .close-modal');
+            const cancelInviteBtn = document.getElementById('cancel-invite');
+            
+            // Create project modal events
+            createProjectBtn.addEventListener('click', () => {
+                createProjectModal.style.display = 'flex';
+            });
+            
+            if (createFirstProjectBtn) {
+                createFirstProjectBtn.addEventListener('click', () => {
+                    createProjectModal.style.display = 'flex';
+                });
+            }
+            
+            closeProjectModal.addEventListener('click', () => {
+                createProjectModal.style.display = 'none';
+            });
+            
+            cancelProjectBtn.addEventListener('click', () => {
+                createProjectModal.style.display = 'none';
+            });
+            
+            // Invite member modal events
+            inviteMemberBtn.addEventListener('click', () => {
+                inviteMemberModal.style.display = 'flex';
+            });
+            
+            if (inviteFirstMemberBtn) {
+                inviteFirstMemberBtn.addEventListener('click', () => {
+                    inviteMemberModal.style.display = 'none';
+                });
+            }
+            
+            closeInviteModal.addEventListener('click', () => {
+                inviteMemberModal.style.display = 'none';
+            });
+            
+            cancelInviteBtn.addEventListener('click', () => {
+                inviteMemberModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (event) => {
+                if (event.target === createProjectModal) {
+                    createProjectModal.style.display = 'none';
+                }
+                if (event.target === inviteMemberModal) {
+                    inviteMemberModal.style.display = 'none';
+                }
+            });
+        }
+        
+        // Setup form submissions
+        function setupForms(workspaceId) {
+            // Create project form
+            const createProjectForm = document.getElementById('create-project-form');
+            createProjectForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                
+                const name = createProjectForm.elements.name.value.trim();
+                const description = createProjectForm.elements.description.value.trim();
+                const deadline = createProjectForm.elements.deadline.value;
+                
+                if (!name) {
+                    showError('Project name is required');
+                    return;
+                }
+                
+                // Disable form submission to prevent multiple submissions
+                const submitBtn = createProjectForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating...';
+                
+                // Create project via API
+                fetch(`/api/workspaces/${workspaceId}/projects`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        description: description,
+                        deadline: deadline
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to create project');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Add the new project to the workspace
+                        if (!currentWorkspace.projects) {
+                            currentWorkspace.projects = [];
+                        }
+                        
+                        // Add task count properties for UI rendering
+                        data.project.task_count = 0;
+                        data.project.completed_tasks = 0;
+                        
+                        currentWorkspace.projects.push(data.project);
+                        renderProjects();
+                        
+                        // Close the modal and reset form
+                        document.getElementById('create-project-modal').style.display = 'none';
+                        createProjectForm.reset();
+                        
+                        // Show success message
+                        showSuccess('Project created successfully');
+                    } else {
+                        showError(data.error || 'Failed to create project');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error creating project:', error);
+                    showError('Failed to create project. Please try again later.');
+                })
+                .finally(() => {
+                    // Re-enable the submit button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Project';
+                });
+            });
+            
+            // Invite member form
+            const inviteMemberForm = document.getElementById('invite-member-form');
+            inviteMemberForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                
+                const email = inviteMemberForm.elements.email.value.trim();
+                const role = inviteMemberForm.elements.role.value;
+                
+                if (!email) {
+                    showError('Member email is required');
+                    return;
+                }
+                
+                // Disable form submission to prevent multiple submissions
+                const submitBtn = inviteMemberForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                
+                // Invite member via API
+                fetch(`/api/workspaces/${workspaceId}/members`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        role: role
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to invite member');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Add the new member to the workspace
+                        if (!currentWorkspace.members) {
+                            currentWorkspace.members = [];
+                        }
+                        currentWorkspace.members.push(data.member);
+                        renderMembers();
+                        
+                        // Close the modal and reset form
+                        document.getElementById('invite-member-modal').style.display = 'none';
+                        inviteMemberForm.reset();
+                        
+                        // Show success message
+                        showSuccess('Member invited successfully');
+                    } else {
+                        showError(data.error || 'Failed to invite member');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error inviting member:', error);
+                    showError('Failed to invite member. Please try again later.');
+                })
+                .finally(() => {
+                    // Re-enable the submit button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Invitation';
+                });
+            });
+            
+            // Message form
+            const messageForm = document.getElementById('message-form');
+            messageForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                
+                const messageInput = document.getElementById('message-input');
+                const content = messageInput.value.trim();
+                
+                if (!content) {
+                    return; // Don't send empty messages
+                }
+                
+                // Disable form submission to prevent multiple submissions
+                const submitBtn = messageForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                
+                // Send message via API
+                fetch(`/api/workspaces/${workspaceId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: content
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send message');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Add the new message to the workspace
+                        if (!currentWorkspace.recent_messages) {
+                            currentWorkspace.recent_messages = [];
+                        }
+                        currentWorkspace.recent_messages.unshift(data.message);
+                        renderMessages();
+                        
+                        // Clear the input
+                        messageInput.value = '';
+                    } else {
+                        showError(data.error || 'Failed to send message');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    showError('Failed to send message. Please try again later.');
+                })
+                .finally(() => {
+                    // Re-enable the submit button
+                    submitBtn.disabled = false;
+                });
+            });
+        }
+        
+        // Helper function to get workspace ID from URL
+        function getWorkspaceIdFromUrl() {
+            const path = window.location.pathname;
+            const match = path.match(/\/workspace\/(\d+)/);
+            return match ? match[1] : null;
+        }
+        
+        // Helper function to format message time
+        function formatMessageTime(date) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            // Check if date is today
+            if (date >= today) {
+                return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            }
+            
+            // Check if date is yesterday
+            if (date >= yesterday) {
+                return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            }
+            
+            // Otherwise, show full date
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // Helper function to show error messages
+        function showError(message) {
+            // Simplified error display - in a real app, you might use a toast or notification system
+            alert(message);
+        }
+        
+        // Helper function to show success messages
+        function showSuccess(message) {
+            // Simplified success display
+            alert(message);
+        }
+        
+        // Helper function to safely escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+        
+        // Helper function to get cookie value
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+    </script>
+</body>
+</html>

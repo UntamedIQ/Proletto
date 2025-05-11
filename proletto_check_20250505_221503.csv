@@ -1,0 +1,13 @@
+URL,Status Code,Status
+https://myproletto.replit.app/,200,OK
+https://myproletto.replit.app/dashboard,500,BROKEN
+https://myproletto.replit.app/opportunities,200,OK
+https://myproletto.replit.app/portfolio,500,BROKEN
+https://myproletto.replit.app/profile,500,BROKEN
+https://myproletto.replit.app/simple-admin/,200,OK
+https://myproletto.replit.app/get-started,500,BROKEN
+https://myproletto.replit.app/upgrade,200,OK
+https://myproletto.replit.app/auth/login,200,OK
+https://myproletto.replit.app/auth/register,200,OK
+https://myproletto.replit.app/referral/,500,BROKEN
+https://myproletto.replit.app/workspace,500,BROKEN

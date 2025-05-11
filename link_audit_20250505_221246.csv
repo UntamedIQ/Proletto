@@ -1,0 +1,3 @@
+URL,Anchor Text,Type,Status Code,Broken
+https://example.com,,internal,200,no
+https://www.iana.org/domains/example,More information...,external,200,no

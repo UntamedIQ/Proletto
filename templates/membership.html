@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proletto Membership | The Artist Opportunity Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Membership page specific styles */
+        .membership-header {
+            background: linear-gradient(135deg, #8E44AD 0%, #E84B63 100%);
+            color: white;
+            padding: 60px 20px 40px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 60px;
+        }
+        
+        .membership-header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+        }
+        
+        .membership-header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .membership-plans {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+        
+        .plan-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .plan-card.featured {
+            transform: scale(1.05);
+            border: 2px solid #E84B63;
+        }
+        
+        .plan-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+        
+        .plan-header {
+            padding: 30px 20px;
+            color: white;
+            text-align: center;
+        }
+        
+        .plan-essentials .plan-header {
+            background-color: #6c757d;
+        }
+        
+        .plan-insider .plan-header {
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+        }
+        
+        .plan-gallery .plan-header {
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+        }
+        
+        .plan-payperpost .plan-header {
+            background-color: #27ae60;
+        }
+        
+        .plan-name {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .plan-price {
+            font-size: 2.2rem;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .plan-billing {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .plan-trial {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 5px;
+            color: #8E44AD;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 3px 10px;
+            display: inline-block;
+        }
+        
+        .plan-body {
+            padding: 30px 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .plan-description {
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            color: #555;
+            flex-grow: 1;
+        }
+        
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+        
+        .plan-features li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+            font-size: 0.95rem;
+        }
+        
+        .plan-features li::before {
+            content: "✓";
+            color: #2ecc71;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .plan-features li.feature-unavailable {
+            color: #999;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        .plan-features li.feature-unavailable::before {
+            content: "✗";
+            color: #e74c3c;
+        }
+        
+        .plan-action {
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .plan-button {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.2s;
+            width: 80%;
+        }
+        
+        .plan-essentials .plan-button {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .plan-insider .plan-button {
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+            color: white;
+        }
+        
+        .plan-gallery .plan-button {
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+            color: white;
+        }
+        
+        .plan-payperpost .plan-button {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .plan-special {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+        }
+        
+        .plan-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #E84B63;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .state-options {
+            margin: 15px 0;
+            padding: 0 15px;
+        }
+        
+        .state-options h4 {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+        
+        .state-options select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .testimonials {
+            background-color: #f8f3e6;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .testimonials h2 {
+            margin-bottom: 40px;
+            font-size: 2rem;
+        }
+        
+        .testimonial-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: left;
+            max-width: 350px;
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        
+        .author-info h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .author-info p {
+            margin: 5px 0 0;
+            font-size: 0.8rem;
+            color: #777;
+        }
+        
+        .faq-section {
+            max-width: 800px;
+            margin: 0 auto 80px;
+            padding: 0 20px;
+        }
+        
+        .faq-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2rem;
+        }
+        
+        .faq-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .faq-answer {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        .ai-badge-large {
+            display: inline-block;
+            background: linear-gradient(135deg, #8E44AD 0%, #E84B63 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+        }
+        
+        .ai-badge-icon {
+            margin-right: 8px;
+        }
+        
+        /* Error message styling */
+        .error-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin: 20px auto;
+            max-width: 800px;
+            display: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .membership-plans {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .plan-card.featured {
+                transform: scale(1);
+                order: -1;
+            }
+            
+            .plan-card.featured:hover {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="minimal-header">
+      <div class="header-left">
+        <div class="logo">
+          <a href="/" aria-label="Proletto Home" class="text-logo">
+            Proletto
+          </a>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/how-it-works">How It Works</a></li>
+          <li><a href="/membership" class="active">Membership</a></li>
+        </ul>
+      </nav>
+      <div class="auth-nav">
+        <a href="/auth/login" class="login-register-link">Sign In / Register</a>
+      </div>
+    </header>
+
+    <main>
+        <!-- Error message container -->
+        <div id="error-message" class="error-message"></div>
+        
+        <div class="membership-header">
+            <h1>Choose Your Membership Plan</h1>
+            <p>Join thousands of visual artists accessing exclusive opportunities and AI-powered tools to advance their careers. Unlock specialized services to discover more paid art opportunities, residencies, and grants.</p>
+            <div class="ai-badge-large">
+                <span class="ai-badge-icon">🤖</span> World's First AI-Powered Auto-Submit Technology
+            </div>
+            <div style="margin-top: 20px;">
+                <a href="/auth/login" class="login-link" style="color: white; text-decoration: underline; font-weight: 500;">Already a member? Sign in</a>
+            </div>
+        </div>
+        
+        <div class="membership-plans">
+            <!-- Essentials Plan -->
+            <div class="plan-card plan-essentials">
+                <div class="plan-header">
+                    <div class="plan-name">Essentials</div>
+                    <div class="plan-price">$5</div>
+                    <div class="plan-billing">per month</div>
+                    <div class="plan-trial">7-day free trial</div>
+                </div>
+                <div class="plan-body">
+                    <div class="plan-description">
+                        Essential tools and opportunities for artists beginning to build their professional careers.
+                    </div>
+                    <ul class="plan-features">
+                        <li>Unlimited organic calls</li>
+                        <li>In-app & email alerts</li>
+                        <li>Basic AI portfolio tips</li>
+                        <li>Basic opportunity filtering</li>
+                        <li>Artist resources library</li>
+                        <li class="feature-unavailable">Early ad-driven listings</li>
+                        <li class="feature-unavailable">Advanced analytics & API access</li>
+                    </ul>
+                    <div class="plan-action">
+                        <a href="#" class="plan-button" id="essentials-signup-button">Start Trial</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Proletto Insider Plan (Most Popular) -->
+            <div class="plan-card plan-insider featured">
+                <div class="featured-badge">MOST POPULAR</div>
+                <div class="plan-header">
+                    <div class="plan-name">Proletto Insider</div>
+                    <div class="plan-price">$15</div>
+                    <div class="plan-billing">per month</div>
+                    <div class="plan-trial">7-day free trial</div>
+                </div>
+                <div class="plan-body">
+                    <div class="plan-description">
+                        Advanced features for serious artists looking to maximize opportunities and exposure.
+                    </div>
+                    <ul class="plan-features">
+                        <li>Everything in Essentials</li>
+                        <li>Early ad-driven listings (24-48 hrs)</li>
+                        <li>Advanced analytics & API access</li>
+                        <li>AI portfolio optimization tool</li>
+                        <li>Weekly curated digest email</li>
+                        <li>Application reviews</li>
+                        <li>State-specific opportunity engines</li>
+                    </ul>
+                    
+                    <div class="plan-action">
+                        <a href="#" class="plan-button" id="insider-signup-button">Start Trial</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gallery/Event Plan -->
+            <div class="plan-card plan-gallery">
+                <div class="plan-header">
+                    <div class="plan-name">Gallery / Event</div>
+                    <div class="plan-price">$50</div>
+                    <div class="plan-billing">per month</div>
+                    <div class="plan-trial">7-day free trial</div>
+                </div>
+                <div class="plan-body">
+                    <div class="plan-description">
+                        For galleries, institutions, and event organizers looking to reach our community of artists.
+                    </div>
+                    <ul class="plan-features">
+                        <li>10 gallery/event posts per month</li>
+                        <li>Featured carousel slots</li>
+                        <li>Detailed click-through reports</li>
+                        <li>Artist application management</li>
+                        <li>Dedicated account manager</li>
+                        <li>Custom branding opportunities</li>
+                    </ul>
+                    <div class="plan-action">
+                        <a href="#" class="plan-button" id="gallery-signup-button">Start Trial</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pay-Per-Post Option -->
+            <div class="plan-card plan-payperpost">
+                <div class="plan-header">
+                    <div class="plan-name">Pay-Per-Post</div>
+                    <div class="plan-price">$10</div>
+                    <div class="plan-billing">per listing</div>
+                </div>
+                <div class="plan-body">
+                    <div class="plan-description">
+                        One-time listings for galleries and event organizers with occasional posting needs.
+                    </div>
+                    <ul class="plan-features">
+                        <li>One-off gallery/event listing</li>
+                        <li>Lifetime listing (no monthly fee)</li>
+                        <li>Standard visibility in search results</li>
+                        <li>Basic analytics on views</li>
+                        <li class="feature-unavailable">Featured carousel placement</li>
+                        <li class="feature-unavailable">Detailed application reports</li>
+                    </ul>
+                    <div class="plan-action">
+                        <a href="#" class="plan-button" id="payperpost-button">Create Listing</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alternative Sign-up Options -->
+        <div class="quick-access" style="text-align: center; margin-bottom: 60px;">
+            <h3>Quick Access with Partner Accounts</h3>
+            <p style="margin-bottom: 20px; color: #666;">Already have an account with one of our partners? Get instant premium access:</p>
+            
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <button id="openai-login" class="social-login-button openai-login" style="display: flex; align-items: center; padding: 10px 20px; border-radius: 30px; border: 1px solid #ddd; background-color: white; cursor: pointer;">
+                    <img src="/assets/openai-logo.svg" alt="OpenAI Logo" width="20" height="20" loading="lazy" style="height: 20px; margin-right: 10px;">
+                    OpenAI Account
+                </button>
+            </div>
+            <p style="margin-top: 10px; font-size: 13px; color: #904E95; font-style: italic;">OpenAI account holders receive complimentary Premium access</p>
+        </div>
+        
+        <!-- Testimonials -->
+        <div class="testimonials">
+            <h2>What Our Members Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Thanks to Proletto's AI portfolio optimizer, I completely revamped my artist statement and work samples. I've since been accepted to three residencies I had previously been rejected from!"
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah L." class="testimonial-avatar" width="50" height="50" loading="lazy">
+                        <div class="author-info">
+                            <h4>Sarah L.</h4>
+                            <p>Mixed Media Artist, Brooklyn</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "The state-specific engines are incredible. As a California-based painter, I've discovered grant opportunities I never would have found otherwise. Well worth the monthly fee."
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Michael T." class="testimonial-avatar" width="50" height="50" loading="lazy">
+                        <div class="author-info">
+                            <h4>Michael T.</h4>
+                            <p>Painter, Los Angeles</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "I used the auto-apply AI to submit to a major public art commission in Chicago. Not only did I get an interview, but the selection committee specifically mentioned how impressed they were with my application materials!"
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Jasmine K." class="testimonial-avatar" width="50" height="50" loading="lazy">
+                        <div class="author-info">
+                            <h4>Jasmine K.</h4>
+                            <p>Public Artist, Chicago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">What are state-specific opportunity engines?</div>
+                <div class="faq-answer">
+                    Our state-specific engines are specialized web scrapers tailored to find art opportunities in specific geographic regions. Each engine focuses on sources relevant to that state, including local arts councils, regional grants, museum opportunities, and local galleries. This allows us to find opportunities that broader scrapers miss.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">How does the AI auto-apply technology work?</div>
+                <div class="faq-answer">
+                    Our revolutionary AI auto-apply technology analyzes your portfolio and the specific requirements of each opportunity. It then generates customized application materials such as artist statements, project proposals, and cover letters tailored to each opportunity. Premium members can review, edit, and submit these materials directly through our platform.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">What are the differences between Essentials and Proletto Insider?</div>
+                <div class="faq-answer">
+                    Essentials ($5/month) provides basic tools like unlimited organic calls, alerts, and basic AI portfolio tips. Proletto Insider ($15/month) adds early access to ad-driven listings 24-48 hours before others, advanced analytics, API access, and more comprehensive portfolio tools.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Is my payment information secure?</div>
+                <div class="faq-answer">
+                    Absolutely. We use Stripe, a PCI-compliant payment processor, to handle all transactions. Your payment information is never stored on our servers, and all transactions are encrypted using industry-standard TLS technology.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">How does the 7-day free trial work?</div>
+                <div class="faq-answer">
+                    Our paid membership tiers (Essentials, Proletto Insider, and Gallery/Event) include a 7-day free trial. You'll get full access to all features of your chosen plan immediately, and won't be charged until after the 7-day trial period. You can cancel anytime during the trial and won't be charged.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Can I cancel my subscription at any time?</div>
+                <div class="faq-answer">
+                    Yes, you can cancel your subscription at any time from your account settings. You'll continue to have access to your plan's features until the end of your current billing period. We don't offer refunds for partial months, but we also don't have any cancellation fees.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">What if I'm an international artist?</div>
+                <div class="faq-answer">
+                    While our state-specific engines focus on US opportunities, our social media scraper and general engine find opportunities worldwide. We're also developing country-specific engines for Canada, UK, Australia, and the EU, which will be available to Proletto Insider members when launched.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Do you have promo codes available?</div>
+                <div class="faq-answer">
+                    Yes, we occasionally offer promotional codes for special discounts. If you have a promo code, you can enter it during checkout. We also offer special pricing for students, educational institutions, and nonprofit arts organizations. Please contact our support team at support@proletto.com for more information.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sign in link at bottom -->
+        <div style="text-align: center; margin: 40px 0;">
+            <a href="/auth/login" class="login-link" style="color: #904E95; text-decoration: underline; font-weight: 500; font-size: 16px;">Already a member? Sign in</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Proletto</h3>
+                <p>Proletto is a platform designed to connect visual artists with professional opportunities.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/how-it-works">How It Works</a></li>
+                    <li><a href="/membership">Membership</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: support@myproletto.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Proletto. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="modal-content" style="background-color: white; padding: 30px; border-radius: 8px; max-width: 500px; width: 100%; position: relative;">
+            <span class="close-modal" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #999;">&times;</span>
+            
+            <h2 style="margin-top: 0; margin-bottom: 20px; text-align: center;">Join Proletto</h2>
+            
+            <form id="membership-form">
+                <div style="margin-bottom: 20px;">
+                    <label for="signup-email" style="display: block; margin-bottom: 8px; font-weight: bold;">Email Address</label>
+                    <input type="email" id="signup-email" placeholder="Your email address" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="signup-name" style="display: block; margin-bottom: 8px; font-weight: bold;">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Your name" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                </div>
+                
+                <div id="payment-section" style="margin-bottom: 20px; display: none;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Payment Information</label>
+                    <div id="payment-element" style="border: 1px solid #ddd; padding: 15px; border-radius: 4px;">
+                        <!-- Stripe Elements would be injected here in a real implementation -->
+                        <p style="margin: 0; text-align: center; color: #777;">Credit card payment simulation</p>
+                    </div>
+                </div>
+                
+                <div id="plan-summary" style="margin-bottom: 20px; padding: 15px; background-color: #f8f8f8; border-radius: 4px; display: none;">
+                    <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 1.2rem;">Plan Summary</h3>
+                    <div id="plan-details"></div>
+                    <div id="plan-price" style="margin-top: 10px; font-weight: bold;"></div>
+                </div>
+                
+                <button type="submit" id="signup-submit" style="width: 100%; padding: 12px; background-color: #E84B63; color: white; border: none; border-radius: 30px; font-weight: bold; cursor: pointer;">Complete Signup</button>
+                
+                <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: #777;">
+                    By signing up, you agree to our <a href="#" style="color: #E84B63;">Terms of Service</a> and <a href="#" style="color: #E84B63;">Privacy Policy</a>.
+                </div>
+            </form>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <p style="margin-bottom: 10px; color: #777; font-size: 0.9rem;">Or sign up with:</p>
+                <div style="display: flex; justify-content: center; gap: 15px;">
+                    <button id="google-modal-signup" style="display: flex; align-items: center; padding: 8px 15px; border-radius: 4px; border: 1px solid #ddd; background-color: white; cursor: pointer;">
+                        <img src="/assets/google-logo.svg" alt="Google Logo" width="18" height="18" loading="lazy" style="height: 18px; margin-right: 8px;">
+                        Google
+                    </button>
+                    <button id="openai-modal-signup" style="display: flex; align-items: center; padding: 8px 15px; border-radius: 4px; border: 1px solid #ddd; background-color: white; cursor: pointer;">
+                        <img src="/assets/openai-logo.svg" alt="OpenAI Logo" width="18" height="18" loading="lazy" style="height: 18px; margin-right: 8px;">
+                        OpenAI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store user subscription information
+        let userSubscription = {
+            isRegistered: false,
+            membershipLevel: "free",
+            chosenStates: []
+        };
+        
+        // Check if user is already registered from localStorage
+        function checkRegistrationStatus() {
+            const savedEmail = localStorage.getItem('proletto_email');
+            const membershipLevel = localStorage.getItem('proletto_membership_level') || 'free';
+            const chosenStates = JSON.parse(localStorage.getItem('proletto_chosen_states') || '[]');
+            
+            if (savedEmail) {
+                userSubscription.isRegistered = true;
+                userSubscription.email = savedEmail;
+                userSubscription.membershipLevel = membershipLevel;
+                userSubscription.chosenStates = chosenStates;
+                
+                // Update UI based on current membership
+                updateUIForMembership();
+            }
+        }
+        
+        // Update UI based on current membership level
+        function updateUIForMembership() {
+            const currentLevel = userSubscription.membershipLevel;
+            const planButtons = {
+                essentials: document.getElementById('essentials-signup-button'),
+                insider: document.getElementById('insider-signup-button'),
+                gallery: document.getElementById('gallery-signup-button'),
+                payperpost: document.getElementById('payperpost-button')
+            };
+            
+            // Update button texts
+            Object.keys(planButtons).forEach(level => {
+                if (level === currentLevel) {
+                    planButtons[level].textContent = 'Current Plan';
+                    planButtons[level].style.backgroundColor = '#27ae60';
+                    planButtons[level].style.cursor = 'default';
+                    planButtons[level].removeEventListener('click', showSignupModal);
+                } else {
+                    planButtons[level].addEventListener('click', function() {
+                        showSignupModal(level);
+                    });
+                }
+            });
+            
+            // If user is a supporter, populate state selections
+            if (currentLevel === 'supporter' && userSubscription.chosenStates.length > 0) {
+                for (let i = 0; i < Math.min(3, userSubscription.chosenStates.length); i++) {
+                    document.getElementById(`state-select-${i+1}`).value = userSubscription.chosenStates[i];
+                }
+                
+                // Disable changing if not a supporter
+                const stateSelects = document.querySelectorAll('.state-select');
+                stateSelects.forEach(select => {
+                    select.disabled = false;
+                });
+            }
+        }
+        
+        // Show signup modal
+        function showSignupModal(planLevel) {
+            // Set the current plan being signed up for
+            const modal = document.getElementById('signup-modal');
+            modal.dataset.planLevel = planLevel;
+            
+            // Show/hide payment section based on plan
+            const paymentSection = document.getElementById('payment-section');
+            paymentSection.style.display = planLevel === 'free' ? 'none' : 'block';
+            
+            // Update plan summary
+            const planSummary = document.getElementById('plan-summary');
+            const planDetails = document.getElementById('plan-details');
+            const planPrice = document.getElementById('plan-price');
+            
+            planSummary.style.display = 'block';
+            
+            // Set plan details based on level
+            if (planLevel === 'essentials') {
+                planDetails.innerHTML = '<p>Essentials Membership</p><p>Essential tools for artists beginning their career</p>';
+                planPrice.textContent = 'Price: $5.00 / month';
+            } else if (planLevel === 'insider') {
+                planDetails.innerHTML = `
+                    <p>Proletto Insider Membership</p>
+                    <p>Advanced features for serious artists</p>
+                    <p>Special first month pricing: $5.00</p>
+                `;
+                planPrice.textContent = 'Regular price: $15.00 / month';
+            } else if (planLevel === 'gallery') {
+                planDetails.innerHTML = '<p>Gallery / Event Membership</p><p>For galleries and organizations posting opportunities</p>';
+                planPrice.textContent = 'Price: $50.00 / month';
+            } else if (planLevel === 'payperpost') {
+                planDetails.innerHTML = '<p>Pay-Per-Post</p><p>One-off gallery/event listing</p>';
+                planPrice.textContent = 'Price: $10.00 per listing';
+            }
+            
+            // Show the modal
+            modal.style.display = 'flex';
+        }
+        
+        // Close signup modal
+        function closeSignupModal() {
+            document.getElementById('signup-modal').style.display = 'none';
+        }
+        
+        // Handle form submission
+        function handleSignupSubmit(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('signup-email').value;
+            const name = document.getElementById('signup-name').value;
+            const planLevel = document.getElementById('signup-modal').dataset.planLevel;
+            
+            // Validate email
+            if (!validateEmail(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            // Get selected states for supporter plan
+            let chosenStates = [];
+            if (planLevel === 'supporter') {
+                for (let i = 1; i <= 3; i++) {
+                    const stateSelect = document.getElementById(`state-select-${i}`);
+                    if (stateSelect.value) {
+                        chosenStates.push(stateSelect.value);
+                    }
+                }
+                
+                // Validate state selection for supporter plan
+                if (chosenStates.length < 3) {
+                    alert('Please select all three states for your Supporter plan.');
+                    return;
+                }
+            }
+            
+            // For free plan, just register the user
+            if (planLevel === 'free') {
+                // Update user subscription info
+                userSubscription.isRegistered = true;
+                userSubscription.email = email;
+                userSubscription.membershipLevel = 'free';
+                
+                // Save to localStorage
+                localStorage.setItem('proletto_email', email);
+                localStorage.setItem('proletto_name', name);
+                localStorage.setItem('proletto_membership_level', 'free');
+                
+                // Close modal
+                closeSignupModal();
+                
+                // Update UI
+                updateUIForMembership();
+                
+                // Show success message
+                alert('Thank you for signing up to Proletto!');
+                
+                // Also register with the backend
+                registerWithBackend(email, name, 'free');
+            } else {
+                // For paid plans, create a checkout session with Stripe
+                // Show loading state
+                const submitButton = document.getElementById('signup-submit');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Processing...';
+                submitButton.disabled = true;
+                
+                // Save data temporarily
+                localStorage.setItem('proletto_temp_email', email);
+                localStorage.setItem('proletto_temp_name', name);
+                localStorage.setItem('proletto_temp_plan', planLevel);
+                if (planLevel === 'supporter') {
+                    localStorage.setItem('proletto_temp_states', JSON.stringify(chosenStates));
+                }
+                
+                // Create checkout session with Stripe
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('plan', planLevel);
+                
+                // Include selected states for supporter plan
+                if (planLevel === 'supporter' && chosenStates.length === 3) {
+                    formData.append('states', JSON.stringify(chosenStates));
+                }
+                
+                fetch('/create-checkout-session', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to Stripe checkout
+                        window.location.href = data.checkout_url;
+                    } else {
+                        throw new Error(data.error || 'Error creating checkout session');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Sorry, there was a problem processing your payment. Please try again or contact support.');
+                    
+                    // Reset button
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                });
+            }
+        }
+        
+        // Register with backend
+        function registerWithBackend(email, name, plan, states = []) {
+            // Create form data
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('name', name);
+            formData.append('plan', plan);
+            
+            if (states && states.length > 0) {
+                formData.append('states', JSON.stringify(states));
+            }
+            
+            // Send to backend
+            fetch('/api/upgrade', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Registration successful:', data);
+            })
+            .catch(error => {
+                console.error('Registration error:', error);
+            });
+        }
+        
+        // Handle OpenAI login
+        function handleOpenAILogin() {
+            // Set user as premium after OpenAI login
+            localStorage.setItem('proletto_email', 'user@openai.com');
+            localStorage.setItem('proletto_signup_method', 'openai');
+            localStorage.setItem('proletto_membership_level', 'premium');
+            
+            // Update membership status
+            userSubscription.isRegistered = true;
+            userSubscription.email = 'user@openai.com';
+            userSubscription.signupMethod = 'openai';
+            userSubscription.membershipLevel = 'premium';
+            
+            // Update UI
+            updateUIForMembership();
+            
+            // Show success message and redirect
+            alert('Successfully logged in with OpenAI account. You now have Premium access!');
+            window.location.href = '/thankyou.html';
+        }
+        
+        // Email validation helper
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        // Add event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check registration status
+            checkRegistrationStatus();
+            
+            // Add event listeners to plan buttons
+            document.getElementById('essentials-signup-button').addEventListener('click', function() {
+                showSignupModal('essentials');
+            });
+            
+            document.getElementById('insider-signup-button').addEventListener('click', function() {
+                showSignupModal('insider');
+            });
+            
+            document.getElementById('gallery-signup-button').addEventListener('click', function() {
+                showSignupModal('gallery');
+            });
+            
+            document.getElementById('payperpost-button').addEventListener('click', function() {
+                showSignupModal('payperpost');
+            });
+            
+            // Close modal when clicking the X or outside the modal
+            document.querySelector('.close-modal').addEventListener('click', closeSignupModal);
+            
+            document.getElementById('signup-modal').addEventListener('click', function(event) {
+                if (event.target === this) {
+                    closeSignupModal();
+                }
+            });
+            
+            // Form submission
+            document.getElementById('membership-form').addEventListener('submit', handleSignupSubmit);
+            
+            // Social login buttons
+            document.getElementById('openai-login').addEventListener('click', handleOpenAILogin);
+            document.getElementById('openai-modal-signup').addEventListener('click', handleOpenAILogin);
+            
+            document.getElementById('google-modal-signup').addEventListener('click', function() {
+                alert('Google login integration would be implemented in the production version.');
+            });
+            
+            // State selection change handling
+            const stateSelects = document.querySelectorAll('.state-select');
+            stateSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    // Get all currently selected values
+                    const selectedValues = Array.from(stateSelects).map(s => s.value).filter(v => v);
+                    
+                    // Check for duplicates
+                    if (new Set(selectedValues).size !== selectedValues.length) {
+                        alert('Please select different states for each option.');
+                        this.value = '';
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Check for error messages in URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const error = getUrlParameter('error');
+            const message = getUrlParameter('message');
+            
+            if (error) {
+                const errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    if (message) {
+                        errorMessageElement.textContent = message;
+                    } else if (error === 'checkout_failed') {
+                        errorMessageElement.textContent = 'There was an error processing your checkout. Please try again or contact support@myproletto.com for assistance.';
+                    } else {
+                        errorMessageElement.textContent = 'An error occurred. Please try again or contact support@myproletto.com for assistance.';
+                    }
+                    errorMessageElement.style.display = 'block';
+                    
+                    // Scroll to error message
+                    errorMessageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            
+            // Set up checkout buttons
+            document.getElementById('essentials-signup-button').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/create-checkout-session?plan=essentials';
+            });
+            
+            document.getElementById('insider-signup-button').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/create-checkout-session?plan=insider';
+            });
+            
+            document.getElementById('gallery-signup-button').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/create-checkout-session?plan=gallery';
+            });
+            
+            document.getElementById('payperpost-button').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/create-checkout-session?plan=payperpost';
+            });
+            
+            // Find the bottom CTA button and attach event listener
+            const bottomCtaButton = document.getElementById('bottom-cta-button');
+            if (bottomCtaButton) {
+                bottomCtaButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = '/create-checkout-session?plan=insider';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

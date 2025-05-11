@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Proletto Admin{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/favicon.ico">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/static/css/admin.css">
+    
+    <!-- Additional page-specific CSS -->
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary-color: #e67e22;
+            --accent-color: #fd79a8;
+            --dark-color: #2d3436;
+            --light-color: #f8f9fa;
+            --success-color: #00b894;
+            --warning-color: #fdcb6e;
+            --danger-color: #d63031;
+            --info-color: #0984e3;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --sidebar-width-collapsed: 72px;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--gray-900);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: width 0.3s;
+            overflow-x: hidden;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .admin-sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-header-logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-header-logo img {
+            height: 32px;
+            margin-right: 10px;
+        }
+        
+        .sidebar-header-logo h1 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .sidebar-toggle-btn {
+            margin-left: auto;
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .sidebar-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-section-title {
+            color: var(--gray-500);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        
+        .sidebar-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-item {
+            margin: 2px 0;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            position: relative;
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        
+        .sidebar-link.active {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #fff;
+        }
+        
+        .sidebar-link-icon {
+            font-size: 18px;
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-link-text {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .sidebar-collapse-only {
+            display: none;
+        }
+        
+        .admin-sidebar.collapsed .sidebar-header-logo h1,
+        .admin-sidebar.collapsed .sidebar-section-title,
+        .admin-sidebar.collapsed .sidebar-link-text,
+        .admin-sidebar.collapsed .sidebar-collapse-hide {
+            display: none;
+        }
+        
+        .admin-sidebar.collapsed .sidebar-collapse-only {
+            display: block;
+        }
+        
+        .admin-sidebar.collapsed .sidebar-link {
+            padding: 12px 0;
+            justify-content: center;
+        }
+        
+        .admin-sidebar.collapsed .sidebar-link-icon {
+            margin-right: 0;
+        }
+        
+        /* Main Content Styles */
+        .admin-main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s;
+            width: calc(100% - var(--sidebar-width));
+        }
+        
+        .admin-sidebar.collapsed + .admin-main {
+            margin-left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
+        }
+        
+        .admin-header {
+            height: var(--header-height);
+            background-color: #fff;
+            border-bottom: 1px solid var(--gray-300);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+        }
+        
+        .header-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-search {
+            position: relative;
+            margin-right: 24px;
+        }
+        
+        .header-search-input {
+            padding: 8px 12px 8px 36px;
+            border: 1px solid var(--gray-300);
+            border-radius: 24px;
+            outline: none;
+            background-color: var(--gray-100);
+            width: 240px;
+            font-size: 14px;
+        }
+        
+        .header-search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+        
+        .header-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .header-button {
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+        
+        .header-button:hover {
+            background: var(--gray-200);
+        }
+        
+        .header-button .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            background-color: var(--danger-color);
+            color: #fff;
+        }
+        
+        .header-profile {
+            display: flex;
+            align-items: center;
+            margin-left: 24px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .header-profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: #fff;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .header-profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header-profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        
+        .header-profile-role {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+        
+        .header-profile-dropdown {
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
+            color: var(--gray-500);
+        }
+        
+        /* Content Styles */
+        .admin-content {
+            padding: 24px;
+        }
+        
+        .admin-content-header {
+            margin-bottom: 24px;
+        }
+        
+        .admin-content-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0 0 8px;
+        }
+        
+        .admin-content-subtitle {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin: 0;
+        }
+        
+        .admin-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .admin-card-header {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .admin-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+        }
+        
+        .admin-card-subtitle {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin: 4px 0 0;
+        }
+        
+        .admin-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Table Styles */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .admin-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+            font-size: 14px;
+        }
+        
+        .admin-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 14px;
+            color: var(--gray-800);
+        }
+        
+        .admin-table tbody tr:hover {
+            background-color: var(--gray-50);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 1001;
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .admin-sidebar.collapsed + .admin-main {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+                margin-right: 16px;
+            }
+            
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 1000;
+            }
+            
+            .sidebar-overlay.show {
+                display: block;
+            }
+            
+            .header-search {
+                display: none;
+            }
+            
+            .header-profile-info {
+                display: none;
+            }
+            
+            .admin-content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="sidebar-header">
+            <a href="/admin" class="sidebar-header-logo">
+                <img src="/assets/logo-white.svg" alt="Proletto">
+                <h1>Proletto Admin</h1>
+            </a>
+            <button class="sidebar-toggle-btn" id="sidebar-toggle">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Main</div>
+                <ul class="sidebar-items">
+                    <li class="sidebar-item">
+                        <a href="/admin" class="sidebar-link {% if request.path == '/admin' %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                            <span class="sidebar-link-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="/admin/metrics" class="sidebar-link {% if '/admin/metrics' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-graph-up"></i></span>
+                            <span class="sidebar-link-text">Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Management</div>
+                <ul class="sidebar-items">
+                    <li class="sidebar-item">
+                        <a href="/admin/users" class="sidebar-link {% if '/admin/users' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-people"></i></span>
+                            <span class="sidebar-link-text">Users</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="/admin/opportunities" class="sidebar-link {% if '/admin/opportunities' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-lightning"></i></span>
+                            <span class="sidebar-link-text">Opportunities</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="/admin/engines" class="sidebar-link {% if '/admin/engines' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-cpu"></i></span>
+                            <span class="sidebar-link-text">Engines</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Email</div>
+                <ul class="sidebar-items">
+                    <li class="sidebar-item">
+                        <a href="/admin/email-digest" class="sidebar-link {% if '/admin/email-digest' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-envelope"></i></span>
+                            <span class="sidebar-link-text">Email Digest</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="/admin/email-campaigns" class="sidebar-link {% if '/admin/email-campaigns' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-megaphone"></i></span>
+                            <span class="sidebar-link-text">Campaigns</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">System</div>
+                <ul class="sidebar-items">
+                    <li class="sidebar-item">
+                        <a href="/admin/settings" class="sidebar-link {% if '/admin/settings' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-gear"></i></span>
+                            <span class="sidebar-link-text">Settings</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="/admin/logs" class="sidebar-link {% if '/admin/logs' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-journal-text"></i></span>
+                            <span class="sidebar-link-text">Logs</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="/admin/system-health" class="sidebar-link {% if '/admin/system-health' in request.path %}active{% endif %}">
+                            <span class="sidebar-link-icon"><i class="bi bi-heart-pulse"></i></span>
+                            <span class="sidebar-link-text">System Health</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <ul class="sidebar-items">
+                    <li class="sidebar-item">
+                        <a href="/admin/logout" class="sidebar-link">
+                            <span class="sidebar-link-icon"><i class="bi bi-box-arrow-right"></i></span>
+                            <span class="sidebar-link-text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Header -->
+        <header class="admin-header">
+            <button class="header-button mobile-menu-toggle d-lg-none" id="mobile-menu-toggle">
+                <i class="bi bi-list"></i>
+            </button>
+            
+            <h1 class="page-title">{% block page_title %}Admin Dashboard{% endblock %}</h1>
+            
+            <div class="header-actions">
+                <div class="header-search">
+                    <input type="text" class="header-search-input" placeholder="Search...">
+                    <i class="bi bi-search header-search-icon"></i>
+                </div>
+                
+                <div class="header-buttons">
+                    <button class="header-button">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    
+                    <button class="header-button">
+                        <i class="bi bi-envelope"></i>
+                        <span class="badge">2</span>
+                    </button>
+                </div>
+                
+                <div class="header-profile">
+                    <div class="header-profile-avatar">
+                        {% if current_user.profile_image %}
+                            <img src="{{ current_user.profile_image }}" alt="Admin">
+                        {% else %}
+                            A
+                        {% endif %}
+                    </div>
+                    <div class="header-profile-info">
+                        <span class="header-profile-name">{{ current_user.username }}</span>
+                        <span class="header-profile-role">Administrator</span>
+                    </div>
+                    <i class="bi bi-chevron-down header-profile-dropdown"></i>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <div class="admin-content">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Core Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle
+            const sidebar = document.getElementById('admin-sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Update the toggle icon
+                    const icon = this.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.classList.remove('bi-chevron-left');
+                        icon.classList.add('bi-chevron-right');
+                    } else {
+                        icon.classList.remove('bi-chevron-right');
+                        icon.classList.add('bi-chevron-left');
+                    }
+                    
+                    // Save state in localStorage
+                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+                });
+            }
+            
+            // Mobile menu toggle
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                    sidebarOverlay.classList.toggle('show');
+                });
+            }
+            
+            // Sidebar overlay click
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                });
+            }
+            
+            // Load sidebar state from localStorage
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                sidebar.classList.add('collapsed');
+                const icon = sidebarToggle.querySelector('i');
+                icon.classList.remove('bi-chevron-left');
+                icon.classList.add('bi-chevron-right');
+            }
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

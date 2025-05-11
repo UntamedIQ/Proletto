@@ -1,0 +1,377 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Opportunities - Proletto Dashboard{% endblock %}
+
+{% block page_title %}Opportunities{% endblock %}
+
+{% block additional_css %}
+<style>
+  .opportunity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  
+  .opportunity-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .opportunity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card-image {
+    height: 160px;
+    background-color: #f3f3f3;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .card-content {
+    padding: 1.25rem;
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .card-source {
+    font-size: 0.875rem;
+    color: #777;
+    margin-bottom: 0.75rem;
+  }
+  
+  .card-deadline {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #e44d26;
+    margin-bottom: 0.75rem;
+  }
+  
+  .card-description {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eee;
+  }
+  
+  .card-category {
+    font-size: 0.8rem;
+    background-color: #f8f3e6;
+    color: #8c7851;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .card-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .btn-save, .btn-apply {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+    transition: color 0.2s ease;
+  }
+  
+  .btn-save:hover, .btn-apply:hover {
+    color: #e44d26;
+  }
+  
+  .saved .btn-save {
+    color: #e44d26;
+  }
+  
+  .opportunities-nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  .opportunities-nav a {
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    color: #777;
+    text-decoration: none;
+    position: relative;
+  }
+  
+  .opportunities-nav a.active {
+    color: #e44d26;
+  }
+  
+  .opportunities-nav a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #e44d26;
+  }
+  
+  .section-header {
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .section-description {
+    font-size: 0.9rem;
+    color: #777;
+    margin-top: 0.25rem;
+  }
+  
+  .section-badge {
+    display: inline-block;
+    background-color: #f8f3e6;
+    color: #8c7851;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  
+  .ai-badge {
+    background: linear-gradient(135deg, #9c27b0, #e91e63);
+    color: white;
+  }
+  
+  /* Empty state styling */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #777;
+  }
+  
+  .empty-state img {
+    max-width: 150px;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+  }
+  
+  .empty-state h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #555;
+  }
+  
+  .empty-state p {
+    max-width: 400px;
+    margin: 0 auto 1rem;
+  }
+  
+  .search-container {
+    margin: 1rem 0;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 768px) {
+    .opportunity-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .opportunities-nav {
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 0.5rem;
+    }
+    
+    .search-input {
+      font-size: 0.9rem;
+      padding: 0.5rem 0.75rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-content">
+  <!-- Opportunities Navigation -->
+  <div class="opportunities-nav">
+    <a href="/dashboard/opportunities" class="active">All Opportunities</a>
+    <a href="/dashboard/opportunities?tab=saved">Saved</a>
+    <a href="/dashboard/opportunities?tab=recommended">Recommended</a>
+    <a href="/dashboard/opportunities?tab=applied">Applied</a>
+  </div>
+  
+  <!-- Search Bar -->
+  <div class="search-container">
+    <input type="text" class="search-input" placeholder="Search opportunities by title, description, or location...">
+  </div>
+  
+  <!-- Recommended Opportunities Section -->
+  <div class="section-header">
+    <h2 class="section-title">Recommended for You <span class="section-badge ai-badge">AI</span></h2>
+    <p class="section-description">Personalized opportunities based on your portfolio and preferences</p>
+  </div>
+  
+  {% if recommended_opportunities %}
+  <div class="opportunity-grid">
+    {% for opportunity in recommended_opportunities %}
+    <div class="opportunity-card" data-id="{{ opportunity.id }}">
+      <div class="card-image" style="background-image: url('{{ opportunity.image_url|default('/assets/opportunity-placeholder.jpg') }}');"></div>
+      <div class="card-content">
+        <h3 class="card-title">{{ opportunity.title }}</h3>
+        <div class="card-source">{{ opportunity.source }}</div>
+        {% if opportunity.deadline %}
+        <div class="card-deadline">Deadline: {{ opportunity.deadline }}</div>
+        {% endif %}
+        <p class="card-description">{{ opportunity.description }}</p>
+        <div class="card-footer">
+          <span class="card-category">{{ opportunity.category|default('Art Opportunity') }}</span>
+          <div class="card-actions">
+            <button class="btn-save" title="Save this opportunity"><span class="icon-heart"></span></button>
+            <a href="/dashboard/opportunities/view/{{ opportunity.id }}" class="btn-apply" title="View details"><span class="icon-eye"></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <img src="/assets/empty-recommendations.svg" alt="No recommendations">
+    <h3>No recommended opportunities yet</h3>
+    <p>Complete your artist profile to get personalized recommendations</p>
+    <a href="/profile" class="btn btn-primary">Update Profile</a>
+  </div>
+  {% endif %}
+  
+  <!-- All Opportunities Section -->
+  <div class="section-header">
+    <h2 class="section-title">All Opportunities</h2>
+    <p class="section-description">Browse all available opportunities for artists</p>
+  </div>
+  
+  {% if opportunities %}
+  <div class="opportunity-grid">
+    {% for opportunity in opportunities %}
+    <div class="opportunity-card {% if opportunity in saved_opportunities %}saved{% endif %}" data-id="{{ opportunity.id }}">
+      <div class="card-image" style="background-image: url('{{ opportunity.image_url|default('/assets/opportunity-placeholder.jpg') }}');"></div>
+      <div class="card-content">
+        <h3 class="card-title">{{ opportunity.title }}</h3>
+        <div class="card-source">{{ opportunity.source }}</div>
+        {% if opportunity.deadline %}
+        <div class="card-deadline">Deadline: {{ opportunity.deadline }}</div>
+        {% endif %}
+        <p class="card-description">{{ opportunity.description }}</p>
+        <div class="card-footer">
+          <span class="card-category">{{ opportunity.category|default('Art Opportunity') }}</span>
+          <div class="card-actions">
+            <button class="btn-save" title="Save this opportunity"><span class="icon-heart"></span></button>
+            <a href="/dashboard/opportunities/view/{{ opportunity.id }}" class="btn-apply" title="View details"><span class="icon-eye"></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <img src="/assets/empty-opportunities.svg" alt="No opportunities">
+    <h3>No opportunities available</h3>
+    <p>Check back later for new art opportunities</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Save/unsave opportunity functionality
+    const saveButtons = document.querySelectorAll('.btn-save');
+    
+    saveButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const card = this.closest('.opportunity-card');
+        const opportunityId = card.dataset.id;
+        const isSaved = card.classList.contains('saved');
+        
+        // Optimistic UI update
+        card.classList.toggle('saved');
+        
+        // API call to save/unsave
+        fetch(`/dashboard/opportunities/${isSaved ? 'unsave' : 'save'}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ opportunity_id: opportunityId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            // Revert UI change if API call failed
+            card.classList.toggle('saved');
+            console.error('Error:', data.error);
+          }
+        })
+        .catch(error => {
+          // Revert UI change if API call failed
+          card.classList.toggle('saved');
+          console.error('Error:', error);
+        });
+      });
+    });
+    
+    // Search functionality
+    const searchInput = document.querySelector('.search-input');
+    const opportunityCards = document.querySelectorAll('.opportunity-card');
+    
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      
+      opportunityCards.forEach(card => {
+        const title = card.querySelector('.card-title').textContent.toLowerCase();
+        const description = card.querySelector('.card-description').textContent.toLowerCase();
+        const source = card.querySelector('.card-source').textContent.toLowerCase();
+        
+        if (title.includes(query) || description.includes(query) || source.includes(query)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

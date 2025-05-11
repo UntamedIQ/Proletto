@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upgrade Your Membership | Proletto</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="static/css/pricing.css">
+  <link rel="stylesheet" href="static/css/forms.css">
+  <link rel="stylesheet" href="static/css/mobile.css">
+  <style>
+    /* Membership Page Specific Styles */
+    body {
+      background-color: #f8f3e6;
+      font-family: 'Inter', Arial, sans-serif;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      padding: 40px 0;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      color: #a86a3e;
+      margin-bottom: 15px;
+    }
+    
+    .header p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 20px;
+    }
+    
+    .benefit-list {
+      margin: 40px 0;
+      text-align: left;
+    }
+    
+    .benefit-list h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #a86a3e;
+    }
+    
+    .benefits {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    
+    .benefit-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      width: 280px;
+    }
+    
+    .benefit-card h3 {
+      color: #a86a3e;
+      margin-bottom: 10px;
+    }
+    
+    .testimonials {
+      background: white;
+      padding: 40px 0;
+      margin: 40px 0;
+    }
+    
+    .testimonial-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+    }
+    
+    .testimonial {
+      max-width: 350px;
+      padding: 20px;
+      border-left: 3px solid #a86a3e;
+      background: #f9f9f9;
+    }
+    
+    .testimonial p {
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+    
+    .testimonial-author {
+      font-weight: bold;
+      text-align: right;
+    }
+    
+    .faq {
+      margin: 40px 0;
+    }
+    
+    .faq-item {
+      margin-bottom: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .faq-item h3 {
+      color: #a86a3e;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    
+    .faq-answer {
+      padding-top: 10px;
+    }
+    
+    .cta-container {
+      text-align: center;
+      margin: 40px 0;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: #a86a3e;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 4px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    
+    .cta-button:hover {
+      background: #8c562e;
+    }
+    
+    /* Responsive Styles */
+    /* Mobile responsive navigation menu */
+    .hamburger-menu {
+      display: none;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    
+    .bar {
+      width: 25px;
+      height: 3px;
+      background-color: #a86a3e;
+      margin: 5px 0;
+      transition: 0.4s;
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 20px;
+      }
+      
+      .hamburger-menu {
+        display: block;
+      }
+      
+      .nav-menu {
+        position: fixed;
+        right: -100%;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+        background-color: #f8f3e6;
+        padding-top: 80px;
+        transition: 0.3s;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+      }
+      
+      .nav-menu.active {
+        right: 0;
+      }
+      
+      .nav-links {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .nav-links li {
+        margin: 10px 20px;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .benefit-card,
+      .testimonial {
+        width: 100%;
+        max-width: none;
+      }
+      
+      /* Hamburger animation */
+      .hamburger-menu.active .bar:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+      }
+      
+      .hamburger-menu.active .bar:nth-child(2) {
+        opacity: 0;
+      }
+      
+      .hamburger-menu.active .bar:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="page-nav">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo">Proletto</a>
+      <div class="hamburger-menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+      <nav class="nav-menu">
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/opportunities">Opportunities</a></li>
+          <li><a href="/portfolio">Portfolio</a></li>
+          <li><a href="/how-it-works.html">How It Works</a></li>
+          <li><a href="/auth/login">Sign In</a></li>
+        </ul>
+      </nav>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <h1>Upgrade Your Proletto Experience</h1>
+      <p>Join our community of artists who are getting more opportunities with less effort.</p>
+    </div>
+    
+    <section class="pricing">
+      <h2>Choose Your Membership Plan</h2>
+      <div class="tiers">
+        <div class="tier">
+          <h3>Starter</h3>
+          <p><strong>Free</strong></p>
+          <ul>
+            <li>Curated social media calls</li>
+            <li>Portfolio tracker + QR tool</li>
+            <li>No AI matching or early access</li>
+          </ul>
+          <p class="note">Your current plan</p>
+          <a href="/profile" class="btn">Back to Dashboard</a>
+        </div>
+
+        <div class="tier highlighted">
+          <h3>Supporter <span class="beta-badge">Beta</span></h3>
+          <p><strong>$5/month</strong></p>
+          <ul>
+            <li>All Starter features</li>
+            <li>Early access opportunities</li>
+            <li>Digest via email + SMS</li>
+            <li>Choose 3 State Engines</li>
+            <li>"Supporter" badge on profile</li>
+          </ul>
+          <p class="note">14-day free trial</p>
+          <form action="/create-checkout-session" method="POST" class="button-form">
+            <input type="hidden" name="plan" value="supporter">
+            <button type="submit" class="btn">Upgrade Now</button>
+          </form>
+        </div>
+
+        <div class="tier coming-soon">
+          <h3>Agent</h3>
+          <p><strong>$12/month</strong></p>
+          <ul>
+            <li>All Supporter features</li>
+            <li>AI application autofill</li>
+            <li>Portfolio optimization tool</li>
+            <li>All State Engines</li>
+            <li>Priority support</li>
+          </ul>
+          <p class="note">Coming soon</p>
+          <a href="#join-waitlist" class="btn">Join Waitlist</a>
+        </div>
+      </div>
+    </section>
+    
+    <section class="benefit-list">
+      <h2>What You Get as a Supporter</h2>
+      <div class="benefits">
+        <div class="benefit-card">
+          <h3>Early Access Opportunities</h3>
+          <p>Get notified of opportunities before they're public, giving you more time to prepare perfect applications.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <h3>Personalized Opportunity Digest</h3>
+          <p>Receive a weekly digest of opportunities customized to your artistic style and career goals.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <h3>3 State Engine Access</h3>
+          <p>Choose three specialized engines that focus on your preferred regions for more targeted opportunities.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <h3>SMS Notifications</h3>
+          <p>Get timely alerts via text message for high-priority opportunities and approaching deadlines.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <h3>Supporter Badge</h3>
+          <p>Display a badge on your profile showing your commitment to the Proletto community and its growth.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <h3>Beta Access</h3>
+          <p>Be among the first to try new features and provide feedback to shape the future of Proletto.</p>
+        </div>
+      </div>
+    </section>
+    
+    <section class="testimonials">
+      <div class="container">
+        <h2 class="text-center">What Our Supporters Say</h2>
+        <div class="testimonial-container">
+          <div class="testimonial">
+            <p>"Since upgrading to Supporter, I've found three exhibition opportunities that were perfect for my work. The state engines for New York and California are incredibly valuable."</p>
+            <div class="testimonial-author">- Maya C., Painter</div>
+          </div>
+          
+          <div class="testimonial">
+            <p>"The early access feature alone is worth the subscription. I was able to apply for a residency program before it was publicly announced and got accepted!"</p>
+            <div class="testimonial-author">- Derrick P., Sculptor</div>
+          </div>
+          
+          <div class="testimonial">
+            <p>"As someone who's constantly on the go, the SMS notifications have been a game-changer. I never miss an important deadline now."</p>
+            <div class="testimonial-author">- Sophia T., Multimedia Artist</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="faq">
+      <h2 class="text-center">Frequently Asked Questions</h2>
+      
+      <div class="faq-item">
+        <h3>Can I cancel my subscription at any time?</h3>
+        <div class="faq-answer">
+          <p>Yes, you can cancel your subscription at any time. If you cancel, you'll continue to have access to Supporter features until the end of your current billing period.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <h3>How does the 14-day free trial work?</h3>
+        <div class="faq-answer">
+          <p>You'll get full access to all Supporter features for 14 days without being charged. After the trial period, you'll be billed automatically unless you cancel before the trial ends.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <h3>Which state engines are available?</h3>
+        <div class="faq-answer">
+          <p>We currently offer engines for New York, California, Texas, Illinois, Massachusetts, Florida, Washington, Oregon, Colorado, and Pennsylvania. We're constantly adding more states based on member feedback.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <h3>Will the price increase in the future?</h3>
+        <div class="faq-answer">
+          <p>Beta Supporters are guaranteed the $5/month price for as long as they maintain their subscription, even if we raise prices in the future.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <h3>When will the Agent tier be available?</h3>
+        <div class="faq-answer">
+          <p>We're planning to launch the Agent tier in Q3 2025. Join the waitlist to be notified as soon as it's available and get early access.</p>
+        </div>
+      </div>
+    </section>
+    
+    <section id="payment-form" class="payment-section">
+      <h2 class="text-center">Upgrade to Supporter</h2>
+      <div class="payment-container">
+        <p class="text-center">Beta price: $5/month with 14-day free trial</p>
+        <p class="text-center">Please note: This is a demo version. In production, this would connect to our payment processor.</p>
+        
+        <div class="cta-container">
+          <form action="/create-checkout-session" method="POST" class="button-form">
+            <input type="hidden" name="plan" value="supporter">
+            <button type="submit" class="cta-button">Start Your Free Trial</button>
+          </form>
+        </div>
+        
+        <p class="text-center small">By upgrading, you agree to our Terms of Service and Privacy Policy.</p>
+      </div>
+    </section>
+    
+    <section id="join-waitlist" class="waitlist-section">
+      <h2 class="text-center">Join the Agent Tier Waitlist</h2>
+      <div class="form-container">
+        <p class="text-center">Be the first to know when our premium tier launches.</p>
+        
+        <form class="waitlist-form">
+          <div class="form-group">
+            <input type="email" placeholder="Your email address" required>
+          </div>
+          <button type="submit" class="btn">Join Waitlist</button>
+        </form>
+      </div>
+    </section>
+  </div>
+  
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <a href="/" class="text-logo">Proletto</a>
+          <p>Built by an artist, for all artists</p>
+        </div>
+        
+        <div class="footer-links">
+          <div class="footer-column">
+            <h4>Platform</h4>
+            <ul>
+              <li><a href="/opportunities">Opportunities</a></li>
+              <li><a href="/portfolio">Portfolio</a></li>
+              <li><a href="/how-it-works.html">How It Works</a></li>
+              <li><a href="/membership.html">Pricing</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-column">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Careers</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-column">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#">Help Center</a></li>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Proletto. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    // Simple toggling for FAQ items
+    document.addEventListener('DOMContentLoaded', function() {
+      // FAQ toggling
+      const faqItems = document.querySelectorAll('.faq-item h3');
+      
+      faqItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const answer = this.nextElementSibling;
+          answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+        });
+      });
+      
+      // Handle waitlist form submission
+      const waitlistForm = document.querySelector('.waitlist-form');
+      if (waitlistForm) {
+        waitlistForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          alert('Thanks for joining the waitlist! We\'ll notify you when the Agent tier launches.');
+          waitlistForm.reset();
+        });
+      }
+      
+      // Mobile menu toggle
+      const hamburger = document.querySelector('.hamburger-menu');
+      const navMenu = document.querySelector('.nav-menu');
+      
+      hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+      });
+      
+      // Close menu when clicking a nav link
+      document.querySelectorAll('.nav-links li a').forEach(link => {
+        link.addEventListener('click', () => {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!hamburger.contains(e.target) && 
+            !navMenu.contains(e.target) && 
+            navMenu.classList.contains('active')) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+      
+      // Close menu when window is resized to desktop size
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

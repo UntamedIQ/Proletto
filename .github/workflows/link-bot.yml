@@ -1,0 +1,26 @@
+name: "Link Audit & Auto-Fix Bot"
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'    # every 4 hours
+  workflow_dispatch:
+
+jobs:
+  audit_and_fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python & GitHub CLI
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - run: pip install requests beautifulsoup4
+      - name: Install GitHub CLI
+        run: sudo apt-get install -y gh
+      - name: Run Find & Fix Bot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p audits
+          mv audits/last.csv audits/prev.csv 2>/dev/null || true
+          ./find_fix_links.py

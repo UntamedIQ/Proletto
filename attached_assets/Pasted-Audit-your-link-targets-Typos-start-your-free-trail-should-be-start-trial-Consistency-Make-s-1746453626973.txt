@@ -1,0 +1,80 @@
+Audit your link targets
+Typos: “start your free trail” → should be /start-trial
+
+Consistency: Make sure your <Link href="…"> paths exactly match your route definitions (case-sensitive!).
+
+jsx
+Copy
+Edit
+// example in React Router or Next.js Link
+<Link href="/get-started">Get Started</Link>
+<Link href="/sign-in">Sign In</Link>
+<Link href="/upgrade">Upgrade Now</Link>
+<Link href="/dashboard">Back to Dashboard</Link>
+<Link href="/start-trial">Start Your Free Trial</Link>
+<Link href="/portfolio">Portfolio</Link>
+2. Verify your route declarations
+Next.js (/pages folder)
+Ensure you have files corresponding to each path:
+
+sql
+Copy
+Edit
+/pages
+  ├── get-started.js
+  ├── sign-in.js
+  ├── upgrade.js
+  ├── dashboard.js
+  ├── start-trial.js
+  └── portfolio.js
+If you’re nesting under a base path (e.g. /app), update your links or set basePath in next.config.js:
+
+js
+Copy
+Edit
+// next.config.js
+module.exports = {
+  basePath: '/app',
+};
+React Router
+Make sure your <Route> definitions cover each path:
+
+jsx
+Copy
+Edit
+<Routes>
+  <Route path="/get-started" element={<GetStarted />} />
+  <Route path="/sign-in" element={<SignIn />} />
+  <Route path="/upgrade" element={<UpgradePage />} />
+  <Route path="/dashboard" element={<Dashboard />} />
+  <Route path="/start-trial" element={<TrialSignup />} />
+  <Route path="/portfolio" element={<Portfolio />} />
+  {/* Catch-all to redirect or show custom 404 */}
+  <Route path="*" element={<NotFound />} />
+</Routes>
+3. Check your deployment settings
+Vercel/Netlify redirects: If you use client-side routing, ensure fallback rewrites all paths to index.html.
+
+Trailing slashes: If your server expects trailing slashes, configure accordingly in next.config.js:
+
+js
+Copy
+Edit
+module.exports = {
+  trailingSlash: true,
+};
+4. Local debugging steps
+Run dev server: npm run dev (Next.js) or npm start (CRA)
+
+Click each link in the console and watch the Network tab—are they 301s, 302s, or 404s?
+
+Open your terminal logs—any “Cannot GET /path” messages? Those point you to missing files or misnamed routes.
+
+Quick Fix Checklist
+ Rename any files or folders so they exactly match your intended URL (e.g. start-trial.js, not start-trail.js).
+
+ Update all <Link>/<a> tags to use the corrected hrefs.
+
+ Rebuild/deploy and test every navigation entry by clicking through the UI.
+
+ Add a catch-all route to prevent unstyled 404s and guide users back home.

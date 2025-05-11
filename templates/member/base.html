@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard | Proletto{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/static/images/favicon.ico">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    
+    <style>
+        :root {
+            --font-sans: 'Inter', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-serif: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+            --primary-color: #8B5A2B;
+            --primary-dark: #704626;
+            --primary-light: #A67C52;
+            --secondary-color: #4A6FA5;
+            --text-color: #333333;
+            --text-light: #666666;
+            --background-color: #FFFFFF;
+            --background-alt: #f8f3e6;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-color);
+            line-height: 1.5;
+            background-color: var(--gray-100);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: white;
+        }
+        
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover, .btn-outline-primary:focus {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Sidebar styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-logo {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .sidebar-logo img {
+            height: 32px;
+            margin-right: 0.5rem;
+        }
+        
+        .sidebar-logo:hover {
+            text-decoration: none;
+        }
+        
+        .sidebar-menu {
+            padding: 1.5rem 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .menu-section {
+            margin-bottom: 1.5rem;
+            padding: 0 1.5rem;
+        }
+        
+        .menu-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .menu-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--gray-700);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .menu-link:hover {
+            background-color: var(--gray-100);
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .menu-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .menu-icon {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            width: 1.25rem;
+            text-align: center;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: var(--primary-light);
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-details {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+        
+        .user-status {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+        
+        .user-actions {
+            margin-left: 0.5rem;
+        }
+        
+        /* Main content styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .header {
+            height: var(--header-height);
+            background-color: white;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+            flex: 1;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-search {
+            position: relative;
+            width: 300px;
+            margin-right: 1.5rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(139, 90, 43, 0.1);
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+        
+        .notification-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: var(--gray-100);
+            color: var(--gray-700);
+            border-radius: 50%;
+            margin-right: 1rem;
+            position: relative;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .notification-btn:hover {
+            background-color: var(--gray-200);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .user-dropdown-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: var(--primary-light);
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .user-dropdown-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-dropdown-info {
+            margin-right: 0.5rem;
+        }
+        
+        .user-dropdown-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+        
+        .user-dropdown-role {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+        
+        .dropdown-toggle::after {
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+        
+        /* Content area */
+        .content {
+            padding: 2rem;
+            flex: 1;
+        }
+        
+        .content-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .content-subtitle {
+            font-size: 1rem;
+            color: var(--gray-600);
+        }
+        
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1050;
+        }
+        
+        .toast {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toast-header {
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .toast-success {
+            border-left: 4px solid #28a745;
+        }
+        
+        .toast-error {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .toast-warning {
+            border-left: 4px solid #ffc107;
+        }
+        
+        .toast-info {
+            border-left: 4px solid #17a2b8;
+        }
+        
+        /* Mobile sidebar */
+        .mobile-header {
+            display: none;
+            height: var(--header-height);
+            background-color: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 1.5rem;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+        }
+        
+        .mobile-toggle {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gray-100);
+            border-radius: 8px;
+            border: none;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+        
+        .mobile-logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            flex: 1;
+        }
+        
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .header {
+                display: none;
+            }
+            
+            .mobile-header {
+                display: flex;
+            }
+            
+            .content {
+                margin-top: var(--header-height);
+                padding: 1.5rem;
+            }
+            
+            .sidebar-backdrop.show {
+                display: block;
+            }
+            
+            /* Apply mobile spacing to cards and widgets */
+            .card {
+                margin-bottom: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Mobile Header (Visible on small screens) -->
+    <div class="mobile-header">
+        <button class="mobile-toggle" id="mobileToggle">
+            <i class="bi bi-list"></i>
+        </button>
+        <div class="mobile-logo">Proletto</div>
+        <div class="header-actions">
+            <button class="notification-btn">
+                <i class="bi bi-bell"></i>
+                {% if unread_notifications_count > 0 %}
+                <span class="notification-badge">{{ unread_notifications_count }}</span>
+                {% endif %}
+            </button>
+        </div>
+    </div>
+    
+    <!-- Sidebar Backdrop (Visible on small screens) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="/dashboard" class="sidebar-logo">
+                <img src="/static/images/logo.svg" alt="Proletto">
+                Proletto
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <!-- Mobile Search (Visible only on mobile) -->
+            <div class="menu-section d-lg-none">
+                <form class="w-100" action="/search" method="get">
+                    <div class="position-relative">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" class="search-input" name="q" placeholder="Search opportunities...">
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Main menu -->
+            <div class="menu-section">
+                <h3 class="menu-section-title">Main</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="/dashboard" class="menu-link {% if request.path == '/dashboard' %}active{% endif %}">
+                            <i class="bi bi-house-door menu-icon"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/dashboard/feed" class="menu-link {% if request.path == '/dashboard/feed' %}active{% endif %}">
+                            <i class="bi bi-lightning menu-icon"></i>
+                            <span>Opportunity Feed</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/dashboard/saved" class="menu-link {% if request.path == '/dashboard/saved' %}active{% endif %}">
+                            <i class="bi bi-bookmark menu-icon"></i>
+                            <span>Saved Opportunities</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/dashboard/applications" class="menu-link {% if request.path == '/dashboard/applications' %}active{% endif %}">
+                            <i class="bi bi-file-earmark-text menu-icon"></i>
+                            <span>My Applications</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Portfolio section -->
+            <div class="menu-section">
+                <h3 class="menu-section-title">Portfolio</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="/dashboard/portfolio" class="menu-link {% if request.path == '/dashboard/portfolio' %}active{% endif %}">
+                            <i class="bi bi-grid-3x3 menu-icon"></i>
+                            <span>My Portfolio</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/dashboard/portfolio/optimize" class="menu-link {% if request.path == '/dashboard/portfolio/optimize' %}active{% endif %}">
+                            <i class="bi bi-stars menu-icon"></i>
+                            <span>Portfolio Optimizer</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Account section -->
+            <div class="menu-section">
+                <h3 class="menu-section-title">Account</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="/dashboard/profile" class="menu-link {% if request.path == '/dashboard/profile' %}active{% endif %}">
+                            <i class="bi bi-person menu-icon"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/dashboard/subscription" class="menu-link {% if request.path == '/dashboard/subscription' %}active{% endif %}">
+                            <i class="bi bi-credit-card menu-icon"></i>
+                            <span>Subscription</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/dashboard/settings" class="menu-link {% if request.path == '/dashboard/settings' %}active{% endif %}">
+                            <i class="bi bi-gear menu-icon"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Help section -->
+            <div class="menu-section">
+                <h3 class="menu-section-title">Help & Support</h3>
+                <ul class="menu-items">
+                    <li class="menu-item">
+                        <a href="/dashboard/help" class="menu-link {% if request.path == '/dashboard/help' %}active{% endif %}">
+                            <i class="bi bi-question-circle menu-icon"></i>
+                            <span>Help Center</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="/dashboard/support" class="menu-link {% if request.path == '/dashboard/support' %}active{% endif %}">
+                            <i class="bi bi-headset menu-icon"></i>
+                            <span>Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="avatar">
+                    {% if current_user.profile_image %}
+                        <img src="{{ current_user.profile_image }}" alt="{{ current_user.username }}">
+                    {% else %}
+                        {{ current_user.username[0] | upper }}
+                    {% endif %}
+                </div>
+                <div class="user-details">
+                    <div class="user-name">{{ current_user.username }}</div>
+                    <div class="user-status">{{ current_user.membership_tier | title }}</div>
+                </div>
+                <div class="user-actions dropdown">
+                    <button class="btn btn-sm dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="/dashboard/profile">Profile</a></li>
+                        <li><a class="dropdown-item" href="/dashboard/settings">Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">Sign Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+            <div class="header-actions">
+                <!-- Search Box -->
+                <form class="header-search" action="/search" method="get">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="search-input" name="q" placeholder="Search opportunities...">
+                </form>
+                <!-- Notifications -->
+                <div class="dropdown">
+                    <button class="notification-btn" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell"></i>
+                        {% if unread_notifications_count > 0 %}
+                        <span class="notification-badge">{{ unread_notifications_count }}</span>
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="width: 320px;">
+                        <li><h6 class="dropdown-header">Notifications</h6></li>
+                        {% if notifications %}
+                            {% for notification in notifications %}
+                            <li>
+                                <a class="dropdown-item" href="{{ notification.link }}">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <div class="notification-icon {{ notification.icon_class }}">
+                                                <i class="bi {{ notification.icon }}"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-0">{{ notification.title }}</h6>
+                                            <p class="mb-0 text-muted small">{{ notification.message }}</p>
+                                            <small class="text-muted">{{ notification.created_at }}</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li><span class="dropdown-item text-center text-muted">No new notifications</span></li>
+                        {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center" href="/dashboard/notifications">View all notifications</a></li>
+                    </ul>
+                </div>
+                <!-- User profile dropdown -->
+                <div class="dropdown">
+                    <div class="user-dropdown" id="userProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-dropdown-avatar">
+                            {% if current_user.profile_image %}
+                                <img src="{{ current_user.profile_image }}" alt="{{ current_user.username }}">
+                            {% else %}
+                                {{ current_user.username[0] | upper }}
+                            {% endif %}
+                        </div>
+                        <div class="user-dropdown-info d-none d-lg-block">
+                            <div class="user-dropdown-name">{{ current_user.username }}</div>
+                            <div class="user-dropdown-role">{{ current_user.membership_tier | title }}</div>
+                        </div>
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
+                        <li><a class="dropdown-item" href="/dashboard/profile">My Profile</a></li>
+                        <li><a class="dropdown-item" href="/dashboard/subscription">Subscription</a></li>
+                        <li><a class="dropdown-item" href="/dashboard/settings">Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">Sign Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="toast-container">
+                {% for category, message in messages %}
+                    <div class="toast toast-{{ category }} show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">Proletto</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Core Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile sidebar toggle
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+            
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                    sidebarBackdrop.classList.toggle('show');
+                });
+            }
+            
+            if (sidebarBackdrop) {
+                sidebarBackdrop.addEventListener('click', function() {
+                    sidebar.classList.remove('show');
+                    sidebarBackdrop.classList.remove('show');
+                });
+            }
+            
+            // Initialize toasts
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl, {
+                    autohide: true,
+                    delay: 5000
+                });
+            });
+            
+            toastList.forEach(toast => toast.show());
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

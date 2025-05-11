@@ -1,0 +1,153 @@
+Your deliverables must be robust, scalable, and fully integrated within existing systems.
+
+1. ProlettoEngine Smart Scraper
+
+Task: Build an AI-powered scraper that intelligently identifies, scrapes, and categorizes art opportunities from niche platforms.
+
+Requirements:
+
+Utilize NLP techniques to parse and categorize opportunities.
+
+Ensure adaptive learning capability for accuracy improvements.
+
+2. AI Personal Art Agent Matching
+
+Task: Develop an automated matching algorithm that pairs artist profiles with relevant opportunities.
+
+Requirements:
+
+Profile analysis and semantic matching.
+
+Continuous machine learning updates based on user interaction.
+
+3. Auto-Fill Application Submission Flow
+
+Task: Create an AI system that automates completion and submission of artist applications.
+
+Requirements:
+
+Intelligent form detection and completion.
+
+Compatibility with multiple submission platforms.
+
+4. Artist Loyalty Unlock Engine (Gamification)
+
+Task: Implement a gamified system encouraging sustained user engagement through referrals and activity streaks.
+
+Requirements:
+
+Design clear and rewarding gamification elements.
+
+Automated tracking and reward dispensation.
+
+5. Curated Digest Personalization Model
+
+Task: Build a personalized recommendation engine adapting opportunity digests to individual user behaviors.
+
+Requirements:
+
+User behavior tracking and analysis.
+
+Dynamic content generation and customization.
+
+6. Stripe → Badge → Loyalty Automation
+
+Task: Integrate automated workflows connecting payment transactions, loyalty badges, and user rewards seamlessly.
+
+Requirements:
+
+Stripe API integration.
+
+Automatic badge issuance and loyalty tier upgrades.
+
+7. Continuous Execution AI Workflow
+
+Task: Develop an AI-assisted agile workflow system optimized for continuous deployment and collaboration.
+
+Requirements:
+
+Real-time project tracking and AI-driven suggestions.
+
+Continuous integration and deployment automation.
+
+8. Multitiered Freemium Conversion System
+
+Task: Create a freemium-to-premium conversion strategy driven by data insights and automated triggers.
+
+Requirements:
+
+User engagement tracking and analytics.
+
+Strategic prompts and conversion triggers.
+
+9. Interactive AI-Guided Onboarding Flow
+
+Task: Implement a dynamic, AI-powered onboarding sequence guiding artists to optimal feature adoption.
+
+Requirements:
+
+Adaptive onboarding experiences based on user profiles.
+
+Interactive prompts and personalized guidance.
+
+10. Visual Portfolio Optimization Engine
+
+Task: Develop an AI system to analyze artist portfolios and suggest optimization.
+
+Requirements:
+
+AI-driven visual content analysis.
+
+Actionable, automated suggestions for enhancements.
+
+11. Social Media Opportunity Extraction System
+
+Task: Build an extraction method leveraging AI to validate and categorize art opportunities from social media platforms.
+
+Requirements:
+
+Social media API integration.
+
+Validation and authenticity checking.
+
+12. Referral-Based Trial Activation Method
+
+Task: Set up an automated method for activating premium trial features based on user referrals.
+
+Requirements:
+
+Referral tracking automation.
+
+Automatic trial activation upon successful validation.
+
+13. AI-Powered Application Status Tracker
+
+Task: Implement a real-time tracking system providing automated updates on artist application statuses.
+
+Requirements:
+
+Intelligent status tracking and update notifications.
+
+Real-time status synchronization with user interfaces.
+
+14. Automated Opportunity Expiration Workflow
+
+Task: Create a backend automation method for managing lifecycle of artist opportunities, including automatic expiration and refresh.
+
+Requirements:
+
+Opportunity monitoring and automated expiration.
+
+Continuous refresh and curation cycles.
+
+15. Dynamic, AI-Enhanced Opportunity Digest Generation
+
+Task: Build a fully automated weekly digest system generating tailored content based on individual artist criteria.
+
+Requirements:
+
+AI-driven content aggregation and customization.
+
+Automated weekly content generation and delivery.
+
+Ensure each feature is developed with comprehensive documentation, testing protocols, and integration guides. Your goal is seamless integration, robust functionality, and scalability for future expansion.

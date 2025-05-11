@@ -1,0 +1,305 @@
+{
+  "base_url": "http://localhost:5000",
+  "scan_date": "2025-05-10T20:02:25.416576",
+  "pages_checked": 15,
+  "internal_links_count": 32,
+  "external_links_count": 0,
+  "broken_links_count": 59,
+  "broken_links": [
+    {
+      "url": "http://localhost:5000/security",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:17.169922"
+    },
+    {
+      "url": "http://localhost:5000/security",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:18.200649"
+    },
+    {
+      "url": "http://localhost:5000/features",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:18.208026"
+    },
+    {
+      "url": "http://localhost:5000/static/images/favicon.ico",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:18.721129"
+    },
+    {
+      "url": "http://localhost:5000/press",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:19.229407"
+    },
+    {
+      "url": "http://localhost:5000/register",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:20.250154"
+    },
+    {
+      "url": "http://localhost:5000/privacy",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:21.272418"
+    },
+    {
+      "url": "http://localhost:5000/careers",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:21.781720"
+    },
+    {
+      "url": "http://localhost:5000/membership",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:22.291063"
+    },
+    {
+      "url": "http://localhost:5000/assets/matching-illustration.jpg",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:23.339176"
+    },
+    {
+      "url": "http://localhost:5000/assets/portfolio-optimization.jpg",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:23.847733"
+    },
+    {
+      "url": "http://localhost:5000/security",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.356654"
+    },
+    {
+      "url": "http://localhost:5000/features",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.365155"
+    },
+    {
+      "url": "http://localhost:5000/static/images/favicon.ico",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.371211"
+    },
+    {
+      "url": "http://localhost:5000/press",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.377025"
+    },
+    {
+      "url": "http://localhost:5000/register",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.384193"
+    },
+    {
+      "url": "http://localhost:5000/privacy",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.391572"
+    },
+    {
+      "url": "http://localhost:5000/careers",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.396221"
+    },
+    {
+      "url": "http://localhost:5000/membership",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.401480"
+    },
+    {
+      "url": "http://localhost:5000/team",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.411869"
+    },
+    {
+      "url": "http://localhost:5000/terms",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.421215"
+    },
+    {
+      "url": "http://localhost:5000/about",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.427483"
+    },
+    {
+      "url": "http://localhost:5000/start-trial",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.432891"
+    },
+    {
+      "url": "http://localhost:5000/blog",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.438032"
+    },
+    {
+      "url": "http://localhost:5000/support",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.447582"
+    },
+    {
+      "url": "http://localhost:5000/assets/how-it-works-hero.jpg",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.766085"
+    },
+    {
+      "url": "http://localhost:5000/faq",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.771559"
+    },
+    {
+      "url": "http://localhost:5000/login",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.776591"
+    },
+    {
+      "url": "http://localhost:5000/assets/application-assistance.jpg",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.782842"
+    },
+    {
+      "url": "http://localhost:5000/assets/workspace-collaboration.jpg",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.789474"
+    },
+    {
+      "url": "http://localhost:5000/cookies",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.794885"
+    },
+    {
+      "url": "http://localhost:5000/contact",
+      "parent": "http://localhost:5000/how-it-works",
+      "timestamp": "2025-05-10T20:02:24.799931"
+    },
+    {
+      "url": "http://localhost:5000/team",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:24.808209"
+    },
+    {
+      "url": "http://localhost:5000/terms",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:24.815062"
+    },
+    {
+      "url": "http://localhost:5000/about",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:24.820507"
+    },
+    {
+      "url": "http://localhost:5000/start-trial",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:24.825827"
+    },
+    {
+      "url": "http://localhost:5000/blog",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:24.831205"
+    },
+    {
+      "url": "http://localhost:5000/support",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:24.847045"
+    },
+    {
+      "url": "http://localhost:5000/faq",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:25.080938"
+    },
+    {
+      "url": "http://localhost:5000/login",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:25.085431"
+    },
+    {
+      "url": "http://localhost:5000/cookies",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:25.090063"
+    },
+    {
+      "url": "http://localhost:5000/contact",
+      "parent": "http://localhost:5000/",
+      "timestamp": "2025-05-10T20:02:25.094797"
+    },
+    {
+      "url": "http://localhost:5000/features",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.100053"
+    },
+    {
+      "url": "http://localhost:5000/static/images/favicon.ico",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.104880"
+    },
+    {
+      "url": "http://localhost:5000/press",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.109526"
+    },
+    {
+      "url": "http://localhost:5000/register",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.115898"
+    },
+    {
+      "url": "http://localhost:5000/privacy",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.122562"
+    },
+    {
+      "url": "http://localhost:5000/careers",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.127293"
+    },
+    {
+      "url": "http://localhost:5000/membership",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.131830"
+    },
+    {
+      "url": "http://localhost:5000/team",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.140969"
+    },
+    {
+      "url": "http://localhost:5000/terms",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.145752"
+    },
+    {
+      "url": "http://localhost:5000/about",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.150951"
+    },
+    {
+      "url": "http://localhost:5000/start-trial",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.156686"
+    },
+    {
+      "url": "http://localhost:5000/blog",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.161414"
+    },
+    {
+      "url": "http://localhost:5000/support",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.170753"
+    },
+    {
+      "url": "http://localhost:5000/faq",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.401169"
+    },
+    {
+      "url": "http://localhost:5000/login",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.405601"
+    },
+    {
+      "url": "http://localhost:5000/cookies",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.410746"
+    },
+    {
+      "url": "http://localhost:5000/contact",
+      "parent": "http://localhost:5000",
+      "timestamp": "2025-05-10T20:02:25.416557"
+    }
+  ]
+}

@@ -1,0 +1,634 @@
+/* Mobile responsive menu */
+.hamburger-menu {
+  display: none;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.bar {
+  width: 25px;
+  height: 3px;
+  background-color: #a86a3e;
+  margin: 5px 0;
+  transition: 0.4s;
+}
+
+/* Mobile bottom navigation */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  padding: 8px 0 5px;
+  justify-content: space-around;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #888;
+  font-size: 0.7rem;
+  padding: 5px 0;
+}
+
+.mobile-nav-item.active {
+  color: #a86a3e;
+}
+
+.mobile-nav-item .nav-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+}
+
+.mobile-nav-item.active .nav-icon {
+  stroke: #a86a3e;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 60px; /* Make room for the mobile nav */
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 20px;
+  }
+  
+  .minimal-header {
+    padding: 1rem 20px;
+    margin: 0 15px;
+  }
+  
+  .minimal-header {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 1rem 15px;
+  }
+  
+  .header-left {
+    flex: 0 0 30%;
+    order: 1;
+  }
+  
+  .main-nav {
+    flex: 0 0 100%;
+    order: 3;
+    margin-top: 10px;
+  }
+  
+  .main-nav ul {
+    gap: 1.5rem;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .main-nav ul li a {
+    font-size: 0.9rem;
+  }
+  
+  .auth-nav {
+    flex: 0 0 30%;
+    order: 2;
+    justify-content: flex-end;
+  }
+  
+  .login-register-link {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .hamburger-menu {
+    display: block;
+  }
+  
+  .mobile-bottom-nav {
+    display: flex;
+  }
+  
+  .nav-menu {
+    position: fixed;
+    right: -100%;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #f8f3e6;
+    padding-top: 80px;
+    transition: 0.3s;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+  }
+  
+  .nav-menu.active {
+    right: 0;
+  }
+  
+  .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .nav-links li {
+    margin: 10px 20px;
+  }
+  
+  /* Hamburger animation */
+  .hamburger-menu.active .bar:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+  }
+  
+  .hamburger-menu.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .hamburger-menu.active .bar:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+  }
+  
+  /* Opportunities page mobile optimization */
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+  
+  .sidebar {
+    position: relative !important;
+    top: 0 !important;
+    width: 100% !important;
+  }
+  
+  .opportunity-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .opportunity-card {
+    margin-bottom: 15px;
+  }
+  
+  .card-header, .card-body, .card-footer {
+    padding: 15px !important;
+  }
+  
+  .opportunity-title {
+    font-size: 1.2rem !important;
+  }
+  
+  .filter-panel {
+    margin-bottom: 20px;
+  }
+  
+  .search-box, .filter-select {
+    font-size: 16px !important; /* Prevent zoom on mobile */
+  }
+  
+  .group-header {
+    font-size: 1.4rem !important;
+    text-align: center;
+    margin: 20px 0 15px !important;
+  }
+  
+  .membership-panel, .filter-panel, .stats-container {
+    border-radius: 8px !important;
+  }
+  
+  .opportunity-link {
+    padding: 8px 14px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Footer responsive */
+  .footer-content {
+    flex-direction: column;
+  }
+  
+  .footer-logo {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .footer-links {
+    width: 100%;
+    justify-content: space-around;
+  }
+  
+  .footer-column {
+    margin-bottom: 20px;
+  }
+  
+  /* Container spacing */
+  .container {
+    padding: 20px;
+  }
+  
+  /* Typography */
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.8rem;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Additional mobile optimizations for smaller screens */
+@media (max-width: 480px) {
+  .container {
+    padding: 15px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.6rem;
+  }
+  
+  h3 {
+    font-size: 1.4rem;
+  }
+  
+  .minimal-header {
+    padding: 0.75rem 10px;
+  }
+  
+  .header-left {
+    flex: 0 0 40%;
+  }
+  
+  .auth-nav {
+    flex: 0 0 40%;
+  }
+  
+  .main-nav {
+    margin-top: 8px;
+  }
+  
+  .main-nav ul {
+    gap: 1.2rem;
+  }
+  
+  .main-nav ul li a {
+    font-size: 0.8rem;
+  }
+  
+  .login-register-link {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Opportunities page mobile optimization for smaller devices */
+  .opportunities-container {
+    padding: 10px !important; 
+  }
+  
+  .page-header {
+    margin-bottom: 15px !important;
+  }
+  
+  .page-header h1 {
+    font-size: 1.6rem !important;
+  }
+  
+  .page-header p {
+    font-size: 0.9rem !important;
+  }
+  
+  .card-header, .card-body, .card-footer {
+    padding: 12px !important;
+  }
+  
+  .filter-section label {
+    font-size: 0.85rem !important;
+  }
+  
+  .opportunity-description {
+    font-size: 0.85rem !important;
+    -webkit-line-clamp: 2 !important; /* Show fewer lines on smaller screens */
+  }
+  
+  .opportunity-meta {
+    font-size: 11px !important;
+  }
+  
+  .opportunity-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .opportunity-image {
+    height: 130px !important; /* Smaller images for smaller screens */
+  }
+  
+  .opportunity-location {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+  }
+  
+  .opportunity-source {
+    font-size: 11px !important;
+  }
+  
+  .premium-indicator {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+  
+  .dashboard-grid {
+    gap: 15px !important;
+  }
+  
+  /* Profile and Portfolio page optimizations */
+  .profile-header h1, .portfolio-header h1 {
+    font-size: 1.5rem !important;
+    margin-bottom: 12px !important;
+  }
+  
+  .tab-navigation {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 5px 0 !important;
+    margin-bottom: 15px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tab-item {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+  
+  .profile-section, .portfolio-section {
+    padding: 12px !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .profile-section h2, .portfolio-section h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .profile-section p, .portfolio-section p {
+    font-size: 0.9rem !important;
+  }
+  
+  .profile-form input, .profile-form select, .profile-form textarea {
+    font-size: 16px !important; /* Prevent zoom on focus */
+    padding: 10px !important;
+    border-radius: 5px !important;
+    margin-bottom: 15px !important;
+  }
+  
+  /* Email digest toggle switch */
+  .toggle-switch {
+    display: flex;
+    align-items: center;
+  }
+  
+  .toggle-switch input[type="checkbox"] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+    position: absolute;
+  }
+  
+  .toggle-switch label {
+    cursor: pointer;
+    width: 50px;
+    height: 24px;
+    background: #ccc;
+    display: block;
+    border-radius: 100px;
+    position: relative;
+    margin-right: 10px;
+  }
+  
+  .toggle-switch label:after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+  
+  .toggle-switch input:checked + label {
+    background: #a86a3e;
+  }
+  
+  .toggle-switch input:checked + label:after {
+    left: calc(100% - 3px);
+    transform: translateX(-100%);
+  }
+  
+  /* Portfolio upload styles */
+  .upload-container {
+    padding: 15px !important;
+    border: 2px dashed #ddd !important;
+    border-radius: 5px !important;
+    text-align: center !important;
+    margin-bottom: 20px !important;
+    background-color: #fafafa !important;
+  }
+  
+  .upload-icon {
+    color: #a86a3e !important;
+    font-size: 32px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .upload-text {
+    font-size: 0.9rem !important;
+    color: #666 !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .portfolio-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px !important;
+  }
+  
+  .portfolio-button {
+    background-color: #a86a3e !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 12px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .portfolio-button.secondary {
+    background-color: white !important;
+    color: #333 !important;
+    border: 1px solid #ddd !important;
+  }
+  
+  .upload-progress {
+    width: 100% !important;
+    height: 5px !important;
+    background-color: #eee !important;
+    border-radius: 10px !important;
+    margin-top: 15px !important;
+    overflow: hidden !important;
+  }
+  
+  .progress-bar {
+    height: 100% !important;
+    background-color: #a86a3e !important;
+    width: 0 !important;
+    transition: width 0.3s ease !important;
+  }
+  
+  .social-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .social-buttons button {
+    padding: 8px 0 !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .checkbox-group label {
+    font-size: 0.85rem !important;
+  }
+  
+  .reward-item {
+    padding: 8px !important;
+    margin-bottom: 8px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .stats-item {
+    font-size: 0.9rem !important;
+  }
+  
+  .stats-value {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Referrals section */
+  .referral-section {
+    padding: 15px !important;
+  }
+  
+  .referral-section h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .referral-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 15px !important;
+  }
+  
+  .referral-item {
+    margin-bottom: 10px !important;
+  }
+  
+  .referral-code {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px !important;
+  }
+  
+  .referral-code input {
+    flex-grow: 1;
+    font-size: 14px !important;
+    padding: 8px !important;
+    border-radius: 4px 0 0 4px !important;
+    border: 1px solid #ddd !important;
+  }
+  
+  .referral-code button {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    border-radius: 0 4px 4px 0 !important;
+    background-color: #a86a3e !important;
+    color: white !important;
+    border: none !important;
+  }
+  
+  .share-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px !important;
+  }
+  
+  .share-button {
+    padding: 8px 0 !important;
+    font-size: 14px !important;
+    border-radius: 4px !important;
+    border: none !important;
+    color: white !important;
+    text-align: center !important;
+  }
+  
+  .share-button.email {
+    background-color: #d9534f !important;
+  }
+  
+  .share-button.twitter {
+    background-color: #1da1f2 !important;
+  }
+  
+  .share-button.facebook {
+    background-color: #3b5998 !important;
+  }
+  
+  .share-button.instagram {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;
+  }
+  
+  .rewards-table {
+    width: 100%;
+    margin-top: 15px !important;
+    border-collapse: collapse;
+  }
+  
+  .rewards-table tr {
+    border-bottom: 1px solid #eee !important;
+  }
+  
+  .rewards-table td {
+    padding: 8px 5px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .footer-links {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footer-column {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .footer-column h4 {
+    margin-top: 20px;
+  }
+}

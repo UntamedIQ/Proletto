@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proletto Deployment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/deployment-tracker/styles.css') }}">
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: #f7f6f3;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #6d4c41;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #616161;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #994d00;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Proletto Deployment</h1>
+            <p>Use this page to deploy Proletto to the Replit environment. The deployment process is automated and will guide you through each step.</p>
+        </div>
+        
+        <div id="deployment-tracker" class="deployment-tracker">
+            <!-- Deployment tracker will be rendered here by JavaScript -->
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button id="start-deployment" class="btn-primary">Start Deployment</button>
+            <button id="cancel-deployment" class="btn-secondary" style="display: none;">Cancel Deployment</button>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="{{ url_for('admin.dashboard') }}" class="back-link">← Back to Admin Dashboard</a>
+        </div>
+        
+        <style>
+            .btn-primary {
+                background-color: #6d4c41;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: 600;
+                cursor: pointer;
+                margin: 0 10px;
+                transition: background-color 0.3s;
+            }
+            
+            .btn-primary:hover {
+                background-color: #5d4037;
+            }
+            
+            .btn-secondary {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: 600;
+                cursor: pointer;
+                margin: 0 10px;
+                transition: background-color 0.3s;
+            }
+            
+            .btn-secondary:hover {
+                background-color: #d32f2f;
+            }
+        </style>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/deployment-tracker/deployment-tracker.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get button elements
+            const startBtn = document.getElementById('start-deployment');
+            const cancelBtn = document.getElementById('cancel-deployment');
+            
+            // Create the deployment tracker
+            const deploymentTracker = createDeploymentTracker('deployment-tracker', {
+                apiEndpoint: '/deployment/api/status',
+                pollingInterval: 3000,
+                autoStart: false,
+                onStatusChange: function(status) {
+                    // Update buttons based on deployment status
+                    if (status === 'in-progress') {
+                        startBtn.style.display = 'none';
+                        cancelBtn.style.display = 'inline-block';
+                    } else {
+                        startBtn.style.display = 'inline-block';
+                        cancelBtn.style.display = 'none';
+                    }
+                },
+                onComplete: function() {
+                    console.log('Deployment completed successfully');
+                    startBtn.style.display = 'inline-block';
+                    cancelBtn.style.display = 'none';
+                    alert('Deployment completed successfully!');
+                },
+                onFailed: function(reason) {
+                    console.error('Deployment failed:', reason);
+                    startBtn.style.display = 'inline-block';
+                    cancelBtn.style.display = 'none';
+                    alert('Deployment failed: ' + reason);
+                }
+            });
+            
+            // Start deployment button
+            startBtn.addEventListener('click', function() {
+                fetch('/deployment/api/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Deployment started');
+                        deploymentTracker.startPolling();
+                        startBtn.style.display = 'none';
+                        cancelBtn.style.display = 'inline-block';
+                    } else {
+                        console.error('Failed to start deployment:', data.message);
+                        alert('Failed to start deployment: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error starting deployment:', error);
+                    alert('Error starting deployment: ' + error.message);
+                });
+            });
+            
+            // Cancel deployment button
+            cancelBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to cancel the deployment?')) {
+                    fetch('/deployment/api/cancel', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Deployment cancelled');
+                            startBtn.style.display = 'inline-block';
+                            cancelBtn.style.display = 'none';
+                        } else {
+                            console.error('Failed to cancel deployment:', data.message);
+                            alert('Failed to cancel deployment: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error cancelling deployment:', error);
+                        alert('Error cancelling deployment: ' + error.message);
+                    });
+                }
+            });
+            
+            // Check initial status
+            deploymentTracker.checkStatus();
+        });
+    </script>
+</body>
+</html>

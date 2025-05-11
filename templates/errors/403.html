@@ -1,0 +1,167 @@
+{% extends "public/base.html" %}
+
+{% block title %}Access Denied | Proletto{% endblock %}
+
+{% block content %}
+<section class="error-page">
+    <div class="container">
+        <div class="error-content">
+            <h1>403</h1>
+            <h2>Access Denied</h2>
+            <p>You don't have permission to access this page. This could be because:</p>
+            
+            <div class="error-suggestions">
+                <ul>
+                    <li>You need to be logged in to view this content</li>
+                    <li>This feature requires a premium subscription</li>
+                    <li>This area is reserved for administrators</li>
+                </ul>
+                
+                <div class="action-options">
+                    <div class="action-option">
+                        <h3>Already a member?</h3>
+                        <a href="/login" class="btn btn-outline-primary">Log In</a>
+                    </div>
+                    
+                    <div class="action-option">
+                        <h3>Need to upgrade?</h3>
+                        <a href="/membership" class="btn btn-outline-primary">View Plans</a>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="/" class="btn btn-primary">Return to Homepage</a>
+        </div>
+        
+        <div class="error-illustration">
+            <img src="/assets/403-illustration.svg" alt="Access denied illustration">
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-page {
+        padding: 6rem 0;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .error-page .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .error-content {
+        flex: 1;
+        max-width: 600px;
+    }
+    
+    .error-content h1 {
+        font-size: 8rem;
+        color: #f39c12;
+        margin: 0;
+        line-height: 1;
+    }
+    
+    .error-content h2 {
+        font-size: 2.5rem;
+        margin: 0 0 1.5rem;
+    }
+    
+    .error-content p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: #666;
+    }
+    
+    .error-suggestions {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .error-suggestions ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0 0 1.5rem;
+    }
+    
+    .error-suggestions li {
+        margin-bottom: 0.5rem;
+        position: relative;
+        padding-left: 1.5rem;
+    }
+    
+    .error-suggestions li:before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: #f39c12;
+        font-weight: bold;
+    }
+    
+    .action-options {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        border-top: 1px solid #dee2e6;
+        padding-top: 1.5rem;
+    }
+    
+    .action-option {
+        flex: 1;
+    }
+    
+    .action-option h3 {
+        font-size: 1rem;
+        margin: 0 0 0.75rem;
+    }
+    
+    .error-illustration {
+        flex: 1;
+        text-align: center;
+        max-width: 400px;
+    }
+    
+    .error-illustration img {
+        max-width: 100%;
+    }
+    
+    @media (max-width: 768px) {
+        .error-page .container {
+            flex-direction: column-reverse;
+            text-align: center;
+        }
+        
+        .error-illustration {
+            margin-bottom: 2rem;
+        }
+        
+        .error-content h1 {
+            font-size: 6rem;
+        }
+        
+        .error-content h2 {
+            font-size: 2rem;
+        }
+        
+        .action-options {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .error-suggestions li {
+            padding-left: 0;
+        }
+        
+        .error-suggestions li:before {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}

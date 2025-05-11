@@ -1,0 +1,81 @@
+<!-- 
+Lazy Loading Image Gallery Component
+Usage:
+This component expects an array of image objects passed as `gallery_images`.
+Each image object should have:
+- src: image source URL
+- alt: alt text
+- width: (optional) width in pixels
+- height: (optional) height in pixels
+
+Example:
+{% set gallery_images = [
+  {'src': '/static/img/artwork1.jpg', 'alt': 'Artwork 1'},
+  {'src': '/static/img/artwork2.jpg', 'alt': 'Artwork 2'},
+  {'src': '/static/img/artwork3.jpg', 'alt': 'Artwork 3'}
+] %}
+{% include "includes/lazy_image_gallery.html" with gallery_images=gallery_images %}
+-->
+<div class="lazy-image-gallery">
+  {% for image in gallery_images %}
+    <div class="lazy-image">
+      <div class="responsive-img-container aspect-{{ image.aspect|default('4-3') }}">
+        <img 
+          data-src="{{ image.src }}" 
+          alt="{{ image.alt|default('Gallery image') }}"
+          width="{{ image.width|default('300') }}"
+          height="{{ image.height|default('225') }}"
+          loading="lazy"
+          {% if image.srcset %}data-srcset="{{ image.srcset }}"{% endif %}
+        >
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Include this script once per page that uses the gallery component -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if ('IntersectionObserver' in window) {
+      const galleryObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const lazyImage = entry.target.querySelector('img[data-src]');
+            if (lazyImage) {
+              lazyImage.src = lazyImage.dataset.src;
+              
+              if (lazyImage.dataset.srcset) {
+                lazyImage.srcset = lazyImage.dataset.srcset;
+              }
+              
+              lazyImage.classList.add('loaded');
+              lazyImage.removeAttribute('data-src');
+              lazyImage.removeAttribute('data-srcset');
+            }
+            
+            entry.target.classList.remove('lazy-image');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        rootMargin: '100px 0px',
+        threshold: 0.01
+      });
+      
+      document.querySelectorAll('.lazy-image').forEach(image => {
+        galleryObserver.observe(image);
+      });
+    } else {
+      // Fallback for browsers that don't support IntersectionObserver
+      document.querySelectorAll('.lazy-image img[data-src]').forEach(img => {
+        img.src = img.dataset.src;
+        if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+        img.classList.add('loaded');
+      });
+      
+      document.querySelectorAll('.lazy-image').forEach(image => {
+        image.classList.remove('lazy-image');
+      });
+    }
+  });
+</script>

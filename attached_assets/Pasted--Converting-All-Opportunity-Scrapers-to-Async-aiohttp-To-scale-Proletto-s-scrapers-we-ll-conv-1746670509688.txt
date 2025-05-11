@@ -1,0 +1,128 @@
+# Converting All Opportunity Scrapers to Async + aiohttp
+
+To scale Proletto’s scrapers, we’ll convert each engine from synchronous (requests/BeautifulSoup) to asynchronous (aiohttp/asyncio). Use this pattern for all existing scrapers (California, v1, Instagram Ads, etc.).
+
+---
+
+## 1. Shared Setup
+
+1. **Install dependencies**:
+
+   ```bash
+   pip install aiohttp nest_asyncio
+   ```
+2. **Apply nest\_asyncio** at scheduler startup:
+
+   ```python
+   import nest_asyncio
+   nest_asyncio.apply()
+   ```
+3. **Define an async HTTP client** helper (optional):
+
+   ```python
+   # scrapers/http_client.py
+   import aiohttp
+
+   class AsyncClient:
+       def __init__(self, **kwargs):
+           self._session = None
+           self._kwargs = kwargs
+
+       async def __aenter__(self):
+           self._session = aiohttp.ClientSession(**self._kwargs)
+           return self._session
+
+       async def __aexit__(self, exc_type, exc, tb):
+           await self._session.close()
+   ```
+
+---
+
+## 2. Async Scraper Template
+
+Copy & adapt this for each engine:
+
+```python
+# scrapers/base_async_scraper.py
+import asyncio
+from datetime import datetime
+from models import db, Opportunity
+from scrapers.http_client import AsyncClient
+
+async def fetch_page(session, url: str):
+    try:
+        async with session.get(url, timeout=20) as resp:
+            return await resp.text()
+    except Exception as e:
+        print(f"[{url}] fetch error: {e}")
+        return None
+
+async def parse_and_save(html: str, metadata: dict):
+    if not html:
+        return
+    # parse with BeautifulSoup (works in async code)
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html, 'html.parser')
+    # ... extract fields ...
+    opp = Opportunity(
+        title=metadata['title'],
+        url=metadata['url'],
+        is_ad=metadata.get('is_ad', False),
+        scraped_at=datetime.utcnow()
+    )
+    db.session.add(opp)
+
+async def scrape_<ENGINE_NAME>():
+    urls = [
+        # list of target URLs or generated dynamic links
+    ]
+    async with AsyncClient(headers={'User-Agent':'ProlettoBot/1.0'}) as session:
+        tasks = []
+        for url in urls:
+            tasks.append(fetch_page(session, url))
+        pages = await asyncio.gather(*tasks)
+        # pair with metadata
+        parse_tasks = []
+        for html, url in zip(pages, urls):
+            metadata = {'url': url, 'title': '...' }
+            parse_tasks.append(parse_and_save(html, metadata))
+        await asyncio.gather(*parse_tasks)
+    db.session.commit()
+    print(f"[<ENGINE_NAME>] completed.")
+```
+
+---
+
+## 3. Scheduler Integration
+
+In **ap\_scheduler.py**:
+
+```python
+import asyncio
+from apscheduler.schedulers.background import BackgroundScheduler
+from scrapers.base_async_scraper import scrape_<ENGINE_NAME>
+import nest_asyncio
+nest_asyncio.apply()
+
+scheduler = BackgroundScheduler()
+
+# Example: schedule California engine every 30m
+scheduler.add_job(
+    lambda: asyncio.run(scrape_california()),
+    'interval', minutes=30, id='california_async'
+)
+# Repeat for each engine...
+scheduler.start()
+```
+
+---
+
+## 4. Benefits
+
+* **Throughput:** Multiple fetches in parallel, 5–10× speedup
+* **Resource Efficiency:** Lower thread/process overhead
+* **Resilience:** Easy to add timeouts and per-request error handling
+
+---
+
+Apply this pattern to each of your existing scraper modules (`v1`, `v2`, Instagram Ads, California, etc.) for a fully asynchronous scraping ecosystem.

@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Portfolio Optimizer - Proletto</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Portfolio Optimizer specific styles */
+        .portfolio-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .portfolio-sections {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        @media (min-width: 900px) {
+            .portfolio-sections {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-section {
+            background-color: #FFF8E1;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #FFE0B2;
+        }
+        
+        .results-section {
+            background: linear-gradient(165deg, #fdfbf6 0%, #fff8e1 100%);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #FFE0B2;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .results-section::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(232, 75, 99, 0.05) 0%, rgba(144, 78, 149, 0.02) 70%, transparent 100%);
+            top: -150px;
+            right: -150px;
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .ai-portfolio-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .ai-portfolio-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .ai-portfolio-header p {
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .ai-badge {
+            position: absolute;
+            top: -20px;
+            right: 30%;
+            background: linear-gradient(90deg, #904E95 0%, #E84B63 100%);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            transform: rotate(3deg);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #904E95;
+            box-shadow: 0 0 0 2px rgba(144, 78, 149, 0.2);
+        }
+        
+        .portfolio-items-container,
+        .exhibitions-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .portfolio-item,
+        .exhibition-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+            position: relative;
+        }
+        
+        .remove-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .remove-button:hover {
+            background-color: #ffebee;
+            color: #e57373;
+            border-color: #e57373;
+        }
+        
+        .add-button {
+            background-color: #f8f8f8;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            color: #666;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .add-button:hover {
+            background-color: #f1f8e9;
+            border-color: #aed581;
+            color: #7cb342;
+        }
+        
+        .submit-button {
+            background: linear-gradient(90deg, #904E95 0%, #E84B63 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto 0;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(232, 75, 99, 0.3);
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 75, 99, 0.4);
+        }
+        
+        .ai-progress {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .ai-icon-large {
+            font-size: 48px;
+            display: block;
+            margin: 0 auto 15px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .ai-thinking {
+            display: block;
+            font-size: 18px;
+            color: #904E95;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .loading-dots {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 20px;
+        }
+        
+        .loading-dots div {
+            position: absolute;
+            top: 8px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #904E95 0%, #E84B63 100%);
+            animation-timing-function: cubic-bezier(0, 1, 1, 0);
+        }
+        
+        .loading-dots div:nth-child(1) {
+            left: 8px;
+            animation: loading-dots1 0.6s infinite;
+        }
+        
+        .loading-dots div:nth-child(2) {
+            left: 8px;
+            animation: loading-dots2 0.6s infinite;
+        }
+        
+        .loading-dots div:nth-child(3) {
+            left: 32px;
+            animation: loading-dots2 0.6s infinite;
+        }
+        
+        .loading-dots div:nth-child(4) {
+            left: 56px;
+            animation: loading-dots3 0.6s infinite;
+        }
+        
+        @keyframes loading-dots1 {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes loading-dots3 {
+            0% { transform: scale(1); }
+            100% { transform: scale(0); }
+        }
+        
+        @keyframes loading-dots2 {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(24px, 0); }
+        }
+        
+        .optimization-results {
+            display: none;
+            padding: 15px 0;
+        }
+        
+        .result-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .result-section h3 {
+            color: #904E95;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        .strengths-weaknesses {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 700px) {
+            .strengths-weaknesses {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .strengths, .weaknesses {
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .strengths {
+            background-color: #f1f8e9;
+            border-left: 4px solid #8bc34a;
+        }
+        
+        .weaknesses {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .strengths h4, .weaknesses h4 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .strength-item, .weakness-item {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .strength-item::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #8bc34a;
+            font-weight: bold;
+        }
+        
+        .weakness-item::before {
+            content: "!";
+            position: absolute;
+            left: 0;
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        .recommendations {
+            margin-top: 20px;
+        }
+        
+        .recommendation-item {
+            background-color: #e8eaf6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3f51b5;
+        }
+        
+        .recommendation-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #3f51b5;
+        }
+        
+        .action-plan {
+            margin-top: 20px;
+        }
+        
+        .action-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .action-number {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(90deg, #904E95 0%, #E84B63 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .action-content {
+            flex-grow: 1;
+        }
+        
+        .action-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .action-description {
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .matches-section {
+            margin-top: 30px;
+        }
+        
+        .opportunity-match {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+        }
+        
+        .match-strong {
+            border-color: #4caf50;
+        }
+        
+        .match-medium {
+            border-color: #2196f3;
+        }
+        
+        .match-basic {
+            border-color: #ff9800;
+        }
+        
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .match-title {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .match-score {
+            background: linear-gradient(90deg, #904E95 0%, #E84B63 100%);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .match-description {
+            margin-bottom: 15px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .match-why {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .match-why h4 {
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .match-strategy {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .match-strategy h4 {
+            margin-top: 0;
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .download-button {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 15px;
+            font-weight: 600;
+            color: #333;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        
+        .download-button:hover {
+            background-color: #eeeeee;
+            border-color: #bdbdbd;
+        }
+        
+        .download-button::before {
+            content: "↓";
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        
+        /* Limited access overlay */
+        .premium-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            border-radius: 16px;
+        }
+        
+        .premium-lock {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .premium-message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #904E95;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .premium-description {
+            color: #666;
+            margin-bottom: 25px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+        
+        .upgrade-button {
+            background: linear-gradient(90deg, #904E95 0%, #E84B63 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(232, 75, 99, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .upgrade-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 75, 99, 0.4);
+        }
+        
+        /* Premium options with OpenAI login */
+        .premium-options {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .premium-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+        
+        .premium-divider::before,
+        .premium-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .premium-divider::before {
+            margin-right: 10px;
+        }
+        
+        .premium-divider::after {
+            margin-left: 10px;
+        }
+        
+        .login-options {
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .login-options p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .quick-login-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .social-login-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .social-login-button:hover {
+            background-color: #f5f5f5;
+            border-color: #ccc;
+        }
+        
+        .social-login-button img {
+            height: 20px;
+            margin-right: 10px;
+        }
+        
+        .login-note {
+            font-size: 13px;
+            color: #904E95;
+            font-style: italic;
+        }
+        
+        /* Simple responsive adjustments */
+        @media (max-width: 768px) {
+            .ai-portfolio-header h1 {
+                font-size: 2rem;
+            }
+            
+            .ai-badge {
+                position: static;
+                display: inline-block;
+                margin-bottom: 15px;
+                transform: none;
+            }
+            
+            .portfolio-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .strengths-weaknesses {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="/" aria-label="Proletto Home">
+                    <img src="assets/proletto-logo.svg" alt="Proletto - Opportunities for Visual Artists" class="main-logo" width="220" height="60" loading="eager">
+                </a>
+            </div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/how-it-works">How It Works</a></li>
+                <li><a href="/opportunities">Opportunities</a></li>
+                <li><a href="/portfolio" class="active">Portfolio Optimizer</a></li>
+                <li><a href="/membership">Membership</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="portfolio-container">
+        <div class="ai-portfolio-header">
+            <div class="ai-badge">AI POWERED</div>
+            <h1>AI Portfolio Optimizer for Artists</h1>
+            <p>Upload your portfolio details and our AI will analyze your work, provide feedback, and suggest improvements to maximize your application success rates.</p>
+        </div>
+        
+        <div class="portfolio-sections">
+            <!-- Portfolio Form Section -->
+            <div class="form-section">
+                <h2>Your Portfolio Details</h2>
+                <form id="portfolio-form">
+                    <div class="form-group">
+                        <label for="artist-name">Your Name</label>
+                        <input type="text" id="artist-name" name="artist_name" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="art-type">Art Medium/Type</label>
+                        <input type="text" id="art-type" name="art_type" placeholder="e.g., Painting, Sculpture, Digital Media, Mixed Media, etc." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="portfolio-description">Portfolio Description</label>
+                        <textarea id="portfolio-description" name="portfolio_description" placeholder="Describe your artistic practice, themes, and approach..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Portfolio Items</label>
+                        <div id="portfolio-items" class="portfolio-items-container">
+                            <!-- Portfolio items will be added here -->
+                        </div>
+                        <button type="button" id="add-portfolio-item" class="add-button">+ Add Portfolio Item</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Past Exhibitions/Shows</label>
+                        <div id="exhibitions" class="exhibitions-container">
+                            <!-- Exhibition items will be added here -->
+                        </div>
+                        <button type="button" id="add-exhibition" class="add-button">+ Add Exhibition/Show</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="optimization-goals">Optimization Goals (Optional)</label>
+                        <textarea id="optimization-goals" name="optimization_goals" placeholder="What specific goals are you trying to achieve? (e.g., 'Prepare portfolio for residency applications' or 'Make work more cohesive')"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-button">Analyze My Portfolio with AI</button>
+                </form>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="results-section">
+                <!-- Premium overlay - shown for free tier users -->
+                <div id="premium-overlay" class="premium-overlay">
+                    <div class="premium-lock">🔒</div>
+                    <div class="premium-message">Premium AI Feature</div>
+                    <p class="premium-description">AI Portfolio Optimization is available to Premium and Supporter members. Upgrade your membership to access this powerful tool.</p>
+                    
+                    <div class="premium-options">
+                        <a href="/membership" class="upgrade-button">Upgrade Membership</a>
+                        
+                        <div class="premium-divider">or</div>
+                        
+                        <div class="login-options">
+                            <p>Quick access with:</p>
+                            <div class="quick-login-buttons">
+                                <button id="openai-login" class="social-login-button openai-login">
+                                    <img src="/assets/openai-logo.svg" alt="OpenAI Logo" width="18" height="18" loading="lazy">
+                                    OpenAI Account
+                                </button>
+                            </div>
+                            <p class="login-note">OpenAI account holders get instant Premium access</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Processing Animation -->
+                <div id="ai-progress" class="ai-progress">
+                    <span class="ai-icon-large">🤖</span>
+                    <span class="ai-thinking">AI is analyzing your portfolio...</span>
+                    <div class="loading-dots"><div></div><div></div><div></div><div></div></div>
+                </div>
+                
+                <!-- Results will be displayed here -->
+                <div id="optimization-results" class="optimization-results">
+                    <h2>Portfolio Analysis Results</h2>
+                    
+                    <div class="result-section">
+                        <h3>Portfolio Overview</h3>
+                        <div id="portfolio-overview"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <h3>Portfolio Assessment</h3>
+                        <div class="strengths-weaknesses">
+                            <div class="strengths">
+                                <h4>Strengths</h4>
+                                <div id="portfolio-strengths"></div>
+                            </div>
+                            <div class="weaknesses">
+                                <h4>Areas for Improvement</h4>
+                                <div id="portfolio-weaknesses"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <h3>Key Recommendations</h3>
+                        <div id="recommendations" class="recommendations"></div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <h3>Action Plan</h3>
+                        <div id="action-plan" class="action-plan"></div>
+                    </div>
+                    
+                    <div id="matches-section" class="result-section matches-section" style="display: none;">
+                        <h3>Opportunity Matches</h3>
+                        <div id="opportunity-matches"></div>
+                    </div>
+                    
+                    <a href="#" id="download-report" class="download-button">Download Full Analysis Report</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Proletto</h3>
+                <p>Proletto is a platform designed to connect visual artists with professional opportunities.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/how-it-works">How It Works</a></li>
+                    <li><a href="/opportunities">Opportunities</a></li>
+                    <li><a href="/portfolio">Portfolio Optimizer</a></li>
+                    <li><a href="/membership">Membership</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: support@myproletto.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Proletto. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // User subscription status (in a real app, this would be retrieved from backend)
+        let userSubscription = {
+            isRegistered: false, // Whether the user has signed up with email
+            membershipLevel: "free", // Options: "free", "supporter", "premium"
+            chosenStates: [] // For supporter level, would contain 3 chosen states
+        };
+        
+        // Check if user is already registered from localStorage
+        function checkRegistrationStatus() {
+            const savedEmail = localStorage.getItem('proletto_email');
+            const membershipLevel = localStorage.getItem('proletto_membership_level') || 'free';
+            
+            if (savedEmail) {
+                userSubscription.isRegistered = true;
+                userSubscription.email = savedEmail;
+                userSubscription.membershipLevel = membershipLevel;
+                
+                // If premium or supporter, hide premium overlay
+                if (membershipLevel === 'premium' || membershipLevel === 'supporter') {
+                    document.getElementById('premium-overlay').style.display = 'none';
+                }
+            }
+        }
+        
+        // Template for a portfolio item
+        function createPortfolioItemTemplate(index) {
+            return `
+                <div class="portfolio-item" data-index="${index}">
+                    <span class="remove-button">×</span>
+                    <div class="form-group">
+                        <label for="portfolio-title-${index}">Title</label>
+                        <input type="text" id="portfolio-title-${index}" name="portfolio_items[${index}][title]" placeholder="Title of work" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolio-year-${index}">Year</label>
+                        <input type="number" id="portfolio-year-${index}" name="portfolio_items[${index}][year]" placeholder="Year created" required min="1900" max="2030">
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolio-medium-${index}">Medium</label>
+                        <input type="text" id="portfolio-medium-${index}" name="portfolio_items[${index}][medium]" placeholder="e.g., Oil on canvas, Digital print, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolio-description-${index}">Description</label>
+                        <textarea id="portfolio-description-${index}" name="portfolio_items[${index}][description]" placeholder="Describe this work..." required></textarea>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Template for an exhibition item
+        function createExhibitionTemplate(index) {
+            return `
+                <div class="exhibition-item" data-index="${index}">
+                    <span class="remove-button">×</span>
+                    <div class="form-group">
+                        <label for="exhibition-title-${index}">Exhibition Title</label>
+                        <input type="text" id="exhibition-title-${index}" name="past_exhibitions[${index}][title]" placeholder="Name of exhibition/show" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exhibition-venue-${index}">Venue</label>
+                        <input type="text" id="exhibition-venue-${index}" name="past_exhibitions[${index}][venue]" placeholder="Gallery/Museum/Space name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exhibition-location-${index}">Location</label>
+                        <input type="text" id="exhibition-location-${index}" name="past_exhibitions[${index}][location]" placeholder="City, State" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exhibition-year-${index}">Year</label>
+                        <input type="number" id="exhibition-year-${index}" name="past_exhibitions[${index}][year]" placeholder="Year of exhibition" required min="1900" max="2030">
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Add a portfolio item
+        let portfolioItemCounter = 0;
+        document.getElementById('add-portfolio-item').addEventListener('click', function() {
+            const portfolioItemsContainer = document.getElementById('portfolio-items');
+            portfolioItemsContainer.insertAdjacentHTML('beforeend', createPortfolioItemTemplate(portfolioItemCounter));
+            attachRemoveButtonListeners();
+            portfolioItemCounter++;
+        });
+        
+        // Add an exhibition
+        let exhibitionCounter = 0;
+        document.getElementById('add-exhibition').addEventListener('click', function() {
+            const exhibitionsContainer = document.getElementById('exhibitions');
+            exhibitionsContainer.insertAdjacentHTML('beforeend', createExhibitionTemplate(exhibitionCounter));
+            attachRemoveButtonListeners();
+            exhibitionCounter++;
+        });
+        
+        // Attach event listeners to remove buttons
+        function attachRemoveButtonListeners() {
+            document.querySelectorAll('.remove-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.parentElement.remove();
+                });
+            });
+        }
+        
+        // Submit form
+        document.getElementById('portfolio-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            // Check if premium or above
+            if (userSubscription.membershipLevel !== 'premium' && userSubscription.membershipLevel !== 'supporter') {
+                document.getElementById('premium-overlay').style.display = 'flex';
+                return;
+            }
+            
+            // Show loading animation
+            document.getElementById('ai-progress').style.display = 'block';
+            document.getElementById('optimization-results').style.display = 'none';
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const portfolioData = {
+                artist_name: formData.get('artist_name'),
+                art_type: formData.get('art_type'),
+                portfolio_description: formData.get('portfolio_description'),
+                portfolio_items: [],
+                past_exhibitions: []
+            };
+            
+            // Add optional goals if provided
+            const goals = formData.get('optimization_goals');
+            if (goals && goals.trim()) {
+                portfolioData.optimization_goals = goals;
+            }
+            
+            // Collect portfolio items
+            document.querySelectorAll('.portfolio-item').forEach(item => {
+                const index = item.dataset.index;
+                portfolioData.portfolio_items.push({
+                    title: formData.get(`portfolio_items[${index}][title]`),
+                    year: parseInt(formData.get(`portfolio_items[${index}][year]`)),
+                    medium: formData.get(`portfolio_items[${index}][medium]`),
+                    description: formData.get(`portfolio_items[${index}][description]`)
+                });
+            });
+            
+            // Collect exhibitions
+            document.querySelectorAll('.exhibition-item').forEach(item => {
+                const index = item.dataset.index;
+                portfolioData.past_exhibitions.push({
+                    title: formData.get(`past_exhibitions[${index}][title]`),
+                    venue: formData.get(`past_exhibitions[${index}][venue]`),
+                    location: formData.get(`past_exhibitions[${index}][location]`),
+                    year: parseInt(formData.get(`past_exhibitions[${index}][year]`))
+                });
+            });
+            
+            try {
+                // In a real app, send to backend for processing with the OpenAI API
+                const response = await fetch('/api/optimize-portfolio', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(portfolioData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to analyze portfolio');
+                }
+                
+                const result = await response.json();
+                
+                // Display results
+                displayResults(result);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Sorry, there was an error analyzing your portfolio. Please try again later.');
+            } finally {
+                // Hide loading animation
+                document.getElementById('ai-progress').style.display = 'none';
+            }
+        });
+        
+        // Display results from API
+        function displayResults(data) {
+            // Show results container
+            document.getElementById('optimization-results').style.display = 'block';
+            
+            // Overview
+            document.getElementById('portfolio-overview').innerHTML = `<p>${data.analysis.overview}</p>`;
+            
+            // Strengths
+            const strengthsContainer = document.getElementById('portfolio-strengths');
+            strengthsContainer.innerHTML = '';
+            data.analysis.strengths.forEach(strength => {
+                strengthsContainer.innerHTML += `<div class="strength-item">${strength}</div>`;
+            });
+            
+            // Weaknesses
+            const weaknessesContainer = document.getElementById('portfolio-weaknesses');
+            weaknessesContainer.innerHTML = '';
+            data.analysis.weaknesses.forEach(weakness => {
+                weaknessesContainer.innerHTML += `<div class="weakness-item">${weakness}</div>`;
+            });
+            
+            // Recommendations
+            const recommendationsContainer = document.getElementById('recommendations');
+            recommendationsContainer.innerHTML = '';
+            data.analysis.recommendations.forEach(rec => {
+                recommendationsContainer.innerHTML += `
+                    <div class="recommendation-item">
+                        <div class="recommendation-title">${rec.title}</div>
+                        <div class="recommendation-description">${rec.description}</div>
+                    </div>
+                `;
+            });
+            
+            // Action Plan
+            const actionPlanContainer = document.getElementById('action-plan');
+            actionPlanContainer.innerHTML = '';
+            data.analysis.action_plan.forEach((action, index) => {
+                actionPlanContainer.innerHTML += `
+                    <div class="action-item">
+                        <div class="action-number">${index + 1}</div>
+                        <div class="action-content">
+                            <div class="action-title">${action.title}</div>
+                            <div class="action-description">${action.description}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Opportunity Matches (if available)
+            if (data.analysis.opportunity_matches && data.analysis.opportunity_matches.length > 0) {
+                document.getElementById('matches-section').style.display = 'block';
+                const matchesContainer = document.getElementById('opportunity-matches');
+                matchesContainer.innerHTML = '';
+                
+                data.analysis.opportunity_matches.forEach(match => {
+                    // Determine match level based on score
+                    let matchClass = 'match-basic';
+                    if (match.match_score >= 85) {
+                        matchClass = 'match-strong';
+                    } else if (match.match_score >= 70) {
+                        matchClass = 'match-medium';
+                    }
+                    
+                    matchesContainer.innerHTML += `
+                        <div class="opportunity-match ${matchClass}">
+                            <div class="match-header">
+                                <div class="match-title">${match.title}</div>
+                                <div class="match-score">${match.match_score}% Match</div>
+                            </div>
+                            <div class="match-description">${match.description}</div>
+                            <div class="match-why">
+                                <h4>Why It's a Good Match:</h4>
+                                <p>${match.match_rationale}</p>
+                            </div>
+                            <div class="match-strategy">
+                                <h4>Application Strategy:</h4>
+                                <p>${match.application_strategy}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                document.getElementById('matches-section').style.display = 'none';
+            }
+            
+            // Implement download functionality
+            document.getElementById('download-report').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // In a real app, this would generate a formatted PDF or document
+                // For now, just alert
+                alert('In a real application, this would download a formatted PDF report of your portfolio analysis.');
+            });
+        }
+        
+        // Handle OpenAI login
+        document.getElementById('openai-login').addEventListener('click', function() {
+            // In a real app, this would open an OpenAI OAuth popup
+            // For this demo, we'll simulate a successful login
+            
+            // Set user as premium after OpenAI login
+            localStorage.setItem('proletto_email', 'user@openai.com');
+            localStorage.setItem('proletto_signup_method', 'openai');
+            localStorage.setItem('proletto_membership_level', 'premium');
+            
+            // Update membership status
+            userSubscription.isRegistered = true;
+            userSubscription.email = 'user@openai.com';
+            userSubscription.signupMethod = 'openai';
+            userSubscription.membershipLevel = 'premium';
+            
+            // Hide premium overlay
+            document.getElementById('premium-overlay').style.display = 'none';
+            
+            alert('Successfully logged in with OpenAI account. You now have Premium access!');
+        });
+        
+        // Add initial items on page load for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a blank portfolio item and exhibition to start
+            document.getElementById('add-portfolio-item').click();
+            document.getElementById('add-exhibition').click();
+            
+            // Check user registration status
+            checkRegistrationStatus();
+            
+            // Simulate results for demonstration/testing (can be removed in production)
+            if (window.location.search.includes('demo=true')) {
+                simulateDemoResults();
+            }
+        });
+        
+        // Function to simulate results for demonstration purposes
+        function simulateDemoResults() {
+            // This will only run when the URL has ?demo=true
+            const demoData = {
+                analysis: {
+                    overview: "Your portfolio shows a strong conceptual foundation with a coherent exploration of digital and physical interfaces. There's a clear thematic focus on human-technology relationships that runs through your work, creating a strong narrative thread. Your technical execution in mixed media installation demonstrates versatility and innovation.",
+                    strengths: [
+                        "Strong conceptual foundation that ties works together",
+                        "Innovative use of technology and interactive elements",
+                        "Unique voice and perspective on contemporary issues",
+                        "Professional presentation of previous exhibitions",
+                        "Diverse range of media showing technical versatility"
+                    ],
+                    weaknesses: [
+                        "Limited documentation of the interactive aspects",
+                        "Portfolio lacks clear progression or evolution over time",
+                        "Some projects would benefit from more context about research process",
+                        "Exhibition history is geographically limited to two regions"
+                    ],
+                    recommendations: [
+                        {
+                            title: "Enhance Documentation",
+                            description: "Create video documentation of interactive installations to better communicate the experience to potential curators and grant committees."
+                        },
+                        {
+                            title: "Develop Artist Statement",
+                            description: "Strengthen your artist statement to more clearly articulate how your technical choices support your conceptual interests."
+                        },
+                        {
+                            title: "Expand Exhibition Reach",
+                            description: "Consider applying to exhibitions and residencies in different geographic regions to expand your presence outside current areas."
+                        }
+                    ],
+                    action_plan: [
+                        {
+                            title: "Create Video Documentation",
+                            description: "Produce 1-2 minute videos for each interactive piece that capture the user experience and technical aspects of your installations."
+                        },
+                        {
+                            title: "Revise Artist Statement",
+                            description: "Update your artist statement to better articulate the relationship between your technological approach and conceptual interests, emphasizing innovation."
+                        },
+                        {
+                            title: "Research East Coast Opportunities",
+                            description: "Identify and prepare applications for at least three exhibitions or residencies in the New York or Boston area within the next four months."
+                        },
+                        {
+                            title: "Develop Process Documentation",
+                            description: "Create a research section in your portfolio that showcases your development process, preliminary sketches, and technical experiments."
+                        },
+                        {
+                            title: "Plan a New Series",
+                            description: "Develop a proposal for a new work or series that builds on your strongest pieces while pushing in a new direction to show artistic evolution."
+                        }
+                    ],
+                    opportunity_matches: [
+                        {
+                            title: "Tech Arts Residency",
+                            description: "A 3-month residency for artists working at the intersection of technology and traditional art forms.",
+                            match_score: 92,
+                            match_rationale: "This residency specifically focuses on digital media artists exploring human-technology interfaces, which aligns perfectly with your portfolio's themes and technical approach.",
+                            application_strategy: "Emphasize your unique combination of physical materials with digital interfaces. Highlight 'Digital Erosion' as it demonstrates both conceptual depth and technical innovation. Include video documentation."
+                        },
+                        {
+                            title: "Immersive Installations Exhibition",
+                            description: "A group exhibition focused on immersive, experiential art installations that engage multiple senses.",
+                            match_score: 85,
+                            match_rationale: "Your interactive installations, particularly 'Biometric Resonance,' align with this exhibition's focus on multisensory experiences and audience engagement.",
+                            application_strategy: "Focus on the experiential aspects of your work. Provide detailed technical rider and installation requirements. Create mockups of how your work would be installed in their specific space."
+                        },
+                        {
+                            title: "Environmental Art Grant",
+                            description: "Funding for projects that address environmental issues through innovative art practices.",
+                            match_score: 68,
+                            match_rationale: "While your work doesn't explicitly address environmental themes, your use of natural materials in 'Digital Erosion' could be repositioned to align with this grant's focus.",
+                            application_strategy: "Develop an extension of 'Digital Erosion' that more explicitly addresses environmental concerns such as digital waste or technological impact on natural landscapes. Emphasize the use of sustainable materials."
+                        }
+                    ]
+                }
+            };
+            
+            // Display the demo results
+            setTimeout(() => {
+                displayResults(demoData);
+                document.getElementById('ai-progress').style.display = 'none';
+            }, 2000);
+        }
+    </script>
+    
+    <!-- Mobile Navigation -->
+    {% include "includes/mobile_nav.html" %}
+</body>
+</html>

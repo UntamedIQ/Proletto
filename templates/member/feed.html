@@ -1,0 +1,138 @@
+{% extends "member/base.html" %}
+
+{% block title %}Your Opportunity Feed{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto p-4">
+  <h1 class="text-2xl font-serif mb-4">Your Feed</h1>
+
+  <!-- Curated Picks -->
+  <section class="mb-8">
+    <h2 class="text-xl font-medium mb-2">Curated Picks</h2>
+    <div id="curation-list" class="space-y-4"></div>
+  </section>
+
+  <!-- Infinite-Scroll Feed -->
+  <div id="feed-list" class="space-y-4"></div>
+  <div id="loading" class="text-center mt-4 text-gray-600">Loading...</div>
+</div>
+
+<script>
+  const feedList = document.getElementById('feed-list');
+  const curationList = document.getElementById('curation-list');
+  const loading = document.getElementById('loading');
+  let page = 1, loadingFeed = false;
+
+  // Render a single card
+  function createCard(opp) {
+    const div = document.createElement('div');
+    div.className = 'bg-white p-4 rounded shadow';
+    
+    // Format deadline if available
+    let deadlineText = '';
+    if (opp.deadline) {
+      try {
+        deadlineText = `Deadline: ${new Date(opp.deadline).toLocaleDateString()}`;
+      } catch (e) {
+        deadlineText = `Deadline: ${opp.deadline}`;
+      }
+    }
+
+    // Create recommendation badge if score available
+    let recBadge = '';
+    if (opp.recommendation_score) {
+      const score = Math.round(opp.recommendation_score * 100);
+      recBadge = `<span class="inline-block px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full ml-2">${score}% match</span>`;
+    }
+
+    div.innerHTML = `
+      <h3 class="font-semibold">${opp.title} ${recBadge}</h3>
+      <p class="text-sm text-gray-700">${opp.description || ''}</p>
+      <div class="flex justify-between items-center mt-1">
+        <p class="text-xs text-gray-500">${deadlineText}</p>
+        <span class="text-xs text-gray-400">${opp.source || ''}</span>
+      </div>
+      <div class="mt-2 flex space-x-2">
+        <button 
+          class="px-3 py-1 bg-olive text-white rounded text-sm hover:bg-olive-dark transition"
+          onclick="window.open('${opp.url}','_blank')"
+        >Apply</button>
+        <button 
+          class="px-3 py-1 border border-gray-300 text-gray-600 rounded text-sm hover:bg-gray-100 transition"
+          onclick="saveOpportunity('${opp.id}')"
+        >Save</button>
+      </div>
+    `;
+    return div;
+  }
+
+  // Save an opportunity (placeholder function)
+  function saveOpportunity(id) {
+    console.log('Saving opportunity:', id);
+    // In a real app, we would send this to an API endpoint
+    alert('Opportunity saved! (Placeholder functionality)');
+  }
+
+  // Load curation
+  async function loadCuration() {
+    try {
+      const res = await fetch('/dashboard/api/curation');
+      if (!res.ok) {
+        throw new Error('Failed to load curated picks');
+      }
+      
+      const items = await res.json();
+      curationList.innerHTML = ''; // Clear existing content
+      
+      if (items.length === 0) {
+        curationList.innerHTML = '<p class="text-gray-500">No curated picks available yet.</p>';
+        return;
+      }
+      
+      items.forEach(opp => curationList.appendChild(createCard(opp)));
+    } catch (err) {
+      console.error('Error loading curation:', err);
+      curationList.innerHTML = '<p class="text-red-500">Failed to load curated picks. Please refresh the page.</p>';
+    }
+  }
+
+  // Load feed page
+  async function loadFeed() {
+    if (loadingFeed) return;
+    loadingFeed = true;
+    loading.style.display = 'block';
+
+    try {
+      const res = await fetch(`/dashboard/api/feed?page=${page}&per_page=10`);
+      if (!res.ok) {
+        throw new Error('Failed to load feed');
+      }
+      
+      const items = await res.json();
+      if (!items.length) {
+        loading.innerText = 'No more opportunities';
+      } else {
+        items.forEach(opp => feedList.appendChild(createCard(opp)));
+        page++;
+        loading.style.display = 'none';
+      }
+    } catch (err) {
+      console.error('Error loading feed:', err);
+      loading.innerText = 'Failed to load feed. Please refresh the page.';
+    } finally {
+      loadingFeed = false;
+    }
+  }
+
+  // Infinite scroll trigger
+  window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+      loadFeed();
+    }
+  });
+
+  // Initial loads
+  loadCuration();
+  loadFeed();
+</script>
+{% endblock %}

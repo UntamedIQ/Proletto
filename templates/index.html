@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Proletto connects visual artists with paid opportunities including grants, residencies, exhibitions, and jobs">
+  <meta name="theme-color" content="#a86a3e">
+  <title>Proletto - The AI-Powered Art Agent</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header class="minimal-header">
+      <div class="header-left">
+        <div class="logo">
+          <a href="/" aria-label="Proletto Home" class="text-logo">
+            Proletto
+          </a>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/how-it-works">How It Works</a></li>
+          <li><a href="/membership">Membership</a></li>
+        </ul>
+      </nav>
+      <div class="auth-nav">
+        <a href="/auth/login" class="login-register-link">Sign In / Register</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="clean-hero">
+        <div class="hero-content">
+          <h1>Proletto</h1>
+          <h2 class="subtitle">The AI-Powered Art Agent</h2>
+          <p class="tagline">Helping artists discover real opportunities and apply with ease—without the stress.</p>
+          <p class="crafted-by">Built by an artist, for all artists.</p>
+          <a href="/how-it-works" class="cta-button">Learn How It Works</a>
+          <div style="margin-top: 15px;">
+            <a href="/auth/login" class="login-link" style="color: white; text-decoration: underline; font-weight: 500;">Already a member? Sign in</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="problem-statement">
+        <h2>We're creating Proletto to solve this.</h2>
+        
+        <div class="stats-container">
+          <div class="stat-item">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-highlight">85% of open calls</p>
+              <p>disappear on social within 48 hours.</p>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-highlight">Artists submit to 5-20</p>
+              <p>opportunities monthly with minimal replies.</p>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-highlight">Every application takes</p>
+              <p>30-60 mins manually.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="benefits">
+        <div class="benefits-center">
+          <h2>Save valuable time.<br>Focus on your art.</h2>
+          <p class="benefits-description">Proletto does the hard work of finding opportunities, allowing you to concentrate on creating remarkable art.</p>
+          <a href="/how-it-works" class="proletto-link">Learn More About Our Platform</a>
+        </div>
+      </section>
+
+      <section class="founder">
+        <h2>Brandon Zarif</h2>
+        <p class="founder-description">—a mixed media artist who grew weary of chasing broken links and entering my CV countless times. I'm bringing Proletto to life to empower artists—eliminating time-consuming busywork.</p>
+      </section>
+
+      <section class="support">
+        <h2>Want to support the build?</h2>
+        <p class="support-description">Proletto is being built from the ground up—no investors, just passion and determination.</p>
+        <a href="/membership" class="stripe-button">Support via Stripe</a>
+      </section>
+      
+      <!-- Join Us Teaser -->
+      <section class="opportunity-teaser">
+        <h2>Ready to join the Proletto community?</h2>
+        <p>Get personalized recommendations, portfolio insights, and a powerful dashboard to manage your art career.</p>
+        <div class="teaser-buttons">
+          <a href="/how-it-works" class="cta-button">Discover Our Features</a>
+          <a href="/membership" class="cta-button">Start a Free Trial</a>
+          <div class="auth-options">
+            <a href="/auth/login" class="auth-button">
+              <span>Already a member? Sign In</span>
+            </a>
+            <div class="auth-divider">or</div>
+            <a href="/auth/google/google_login" class="google-login-button">
+              <img src="assets/google-logo.svg" alt="Google logo" class="google-icon">
+              <span>Continue with Google</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Proletto. All rights reserved. Follow us <a href="https://instagram.com/proletto.app" target="_blank">@proletto.app</a></p>
+    </footer>
+  </div>
+  
+  <!-- Include the mobile navigation bar -->
+  {% include 'includes/mobile_nav.html' %}
+  
+  <!-- Add the mobile.css file for styling -->
+  <link rel="stylesheet" href="/static/css/mobile.css">
+</body>
+</html>

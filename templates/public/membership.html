@@ -1,0 +1,949 @@
+{% extends "public/base.html" %}
+
+{% block title %}Membership Plans | Proletto{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/membership.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="membership-hero">
+    <div class="container text-center">
+        <h1>Choose Your Proletto Membership</h1>
+        <p class="lead">Select the plan that fits your creative journey and unlock the tools you need to advance your art career.</p>
+        <div class="trial-badge">
+            <span>All plans include a 7-day free trial</span>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="pricing-section" id="pricing">
+    <div class="container">
+        <div class="pricing-toggle-container">
+            <span class="pricing-toggle-label">Monthly</span>
+            <label class="pricing-toggle">
+                <input type="checkbox" id="annualPricing">
+                <span class="toggle-slider"></span>
+            </label>
+            <span class="pricing-toggle-label">Annual <span class="pricing-save-badge">Save 15%</span></span>
+        </div>
+        
+        <div class="row pricing-cards">
+            <!-- Free Plan -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <h3>Free</h3>
+                        <div class="pricing-price">
+                            <span class="currency">$</span>
+                            <span class="amount">0</span>
+                            <span class="period">/mo</span>
+                        </div>
+                    </div>
+                    <div class="pricing-card-body">
+                        <ul class="pricing-features">
+                            <li>Limited opportunity alerts</li>
+                            <li>Basic profile</li>
+                            <li>3 portfolio items</li>
+                            <li>Community access</li>
+                            <li class="feature-disabled">Specialized engines</li>
+                            <li class="feature-disabled">Portfolio optimization</li>
+                            <li class="feature-disabled">Application assistance</li>
+                            <li class="feature-disabled">Workspace tools</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card-footer">
+                        <a href="/register" class="btn btn-outline w-100">Sign Up Free</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Essentials Plan -->
+            <div class="col-lg-3 col-md-6 mb-4" id="essentials">
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <h3>Essentials</h3>
+                        <div class="pricing-price">
+                            <span class="currency">$</span>
+                            <span class="amount monthly-price">5</span>
+                            <span class="amount annual-price" style="display: none;">4.25</span>
+                            <span class="period">/mo</span>
+                        </div>
+                    </div>
+                    <div class="pricing-card-body">
+                        <ul class="pricing-features">
+                            <li>Full opportunity database</li>
+                            <li>Basic AI matching</li>
+                            <li>20 portfolio items</li>
+                            <li>Community access</li>
+                            <li>Limited specialized engines</li>
+                            <li>Basic portfolio assessment</li>
+                            <li>Application tracking</li>
+                            <li class="feature-disabled">Workspace tools</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card-footer">
+                        <a href="/start-trial?plan=essentials" class="btn btn-primary w-100">Start 7-Day Trial</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Insider Plan -->
+            <div class="col-lg-3 col-md-6 mb-4" id="insider">
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-card-header">
+                        <h3>Proletto Insider</h3>
+                        <div class="pricing-price">
+                            <span class="currency">$</span>
+                            <span class="amount monthly-price">15</span>
+                            <span class="amount annual-price" style="display: none;">12.75</span>
+                            <span class="period">/mo</span>
+                        </div>
+                    </div>
+                    <div class="pricing-card-body">
+                        <ul class="pricing-features">
+                            <li>Premium opportunity matching</li>
+                            <li>Advanced AI recommendations</li>
+                            <li>Unlimited portfolio items</li>
+                            <li>Priority alerts</li>
+                            <li>All specialized engines</li>
+                            <li>Full portfolio optimization</li>
+                            <li>AI application assistance</li>
+                            <li>Basic workspace tools</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card-footer">
+                        <a href="/start-trial?plan=insider" class="btn btn-primary w-100">Start 7-Day Trial</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gallery Plan -->
+            <div class="col-lg-3 col-md-6 mb-4" id="gallery">
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <h3>Gallery/Event</h3>
+                        <div class="pricing-price">
+                            <span class="currency">$</span>
+                            <span class="amount monthly-price">50</span>
+                            <span class="amount annual-price" style="display: none;">42.50</span>
+                            <span class="period">/mo</span>
+                        </div>
+                    </div>
+                    <div class="pricing-card-body">
+                        <ul class="pricing-features">
+                            <li>Everything in Insider</li>
+                            <li>Multi-user accounts</li>
+                            <li>Client management system</li>
+                            <li>Custom opportunity curation</li>
+                            <li>Advanced analytics</li>
+                            <li>API access</li>
+                            <li>Premium support</li>
+                            <li>White-label options</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card-footer">
+                        <a href="/start-trial?plan=gallery" class="btn btn-primary w-100">Start 7-Day Trial</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature Comparison -->
+<section class="feature-comparison" id="features">
+    <div class="container">
+        <h2 class="text-center mb-5">Detailed Feature Comparison</h2>
+        
+        <div class="table-responsive">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Free</th>
+                        <th>Essentials</th>
+                        <th>Proletto Insider</th>
+                        <th>Gallery/Event</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="category-row">
+                        <td colspan="5">Opportunity Discovery</td>
+                    </tr>
+                    <tr>
+                        <td>Opportunity Alerts</td>
+                        <td>Limited (5/week)</td>
+                        <td>Full Access</td>
+                        <td>Premium Access</td>
+                        <td>Custom Curation</td>
+                    </tr>
+                    <tr>
+                        <td>Specialized Engines</td>
+                        <td>—</td>
+                        <td>2 Engines</td>
+                        <td>All Engines</td>
+                        <td>All Engines + Custom</td>
+                    </tr>
+                    <tr>
+                        <td>Geographic Coverage</td>
+                        <td>Limited</td>
+                        <td>Standard</td>
+                        <td>Comprehensive</td>
+                        <td>Global + Custom</td>
+                    </tr>
+                    <tr>
+                        <td>Matching Algorithm</td>
+                        <td>Basic</td>
+                        <td>Standard</td>
+                        <td>Advanced</td>
+                        <td>Enterprise-grade</td>
+                    </tr>
+                    
+                    <tr class="category-row">
+                        <td colspan="5">Portfolio Management</td>
+                    </tr>
+                    <tr>
+                        <td>Portfolio Items</td>
+                        <td>3 Items</td>
+                        <td>20 Items</td>
+                        <td>Unlimited</td>
+                        <td>Unlimited</td>
+                    </tr>
+                    <tr>
+                        <td>Portfolio Optimization</td>
+                        <td>—</td>
+                        <td>Basic Assessment</td>
+                        <td>Full Optimization</td>
+                        <td>Advanced Analysis</td>
+                    </tr>
+                    <tr>
+                        <td>AI Insights</td>
+                        <td>—</td>
+                        <td>Limited</td>
+                        <td>Comprehensive</td>
+                        <td>Premium</td>
+                    </tr>
+                    <tr>
+                        <td>Portfolio Analytics</td>
+                        <td>—</td>
+                        <td>Basic</td>
+                        <td>Advanced</td>
+                        <td>Enterprise</td>
+                    </tr>
+                    
+                    <tr class="category-row">
+                        <td colspan="5">Application Support</td>
+                    </tr>
+                    <tr>
+                        <td>Application Tracking</td>
+                        <td>Limited (3)</td>
+                        <td>Full</td>
+                        <td>Advanced</td>
+                        <td>Enterprise</td>
+                    </tr>
+                    <tr>
+                        <td>AI Application Assistant</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>Full Access</td>
+                        <td>Premium Access</td>
+                    </tr>
+                    <tr>
+                        <td>Auto-populate Forms</td>
+                        <td>—</td>
+                        <td>Basic</td>
+                        <td>Advanced</td>
+                        <td>Premium</td>
+                    </tr>
+                    <tr>
+                        <td>Deadline Reminders</td>
+                        <td>—</td>
+                        <td>Basic</td>
+                        <td>Advanced</td>
+                        <td>Custom</td>
+                    </tr>
+                    
+                    <tr class="category-row">
+                        <td colspan="5">Workspace Features</td>
+                    </tr>
+                    <tr>
+                        <td>Collaborative Tools</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>Basic</td>
+                        <td>Advanced</td>
+                    </tr>
+                    <tr>
+                        <td>Client Management</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>Full Access</td>
+                    </tr>
+                    <tr>
+                        <td>Project Management</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>Basic</td>
+                        <td>Advanced</td>
+                    </tr>
+                    <tr>
+                        <td>Multi-user Access</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>Up to 5 Users</td>
+                    </tr>
+                    
+                    <tr class="category-row">
+                        <td colspan="5">Support & Extra Features</td>
+                    </tr>
+                    <tr>
+                        <td>Customer Support</td>
+                        <td>Email</td>
+                        <td>Email</td>
+                        <td>Priority Email</td>
+                        <td>Priority + Phone</td>
+                    </tr>
+                    <tr>
+                        <td>API Access</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>Full Access</td>
+                    </tr>
+                    <tr>
+                        <td>White-label Options</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>Available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Free Trial -->
+<section class="trial-section" id="trial">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2>Try Proletto Risk-Free for 7 Days</h2>
+                <p class="lead">Start your free trial today and experience the full power of Proletto. No credit card required to start.</p>
+                <ul class="trial-benefits">
+                    <li>Full access to all features of your chosen plan</li>
+                    <li>No commitment - cancel anytime</li>
+                    <li>No credit card required to start</li>
+                    <li>Set up your profile in minutes</li>
+                    <li>Discover opportunities matched to your work</li>
+                </ul>
+                <a href="/start-trial" class="btn btn-primary btn-lg mt-4">Start Your Free Trial</a>
+            </div>
+            <div class="col-lg-6">
+                <img src="/assets/trial-illustration.jpg" alt="Proletto free trial" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="membership-faq">
+    <div class="container">
+        <h2 class="text-center mb-5">Frequently Asked Questions</h2>
+        
+        <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Can I change plans after signing up?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes! You can upgrade, downgrade, or cancel your plan at any time. If you upgrade, you'll be billed the prorated difference immediately. If you downgrade, your new plan will take effect at the start of your next billing cycle.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        How does the 7-day free trial work?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Our 7-day free trial gives you full access to all features of your chosen plan. You don't need to provide a credit card to start. At the end of the trial, you can choose to subscribe or your account will automatically revert to the Free tier with limited features.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        What are specialized engines?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Specialized engines are our custom-built opportunity scrapers that focus on specific geographic regions or opportunity types. For example, we have engines dedicated to California grants, New York residencies, international exhibitions, and more. Higher tier plans give you access to more specialized engines for comprehensive opportunity discovery.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Do you offer discounts for students or organizations?
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes! We offer a 20% discount for students with valid ID. For organizations, non-profits, and educational institutions, we offer custom pricing based on your needs. Please contact our sales team at <a href="mailto:sales@myproletto.com">sales@myproletto.com</a> to learn more.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        Can I cancel my subscription at any time?
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Absolutely! You can cancel your subscription at any time from your account settings. If you cancel, you'll continue to have access to your plan's features until the end of your current billing period, after which your account will revert to the Free tier.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSix">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                        What payment methods do you accept?
+                    </button>
+                </h2>
+                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        We accept all major credit cards (Visa, Mastercard, American Express, Discover) as well as PayPal. For Gallery/Event annual plans, we also offer invoicing options.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="membership-cta">
+    <div class="container text-center">
+        <h2>Ready to transform your art career?</h2>
+        <p class="lead">Join thousands of artists who are discovering new opportunities with Proletto.</p>
+        <div class="cta-buttons">
+            <a href="/start-trial" class="btn btn-primary btn-lg">Start Your Free Trial</a>
+            <a href="/how-it-works" class="btn btn-outline btn-lg">Learn More</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pricing toggle functionality
+        const pricingToggle = document.getElementById('annualPricing');
+        const monthlyPrices = document.querySelectorAll('.monthly-price');
+        const annualPrices = document.querySelectorAll('.annual-price');
+        const periodLabels = document.querySelectorAll('.period');
+        
+        if (pricingToggle) {
+            pricingToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    // Show annual prices
+                    monthlyPrices.forEach(el => el.style.display = 'none');
+                    annualPrices.forEach(el => el.style.display = 'inline');
+                    periodLabels.forEach(el => el.textContent = '/mo (billed annually)');
+                } else {
+                    // Show monthly prices
+                    monthlyPrices.forEach(el => el.style.display = 'inline');
+                    annualPrices.forEach(el => el.style.display = 'none');
+                    periodLabels.forEach(el => el.textContent = '/mo');
+                }
+            });
+        }
+        
+        // Scroll to section if URL contains hash
+        if (window.location.hash) {
+            const targetElement = document.querySelector(window.location.hash);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Membership Page Styles */
+    .membership-hero {
+        background-color: #f8f3e6;
+        padding: 6rem 0;
+        text-align: center;
+    }
+    
+    .membership-hero h1 {
+        font-family: var(--font-serif);
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--gray-900);
+    }
+    
+    .membership-hero .lead {
+        font-size: 1.25rem;
+        color: var(--gray-700);
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .trial-badge {
+        display: inline-block;
+        background-color: #8B5A2B;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 100px;
+        margin-top: 1rem;
+    }
+    
+    .pricing-section {
+        padding: 6rem 0;
+        background-color: #fff;
+    }
+    
+    .pricing-toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 3rem;
+    }
+    
+    .pricing-toggle-label {
+        font-weight: 500;
+        color: var(--gray-700);
+        margin: 0 1rem;
+    }
+    
+    .pricing-toggle {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+    
+    .pricing-toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--gray-300);
+        transition: .4s;
+        border-radius: 34px;
+    }
+    
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    .pricing-toggle input:checked + .toggle-slider {
+        background-color: #8B5A2B;
+    }
+    
+    .pricing-toggle input:checked + .toggle-slider:before {
+        transform: translateX(30px);
+    }
+    
+    .pricing-save-badge {
+        display: inline-block;
+        background-color: #8B5A2B;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 100px;
+        margin-left: 0.5rem;
+    }
+    
+    .pricing-cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .pricing-card {
+        background-color: #fff;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+    
+    .pricing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .pricing-card.popular {
+        border-color: #8B5A2B;
+        box-shadow: 0 5px 20px rgba(139, 90, 43, 0.2);
+    }
+    
+    .popular-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #8B5A2B;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 0 8px;
+    }
+    
+    .pricing-card-header {
+        padding: 2rem;
+        text-align: center;
+        border-bottom: 1px solid var(--gray-300);
+    }
+    
+    .pricing-card-header h3 {
+        font-family: var(--font-serif);
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0 0 1rem;
+        color: var(--gray-900);
+    }
+    
+    .pricing-price {
+        font-size: 1.25rem;
+        color: var(--gray-700);
+    }
+    
+    .pricing-price .currency {
+        font-size: 1.5rem;
+        font-weight: 600;
+        vertical-align: top;
+        margin-right: 0.25rem;
+    }
+    
+    .pricing-price .amount {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #8B5A2B;
+    }
+    
+    .pricing-price .period {
+        font-size: 1rem;
+        color: var(--gray-600);
+    }
+    
+    .pricing-card-body {
+        padding: 2rem;
+        flex: 1;
+    }
+    
+    .pricing-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .pricing-features li {
+        position: relative;
+        padding-left: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        color: var(--gray-700);
+    }
+    
+    .pricing-features li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #8B5A2B;
+        font-weight: bold;
+    }
+    
+    .pricing-features li.feature-disabled {
+        color: var(--gray-500);
+        text-decoration: line-through;
+    }
+    
+    .pricing-features li.feature-disabled:before {
+        content: '×';
+        color: var(--gray-500);
+    }
+    
+    .pricing-card-footer {
+        padding: 1.5rem 2rem 2rem;
+    }
+    
+    .feature-comparison {
+        padding: 6rem 0;
+        background-color: #f8f3e6;
+    }
+    
+    .feature-comparison h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 3rem;
+        color: var(--gray-900);
+    }
+    
+    .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+        padding: 1rem;
+        text-align: center;
+        border-bottom: 1px solid var(--gray-300);
+    }
+    
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
+        text-align: left;
+        font-weight: 500;
+    }
+    
+    .comparison-table thead th {
+        background-color: #8B5A2B;
+        color: #fff;
+        font-weight: 600;
+        padding: 1.25rem 1rem;
+    }
+    
+    .comparison-table thead th:first-child {
+        background-color: #8B5A2B;
+    }
+    
+    .category-row td {
+        background-color: var(--gray-100);
+        font-weight: 600;
+        color: var(--gray-900);
+        font-family: var(--font-serif);
+        font-size: 1.1rem;
+        padding: 1rem;
+    }
+    
+    .trial-section {
+        padding: 6rem 0;
+        background-color: #fff;
+    }
+    
+    .trial-section h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--gray-900);
+    }
+    
+    .trial-section .lead {
+        font-size: 1.25rem;
+        color: var(--gray-700);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    .trial-benefits {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem;
+    }
+    
+    .trial-benefits li {
+        position: relative;
+        padding-left: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: var(--gray-700);
+    }
+    
+    .trial-benefits li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #8B5A2B;
+        font-weight: bold;
+    }
+    
+    .membership-faq {
+        padding: 6rem 0;
+        background-color: #f8f3e6;
+    }
+    
+    .membership-faq h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 3rem;
+        color: var(--gray-900);
+    }
+    
+    .membership-cta {
+        padding: 6rem 0;
+        background-color: #8B5A2B;
+        color: #fff;
+    }
+    
+    .membership-cta h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+    
+    .membership-cta .lead {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        max-width: 800px;
+        margin: 0 auto 2rem;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .membership-cta .btn-primary {
+        background-color: #fff;
+        border-color: #fff;
+        color: #8B5A2B;
+    }
+    
+    .membership-cta .btn-outline {
+        border-color: #fff;
+        color: #fff;
+    }
+    
+    .membership-cta .btn-primary:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .membership-cta .btn-outline:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .membership-hero,
+        .pricing-section,
+        .feature-comparison,
+        .trial-section,
+        .membership-faq,
+        .membership-cta {
+            padding: 4rem 0;
+        }
+        
+        .membership-hero h1 {
+            font-size: 2.5rem;
+        }
+        
+        .feature-comparison h2,
+        .trial-section h2,
+        .membership-faq h2,
+        .membership-cta h2 {
+            font-size: 2rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .membership-hero,
+        .pricing-section,
+        .feature-comparison,
+        .trial-section,
+        .membership-faq,
+        .membership-cta {
+            padding: 3rem 0;
+        }
+        
+        .membership-hero h1 {
+            font-size: 2rem;
+        }
+        
+        .membership-hero .lead {
+            font-size: 1.1rem;
+        }
+        
+        .pricing-card-header {
+            padding: 1.5rem;
+        }
+        
+        .pricing-card-body,
+        .pricing-card-footer {
+            padding: 1.5rem;
+        }
+        
+        .feature-comparison h2,
+        .trial-section h2,
+        .membership-faq h2,
+        .membership-cta h2 {
+            font-size: 1.8rem;
+        }
+        
+        .trial-section .lead,
+        .membership-cta .lead {
+            font-size: 1.1rem;
+        }
+        
+        .trial-benefits li {
+            font-size: 1rem;
+        }
+        
+        .cta-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}

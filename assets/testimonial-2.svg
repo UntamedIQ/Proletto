@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="100px" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Testimonial 2</title>
+    <g id="Testimonial-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Background" fill="#6CA67C" cx="50" cy="50" r="50"></circle>
+        <text id="LM" font-family="Georgia-Bold, Georgia" font-size="36" font-weight="bold" fill="#FFFFFF">
+            <tspan x="30" y="62">LM</tspan>
+        </text>
+    </g>
+</svg>

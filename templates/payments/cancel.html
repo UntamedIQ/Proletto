@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Canceled | Proletto</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-50">
+  <header class="bg-white px-6 py-4 shadow">
+    <div class="flex items-center justify-between">
+      <div>
+        <a href="/" class="text-xl font-bold text-gray-800">Proletto</a>
+      </div>
+      <div>
+        <a href="/dashboard" class="text-gray-600 hover:text-gray-800 mr-4">Dashboard</a>
+        <a href="/logout" class="text-gray-600 hover:text-gray-800">Logout</a>
+      </div>
+    </div>
+  </header>
+  
+  <div class="max-w-3xl mx-auto px-4 py-12 text-center">
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 mb-6">
+        <svg class="h-8 w-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+      </div>
+      
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">Payment Canceled</h1>
+      
+      <p class="text-lg text-gray-600 mb-6">
+        Your payment process was canceled. No charges were made to your account.
+      </p>
+      
+      <div class="border border-yellow-200 rounded-md bg-yellow-50 p-4 mb-8">
+        <p class="text-yellow-800">
+          You can try again whenever you're ready to upgrade your account.
+        </p>
+      </div>
+      
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Why upgrade to Premium?</h2>
+      
+      <ul class="text-left mb-8 space-y-3">
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">Full access to all specialized search engines</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">Weekly personalized email digests</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">AI-powered portfolio optimization</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">Priority support</span>
+        </li>
+        <li class="flex items-start">
+          <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span class="text-gray-700">Early access to new features</span>
+        </li>
+      </ul>
+      
+      <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+        <a href="/subscription/create-checkout-session" class="px-6 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          Try Again
+        </a>
+        <a href="/dashboard" class="px-6 py-3 bg-white text-blue-600 border border-blue-300 rounded-md font-medium hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          Go to Dashboard
+        </a>
+      </div>
+    </div>
+    
+    <p class="text-gray-600 text-sm">
+      Have questions about our subscription plans? Contact <a href="mailto:support@myproletto.com" class="text-blue-600 hover:underline">support@myproletto.com</a>
+    </p>
+  </div>
+</body>
+</html>

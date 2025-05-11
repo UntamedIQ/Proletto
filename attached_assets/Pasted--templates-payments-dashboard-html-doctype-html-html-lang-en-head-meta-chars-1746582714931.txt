@@ -1,0 +1,114 @@
+<!-- templates/payments/dashboard.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing & Subscription</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="p-4 bg-gray-50">
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
+    <h1 class="text-2xl font-semibold mb-4">Subscription & Billing</h1>
+
+    <!-- Current Subscription Status -->
+    <div id="current-plan" class="mb-6">
+      <h2 class="text-xl font-medium">Current Plan</h2>
+      <p>Status: <span class="font-semibold {{ user.is_pro and 'text-green-600' or 'text-gray-600' }}">{{ user.is_pro and 'Active' or 'Free' }}</span></p>
+      {% if user.is_pro %}
+      <p>Renews on: <strong>{{ renewal_date.strftime('%B %d, %Y') }}</strong></p>
+      {% endif %}
+    </div>
+
+    <!-- Update Payment Method -->
+    {% if user.is_pro %}
+    <div id="update-card" class="mb-6">
+      <h2 class="text-xl font-medium">Update Payment Method</h2>
+      <form id="card-form" class="space-y-4">
+        <div id="card-element" class="p-3 border rounded"></div>
+        <button id="update-button" class="w-full px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800">Update Card</button>
+      </form>
+    </div>
+    {% endif %}
+
+    <!-- Upgrade / Cancel -->
+    <div id="plan-actions" class="mb-6">
+      {% if user.is_pro %}
+        <button id="cancel-subscription" class="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Cancel Subscription</button>
+      {% else %}
+        <button id="subscribe-button" class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Upgrade to Insider</button>
+      {% endif %}
+    </div>
+
+    <!-- Payment History -->
+    <div id="payment-history">
+      <h2 class="text-xl font-medium mb-2">Payment History</h2>
+      <div class="overflow-x-auto">
+      <table class="w-full text-left border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="border-b p-3">Date</th>
+            <th class="border-b p-3">Amount</th>
+            <th class="border-b p-3">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in payments %}
+          <tr class="hover:bg-gray-50">
+            <td class="border-b p-3">{{ payment.date.strftime('%Y-%m-%d') }}</td>
+            <td class="border-b p-3">${{ '%.2f'|format(payment.amount) }}</td>
+            <td class="border-b p-3">{{ payment.status }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3" class="p-3 text-center text-gray-500">No payment history.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const stripe = Stripe("{{ stripe_pub_key }}");
+
+    document.getElementById('subscribe-button')?.addEventListener('click', async () => {
+      const res = await fetch('/create-checkout-session', { method: 'POST' });
+      const { id } = await res.json();
+      const { error } = await stripe.redirectToCheckout({ sessionId: id });
+      if (error) console.error(error.message);
+    });
+
+    document.getElementById('cancel-subscription')?.addEventListener('click', async () => {
+      if (confirm('Are you sure you want to cancel your subscription?')) {
+        const res = await fetch('/api/subscription/cancel', { method: 'POST' });
+        if (res.ok) location.reload();
+        else alert('Failed to cancel. Please try again.');
+      }
+    });
+
+    // Stripe Elements for card update
+    const elements = stripe.elements();
+    const card = elements.create('card', { style: { base: { fontSize: '16px' } } });
+    card.mount('#card-element');
+
+    document.getElementById('card-form')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const { paymentMethod, error } = await stripe.createPaymentMethod('card', card);
+      if (error) {
+        alert(error.message);
+      } else {
+        const res = await fetch('/api/subscription/update-card', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ payment_method: paymentMethod.id })
+        });
+        if (res.ok) alert('Card updated successfully');
+        else alert('Update failed.');
+      }
+    });
+  </script>
+</body>
+</html>

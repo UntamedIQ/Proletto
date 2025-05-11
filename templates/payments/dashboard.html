@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing Dashboard | Proletto</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gray-50">
+  <header class="bg-white px-6 py-4 shadow">
+    <div class="flex items-center justify-between">
+      <div>
+        <a href="/" class="text-xl font-bold text-gray-800">Proletto</a>
+      </div>
+      <div>
+        <a href="/dashboard" class="text-gray-600 hover:text-gray-800 mr-4">Dashboard</a>
+        <a href="/logout" class="text-gray-600 hover:text-gray-800">Logout</a>
+      </div>
+    </div>
+  </header>
+  
+  <div class="max-w-6xl mx-auto px-4 py-12">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Billing Dashboard</h1>
+      <p class="text-gray-600">Manage your subscription and payment information</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Subscription Status Card -->
+      <div class="col-span-2">
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Subscription Status</h2>
+          
+          {% if subscription and subscription.active %}
+            <div class="flex items-center bg-green-50 text-green-700 p-4 rounded-md mb-6">
+              <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>Your subscription is active</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-1">Plan</h3>
+                <p class="text-lg font-semibold text-gray-900">Premium ({{ current_user.membership_level }})</p>
+              </div>
+              
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-1">Status</h3>
+                <p class="text-lg font-semibold text-gray-900">
+                  {% if subscription.cancel_at_period_end %}
+                    Cancelling on {{ subscription.current_period_end.strftime('%b %d, %Y') }}
+                  {% else %}
+                    Active
+                  {% endif %}
+                </p>
+              </div>
+              
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-1">Start Date</h3>
+                <p class="text-lg font-semibold text-gray-900">{{ subscription.current_period_start.strftime('%b %d, %Y') }}</p>
+              </div>
+              
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-1">Next Billing Date</h3>
+                <p class="text-lg font-semibold text-gray-900">{{ subscription.current_period_end.strftime('%b %d, %Y') }}</p>
+              </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-4">
+              {% if not subscription.cancel_at_period_end %}
+                <button id="cancel-subscription-btn" class="px-4 py-2 bg-white border border-red-300 text-red-600 rounded-md hover:bg-red-50">
+                  Cancel Subscription
+                </button>
+              {% else %}
+                <div class="text-gray-700 mb-4">
+                  Your subscription will end on {{ subscription.current_period_end.strftime('%b %d, %Y') }}. 
+                  You'll continue to have access until then.
+                </div>
+                <form action="/subscription/resume" method="POST">
+                  <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    Resume Subscription
+                  </button>
+                </form>
+              {% endif %}
+              
+              <button id="update-payment-btn" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                Update Payment Method
+              </button>
+            </div>
+            
+          {% else %}
+            <div class="bg-yellow-50 text-yellow-700 p-4 rounded-md mb-6">
+              <p class="font-medium">You don't have an active subscription</p>
+              <p class="mt-1">Upgrade to get access to all premium features.</p>
+            </div>
+            
+            <div class="mb-6">
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Benefits of Premium Plan:</h3>
+              <ul class="space-y-2 text-gray-600">
+                <li class="flex items-start">
+                  <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>Full access to all specialized search engines</span>
+                </li>
+                <li class="flex items-start">
+                  <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>Weekly personalized email digests</span>
+                </li>
+                <li class="flex items-start">
+                  <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>AI-powered portfolio optimization</span>
+                </li>
+                <li class="flex items-start">
+                  <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>Priority support</span>
+                </li>
+              </ul>
+            </div>
+            
+            <a href="/subscription/create-checkout-session" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700">
+              Upgrade Now
+            </a>
+          {% endif %}
+        </div>
+        
+        <!-- Payment History -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Payment History</h2>
+          
+          {% if payments %}
+            <div class="overflow-x-auto">
+              <table class="min-w-full">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  {% for payment in payments %}
+                    <tr>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ payment.date.strftime('%b %d, %Y') }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${{ "%.2f"|format(payment.amount) }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        {% if payment.status == 'paid' %}
+                          <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                            Paid
+                          </span>
+                        {% elif payment.status == 'failed' %}
+                          <span class="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                            Failed
+                          </span>
+                        {% else %}
+                          <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                            {{ payment.status|capitalize }}
+                          </span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="text-gray-600 italic">No payment history available</div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- Plan details and FAQ -->
+      <div class="col-span-1">
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Plan Details</h2>
+          
+          <div class="mb-4 pb-4 border-b">
+            <h3 class="font-medium text-gray-900 mb-2">Free Plan</h3>
+            <p class="text-gray-600 mb-2">Basic access to our platform</p>
+            <p class="text-gray-900 font-semibold">$0/month</p>
+          </div>
+          
+          <div class="mb-4 pb-4 border-b">
+            <h3 class="font-medium text-gray-900 mb-2">Supporter Plan</h3>
+            <p class="text-gray-600 mb-2">Access to your chosen state engines</p>
+            <p class="text-gray-900 font-semibold">$5/month</p>
+          </div>
+          
+          <div class="mb-4">
+            <h3 class="font-medium text-gray-900 mb-2">Premium Plan</h3>
+            <p class="text-gray-600 mb-2">Full access to all features</p>
+            <p class="text-gray-900 font-semibold">$12/month</p>
+            <div class="mt-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                Most Popular
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">FAQ</h2>
+          
+          <div class="space-y-4">
+            <div>
+              <h3 class="font-medium text-gray-900 mb-1">How do I cancel my subscription?</h3>
+              <p class="text-gray-600 text-sm">
+                You can cancel your subscription anytime from this dashboard. Your subscription will remain active until the end of your current billing period.
+              </p>
+            </div>
+            
+            <div>
+              <h3 class="font-medium text-gray-900 mb-1">When will I be charged?</h3>
+              <p class="text-gray-600 text-sm">
+                Your subscription renews automatically at the end of each billing cycle. You'll be charged on your renewal date.
+              </p>
+            </div>
+            
+            <div>
+              <h3 class="font-medium text-gray-900 mb-1">Can I get a refund?</h3>
+              <p class="text-gray-600 text-sm">
+                If you're not satisfied with our service, please contact our support team at support@myproletto.com to discuss refund options.
+              </p>
+            </div>
+            
+            <div>
+              <h3 class="font-medium text-gray-900 mb-1">Need more help?</h3>
+              <p class="text-gray-600 text-sm">
+                Contact our support team at <a href="mailto:support@myproletto.com" class="text-blue-600 hover:underline">support@myproletto.com</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Cancel Subscription Modal -->
+  <div id="cancel-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full m-4 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Cancel Subscription</h3>
+        <p class="text-gray-600 mt-2">
+          Are you sure you want to cancel your subscription? You'll lose access to premium features at the end of your current billing period.
+        </p>
+      </div>
+      
+      <div class="bg-yellow-50 p-3 rounded-md mb-4">
+        <p class="text-yellow-700 text-sm">
+          Your subscription will remain active until {{ subscription.current_period_end.strftime('%b %d, %Y') }} if you cancel now.
+        </p>
+      </div>
+      
+      <div class="flex justify-end space-x-3">
+        <button id="cancel-modal-close" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+          Keep Subscription
+        </button>
+        <button id="confirm-cancel" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+          Cancel Subscription
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Update Payment Method Modal -->
+  <div id="payment-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full m-4 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Update Payment Method</h3>
+        <p class="text-gray-600 mt-2">
+          Please enter your new payment details below.
+        </p>
+      </div>
+      
+      <div id="card-element" class="border border-gray-300 p-3 rounded-md mb-4">
+        <!-- Stripe Card Element will be inserted here -->
+      </div>
+      
+      <div id="card-errors" class="text-red-600 text-sm mb-4" role="alert"></div>
+      
+      <div class="flex justify-end space-x-3">
+        <button id="payment-modal-close" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+          Cancel
+        </button>
+        <button id="confirm-payment-update" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+          Update Payment Method
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cancel subscription modal
+      const cancelBtn = document.getElementById('cancel-subscription-btn');
+      const cancelModal = document.getElementById('cancel-modal');
+      const cancelModalClose = document.getElementById('cancel-modal-close');
+      const confirmCancel = document.getElementById('confirm-cancel');
+      
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+          cancelModal.classList.remove('hidden');
+        });
+      }
+      
+      if (cancelModalClose) {
+        cancelModalClose.addEventListener('click', function() {
+          cancelModal.classList.add('hidden');
+        });
+      }
+      
+      if (confirmCancel) {
+        confirmCancel.addEventListener('click', function() {
+          // Send request to cancel subscription
+          fetch('/subscription/cancel-subscription', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            } else {
+              alert('Error: ' + data.error);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+          });
+        });
+      }
+      
+      // Update payment method modal
+      const updatePaymentBtn = document.getElementById('update-payment-btn');
+      const paymentModal = document.getElementById('payment-modal');
+      const paymentModalClose = document.getElementById('payment-modal-close');
+      const confirmPaymentUpdate = document.getElementById('confirm-payment-update');
+      
+      if (updatePaymentBtn) {
+        updatePaymentBtn.addEventListener('click', function() {
+          paymentModal.classList.remove('hidden');
+          setupStripeElements();
+        });
+      }
+      
+      if (paymentModalClose) {
+        paymentModalClose.addEventListener('click', function() {
+          paymentModal.classList.add('hidden');
+        });
+      }
+      
+      // Stripe Elements
+      let stripe, elements, card;
+      
+      function setupStripeElements() {
+        if (!stripe) {
+          stripe = Stripe('{{ stripe_pub_key }}');
+          elements = stripe.elements();
+          
+          // Create card element
+          card = elements.create('card');
+          card.mount('#card-element');
+          
+          // Handle validation errors
+          card.addEventListener('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+              displayError.textContent = event.error.message;
+            } else {
+              displayError.textContent = '';
+            }
+          });
+        }
+      }
+      
+      if (confirmPaymentUpdate) {
+        confirmPaymentUpdate.addEventListener('click', function() {
+          const button = this;
+          button.disabled = true;
+          button.textContent = 'Processing...';
+          
+          stripe.createPaymentMethod({
+            type: 'card',
+            card: card,
+          }).then(function(result) {
+            if (result.error) {
+              const errorElement = document.getElementById('card-errors');
+              errorElement.textContent = result.error.message;
+              button.disabled = false;
+              button.textContent = 'Update Payment Method';
+            } else {
+              // Send payment method to server
+              fetch('/subscription/update-card', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  payment_method: result.paymentMethod.id
+                }),
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  window.location.reload();
+                } else {
+                  const errorElement = document.getElementById('card-errors');
+                  errorElement.textContent = data.error || 'An error occurred';
+                  button.disabled = false;
+                  button.textContent = 'Update Payment Method';
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = 'An error occurred. Please try again.';
+                button.disabled = false;
+                button.textContent = 'Update Payment Method';
+              });
+            }
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

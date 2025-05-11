@@ -1,0 +1,55 @@
+{
+  "general": {
+    "cache_enabled": true,
+    "cache_duration_seconds": 3600,
+    "min_text_length": 15,
+    "save_on_failure": true
+  },
+  "network": {
+    "connect_timeout": 10,
+    "read_timeout": 20,
+    "max_retries": 3,
+    "backoff_factor": 0.5,
+    "retry_status_codes": [429, 500, 502, 503, 504],
+    "verify_ssl": true,
+    "allow_ssl_fallback": true
+  },
+  "circuit_breaker": {
+    "enabled": true,
+    "failure_threshold": 3,
+    "timeout_minutes": 30,
+    "reset_interval_hours": 1
+  },
+  "proxies": {
+    "enabled": false,
+    "proxy_url": "",
+    "rotate_proxies": false
+  },
+  "headless": {
+    "enabled": false,
+    "fallback_for_javascript": true,
+    "browser": "chrome",
+    "timeout_seconds": 30
+  },
+  "site_overrides": [
+    {
+      "domain": "example.com",
+      "verify_ssl": false,
+      "use_headless": true,
+      "timeout": 30
+    }
+  ],
+  "problem_domains": [
+    {
+      "domain": "nitter.net",
+      "notes": "Consistent connection issues, consider removing",
+      "use_proxy": true
+    }
+  ],
+  "monitoring": {
+    "enabled": true,
+    "report_interval_minutes": 60,
+    "alert_threshold_percent": 25,
+    "alert_emails": []
+  }
+}

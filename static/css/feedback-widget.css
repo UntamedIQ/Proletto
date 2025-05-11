@@ -1,0 +1,60 @@
+/* Feedback Widget Styles */
+.feedback-widget {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: var(--light-bg-color, #f8f3e6);
+  border: 1px solid var(--border-color, #e0d8c0);
+}
+
+.feedback-question p {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.feedback-button {
+  background: none;
+  border: 1px solid var(--border-color, #e0d8c0);
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-button:hover {
+  background-color: var(--hover-bg-color, #f0e9d9);
+}
+
+.feedback-emoji {
+  font-size: 1.5rem;
+}
+
+.feedback-button.like:hover {
+  border-color: var(--success-color, #4CAF50);
+}
+
+.feedback-button.dislike:hover {
+  border-color: var(--warning-color, #ff9800);
+}
+
+.feedback-success {
+  color: var(--success-color, #4CAF50);
+  font-weight: 500;
+}
+
+.feedback-error {
+  color: var(--error-color, #f44336);
+  font-weight: 500;
+}
+
+.hidden {
+  display: none;
+}

@@ -1,0 +1,7 @@
+URL,Anchor Text,Type,Status Code,Broken
+https://httpbin.org,,internal,200,no
+https://github.com/requests/httpbin,[No Text],external,200,no
+https://kennethreitz.org,the developer - Website,external,405,yes
+https://github.com/rochacbruno/flasgger,Flasgger,external,200,no
+https://httpbin.org/forms/post,HTML form,internal,200,no
+https://httpbin.org/forms/post,,internal,200,no

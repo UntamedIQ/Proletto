@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="400px" viewBox="0 0 800 400" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Proletto Hero Image</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#F8F3E6" offset="0%"></stop>
+            <stop stop-color="#E8E1D1" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Hero-Image" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Background" fill="url(#linearGradient-1)" x="0" y="0" width="800" height="400"></rect>
+        <g id="Art-Elements" transform="translate(100.000000, 50.000000)">
+            <!-- Easel -->
+            <rect id="Easel-Frame" stroke="#8A4D76" stroke-width="8" x="200" y="50" width="300" height="250"></rect>
+            <rect id="Canvas" fill="#FFFFFF" x="220" y="70" width="260" height="210"></rect>
+            <line x1="200" y1="300" x2="150" y2="350" id="Leg-1" stroke="#8A4D76" stroke-width="8" stroke-linecap="round"></line>
+            <line x1="500" y1="300" x2="550" y2="350" id="Leg-2" stroke="#8A4D76" stroke-width="8" stroke-linecap="round"></line>
+            <line x1="350" y1="300" x2="350" y2="350" id="Center-Support" stroke="#8A4D76" stroke-width="8" stroke-linecap="round"></line>
+            
+            <!-- Paintbrushes -->
+            <rect id="Brush-1" fill="#C38D5F" transform="translate(160.000000, 150.000000) rotate(-30.000000) translate(-160.000000, -150.000000) " x="155" y="100" width="10" height="100" rx="5"></rect>
+            <ellipse id="Brush-Tip-1" fill="#E27D60" transform="translate(145.000000, 105.000000) rotate(-30.000000) translate(-145.000000, -105.000000) " cx="145" cy="105" rx="8" ry="15"></ellipse>
+            
+            <rect id="Brush-2" fill="#C38D5F" transform="translate(135.000000, 170.000000) rotate(-45.000000) translate(-135.000000, -170.000000) " x="130" y="120" width="10" height="100" rx="5"></rect>
+            <ellipse id="Brush-Tip-2" fill="#4A6FA5" transform="translate(115.000000, 130.000000) rotate(-45.000000) translate(-115.000000, -130.000000) " cx="115" cy="130" rx="8" ry="15"></ellipse>
+            
+            <rect id="Brush-3" fill="#C38D5F" transform="translate(115.000000, 190.000000) rotate(-60.000000) translate(-115.000000, -190.000000) " x="110" y="140" width="10" height="100" rx="5"></rect>
+            <ellipse id="Brush-Tip-3" fill="#6CA67C" transform="translate(90.000000, 155.000000) rotate(-60.000000) translate(-90.000000, -155.000000) " cx="90" cy="155" rx="8" ry="15"></ellipse>
+            
+            <!-- Paint Palette -->
+            <path d="M550,200 C580,200 600,220 600,250 C600,280 580,300 550,300 C520,300 500,280 500,250 C500,220 520,200 550,200 Z" id="Palette" fill="#8A4D76"></path>
+            <circle id="Paint-1" fill="#E27D60" cx="540" cy="230" r="10"></circle>
+            <circle id="Paint-2" fill="#6CA67C" cx="560" cy="230" r="10"></circle>
+            <circle id="Paint-3" fill="#4A6FA5" cx="530" cy="250" r="10"></circle>
+            <circle id="Paint-4" fill="#F4D35E" cx="550" cy="250" r="10"></circle>
+            <circle id="Paint-5" fill="#C38D5F" cx="570" cy="250" r="10"></circle>
+            <ellipse id="Thumb-Hole" fill="#F8F3E6" cx="565" cy="280" rx="15" ry="10"></ellipse>
+            
+            <!-- Abstract Art on Canvas -->
+            <circle id="Art-Circle" fill="#E27D60" fill-opacity="0.5" cx="320" cy="150" r="60"></circle>
+            <rect id="Art-Rectangle" fill="#4A6FA5" fill-opacity="0.5" x="280" y="120" width="120" height="80"></rect>
+            <polygon id="Art-Triangle" fill="#6CA67C" fill-opacity="0.5" points="350 100 400 200 300 200"></polygon>
+        </g>
+        
+        <!-- Text Elements -->
+        <text id="DISCOVER" font-family="Georgia, serif" font-size="48" font-weight="bold" fill="#333333">
+            <tspan x="300" y="100">DISCOVER</tspan>
+        </text>
+        <text id="CREATE" font-family="Georgia, serif" font-size="48" font-weight="bold" fill="#333333">
+            <tspan x="325" y="350">CREATE</tspan>
+        </text>
+    </g>
+</svg>

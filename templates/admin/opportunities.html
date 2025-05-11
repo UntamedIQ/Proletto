@@ -1,0 +1,196 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Opportunities Management</h1>
+    
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Opportunities</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ opportunity_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Active Opportunities</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ opportunity_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Sources Count</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ opportunities|selectattr('source')|list|unique|count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Opportunity Types</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ opportunity_types|length }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Opportunities</h6>
+            <a href="#" class="btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-download fa-sm text-white-50"></i> Export
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="opportunitiesTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Source</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                            <th>Deadline</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for opportunity in opportunities %}
+                        <tr>
+                            <td>{{ opportunity.title }}</td>
+                            <td>{{ opportunity.source }}</td>
+                            <td>{{ opportunity.location }}</td>
+                            <td>{{ opportunity.type }}</td>
+                            <td>{{ opportunity.deadline }}</td>
+                            <td>
+                                <a href="{{ opportunity.url }}" target="_blank" class="btn btn-sm btn-info">View</a>
+                                <a href="#" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">No opportunities found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Opportunity Types Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="opportunityTypesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Opportunities by Source</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="sourcesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sample data for charts - this would be dynamically generated 
+    // with real data in production
+    const typesCtx = document.getElementById('opportunityTypesChart').getContext('2d');
+    const typesChart = new Chart(typesCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Exhibition', 'Grant', 'Residency', 'Public Art', 'Commission', 'Workshop'],
+            datasets: [{
+                data: [30, 25, 20, 10, 10, 5],
+                backgroundColor: [
+                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+    
+    const sourcesCtx = document.getElementById('sourcesChart').getContext('2d');
+    const sourcesChart = new Chart(sourcesCtx, {
+        type: 'bar',
+        data: {
+            labels: ['State Arts', 'Museums', 'Galleries', 'Universities', 'Non-profits', 'Private'],
+            datasets: [{
+                label: 'Number of Opportunities',
+                data: [42, 35, 28, 20, 16, 10],
+                backgroundColor: '#4e73df',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

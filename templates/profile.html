@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Proletto - Manage your artist profile, portfolio, and referrals">
+  <meta name="theme-color" content="#a86a3e">
+  <title>My Profile - Proletto</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <a href="/" aria-label="Proletto Home">
+          <img src="assets/proletto-logo.svg" alt="Proletto - Opportunities for Visual Artists" class="main-logo" width="220" height="60" loading="eager">
+        </a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/how-it-works">How It Works</a></li>
+          <li><a href="/opportunities">Opportunities</a></li>
+          <li><a href="/profile" class="active">My Profile</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="profile-page">
+      <div class="profile-header">
+        <h1>My Artist Profile</h1>
+        <p class="membership-badge" id="membershipBadge">Free Tier</p>
+      </div>
+      
+      <div class="profile-container">
+        <!-- Tabs Navigation -->
+        <div class="profile-tabs">
+          <button class="tab-button active" data-tab="portfolio">Portfolio</button>
+          <button class="tab-button" data-tab="referrals">Referrals</button>
+          <button class="tab-button" data-tab="badges">Badges</button>
+          <button class="tab-button" data-tab="settings">Account Settings</button>
+        </div>
+        
+        <!-- Portfolio Tab -->
+        <div class="tab-content active" id="portfolio">
+          <h2>My Portfolio</h2>
+          <p class="tab-description">Manage your artwork portfolio (maximum 20 images)</p>
+          
+          <div class="portfolio-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="imageCount">0</span>
+              <span class="stat-label">Images</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="viewCount">0</span>
+              <span class="stat-label">Views</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="aiAnalysisCount">0</span>
+              <span class="stat-label">AI Analysis</span>
+            </div>
+          </div>
+          
+          <div class="portfolio-upload">
+            <h3>Upload Images</h3>
+            <p>Add images to your portfolio (PNG, JPG, WEBP - max 5MB each)</p>
+            
+            <div class="upload-area" id="uploadArea">
+              <div class="upload-instructions">
+                <img src="assets/upload-icon.svg" alt="Upload" class="upload-icon" width="48" height="48">
+                <p>Drag and drop images here<br>or click to browse</p>
+              </div>
+              <input type="file" id="portfolioUpload" multiple accept="image/png,image/jpeg,image/webp" class="hidden-upload">
+            </div>
+            
+            <div class="upload-progress" id="uploadProgress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+              </div>
+              <span class="progress-text">0%</span>
+            </div>
+          </div>
+          
+          <div class="portfolio-gallery" id="portfolioGallery">
+            <!-- Portfolio images will be dynamically inserted here -->
+            <p class="empty-portfolio-message">No images in your portfolio yet. Upload some to get started!</p>
+          </div>
+          
+          <div class="portfolio-actions">
+            <button class="primary-button" id="btnAiAnalysis">Get AI Portfolio Analysis</button>
+            <button class="secondary-button" id="btnOptimizePortfolio">Optimize for Applications</button>
+          </div>
+          
+          <div class="ai-analysis-results" id="aiAnalysisResults">
+            <!-- AI analysis results will appear here -->
+          </div>
+        </div>
+        
+        <!-- Referrals Tab -->
+        <div class="tab-content" id="referrals">
+          <h2>Invite Friends & Earn Rewards</h2>
+          <p class="tab-description">Share your referral code with other artists and earn rewards</p>
+          
+          <div class="referral-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="referralCount">0</span>
+              <span class="stat-label">Referrals</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="tierUpgrades">0</span>
+              <span class="stat-label">Tier Upgrades</span>
+            </div>
+          </div>
+          
+          <div class="referral-code-section">
+            <h3>Your Referral Code</h3>
+            <div class="referral-code-container">
+              <input type="text" id="referralCode" class="referral-code" value="YOURCODE123" readonly>
+              <button class="copy-button" id="copyReferralCode">Copy</button>
+            </div>
+            
+            <div class="referral-link-container">
+              <input type="text" id="referralLink" class="referral-link" value="https://proletto.app/?ref=YOURCODE123" readonly>
+              <button class="copy-button" id="copyReferralLink">Copy</button>
+            </div>
+          </div>
+          
+          <div class="share-options">
+            <h3>Share with Friends</h3>
+            <div class="share-buttons">
+              <button class="share-button email">Email</button>
+              <button class="share-button twitter">Twitter</button>
+              <button class="share-button facebook">Facebook</button>
+              <button class="share-button instagram">Instagram</button>
+            </div>
+          </div>
+          
+          <div class="referral-rewards">
+            <h3>Rewards Program</h3>
+            <ul class="rewards-list">
+              <li>
+                <span class="reward-threshold">3 Referrals</span>
+                <span class="reward-description">1 month free Premium membership</span>
+              </li>
+              <li>
+                <span class="reward-threshold">5 Referrals</span>
+                <span class="reward-description">AI Portfolio Analysis (Premium feature)</span>
+              </li>
+              <li>
+                <span class="reward-threshold">10 Referrals</span>
+                <span class="reward-description">3 months free Premium membership</span>
+              </li>
+              <li>
+                <span class="reward-threshold">25 Referrals</span>
+                <span class="reward-description">1 year free Premium membership</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Badges Tab -->
+        <div class="tab-content" id="badges">
+          <h2>My Achievements</h2>
+          <p class="tab-description">Collect badges as you use Proletto and accomplish milestones</p>
+          
+          <div class="badges-container" id="badgesContainer">
+            <!-- Badges will be dynamically inserted here -->
+          </div>
+          
+          <div class="locked-badges-container">
+            <h3>Badges to Unlock</h3>
+            <div class="locked-badges" id="lockedBadges">
+              <!-- Locked badges will be dynamically inserted here -->
+            </div>
+          </div>
+        </div>
+        
+        <!-- Account Settings Tab -->
+        <div class="tab-content" id="settings">
+          <h2>Account Settings</h2>
+          <p class="tab-description">Manage your account preferences and subscription</p>
+          
+          <div class="account-info">
+            <h3>Personal Information</h3>
+            <form id="personalInfoForm" class="settings-form">
+              <div class="form-group">
+                <label for="fullName">Name</label>
+                <input type="text" id="fullName" name="fullName" placeholder="Your full name">
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Your email address" readonly>
+              </div>
+              
+              <div class="form-group">
+                <label for="artistType">Artist Type</label>
+                <select id="artistType" name="artistType">
+                  <option value="">Select artist type</option>
+                  <option value="painter">Painter</option>
+                  <option value="sculptor">Sculptor</option>
+                  <option value="photographer">Photographer</option>
+                  <option value="mixed_media">Mixed Media</option>
+                  <option value="digital">Digital Artist</option>
+                  <option value="illustrator">Illustrator</option>
+                  <option value="printmaker">Printmaker</option>
+                  <option value="ceramics">Ceramics</option>
+                  <option value="textiles">Textiles</option>
+                  <option value="installation">Installation</option>
+                  <option value="performance">Performance</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Interests (Select up to 5)</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="interests" value="grants"> Grants
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="interests" value="residencies"> Residencies
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="interests" value="exhibitions"> Exhibitions
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="interests" value="jobs"> Jobs
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="interests" value="commissions"> Public Commissions
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="interests" value="competitions"> Competitions
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="interests" value="fellowships"> Fellowships
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="interests" value="internships"> Internships
+                  </label>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="City, State">
+              </div>
+              
+              <button type="submit" class="primary-button">Save Changes</button>
+            </form>
+          </div>
+          
+          <div class="subscription-settings">
+            <h3>Membership & Subscription</h3>
+            <div class="current-plan">
+              <p>Current plan: <span id="currentPlan">Free</span></p>
+              <p id="subscriptionStatus">No active subscription</p>
+              <p id="subscriptionDate"></p>
+            </div>
+            
+            <div class="subscription-actions">
+              <a href="/membership" class="primary-button">Upgrade Membership</a>
+              <button id="cancelSubscription" class="secondary-button hidden">Cancel Subscription</button>
+            </div>
+          </div>
+          
+          <div class="state-selection hidden" id="stateSelection">
+            <h3>Selected States (Supporter Tier)</h3>
+            <p>Choose up to 3 state engines for your subscription:</p>
+            
+            <div class="checkbox-group states-grid">
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="california"> California
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="newyork"> New York
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="texas"> Texas
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="florida"> Florida
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="illinois"> Illinois
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="washington"> Washington
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="colorado"> Colorado
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="massachusetts"> Massachusetts
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="oregon"> Oregon
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" name="states" value="pennsylvania"> Pennsylvania
+              </label>
+            </div>
+            
+            <button id="saveStates" class="primary-button">Save Selected States</button>
+          </div>
+          
+          <div class="email-preferences" id="emailPreferences">
+            <h3>Email Digest Preferences</h3>
+            <p>Customize how you receive your weekly opportunity digest email:</p>
+            
+            <div class="form-group">
+              <label class="toggle-switch">
+                <input type="checkbox" id="digestEnabled" name="digestEnabled" checked>
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Receive weekly digest emails</span>
+              </label>
+            </div>
+            
+            <div class="form-group" id="dayOfWeekGroup">
+              <label for="digestDayOfWeek">Preferred day to receive digest:</label>
+              <select id="digestDayOfWeek" name="digestDayOfWeek">
+                <option value="0">Monday</option>
+                <option value="1">Tuesday</option>
+                <option value="2">Wednesday</option>
+                <option value="3">Thursday</option>
+                <option value="4">Friday</option>
+                <option value="5">Saturday</option>
+                <option value="6">Sunday</option>
+              </select>
+              <small class="form-helper">Premium members can choose their preferred day</small>
+            </div>
+            
+            <button id="saveEmailPreferences" class="primary-button">Save Email Preferences</button>
+          </div>
+          
+          <div class="account-actions">
+            <button id="logoutButton" class="secondary-button">Logout</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Proletto. All rights reserved.</p>
+    </footer>
+  </div>
+  
+  <!-- Portfolio Management JS -->
+  <script>
+    // Global variables
+    let currentUser = null;
+    const API_BASE_URL = 'http://localhost:5001/api';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize the user - in a real implementation, this would use authentication
+      // For now, we'll just use a mock user ID for demonstration purposes
+      // In production, this would come from the session or JWT token
+      // This is just a temporary placeholder for demonstration
+      initUser();
+      
+      // Tab Switching Functionality
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all buttons and contents
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Add active class to clicked button
+          button.classList.add('active');
+          
+          // Show corresponding content
+          const tabId = button.getAttribute('data-tab');
+          document.getElementById(tabId).classList.add('active');
+          
+          // Track this activity
+          if (currentUser) {
+            trackActivity('view_tab', { tab: tabId });
+          }
+        });
+      });
+      
+      // Initialize the user functions
+      async function initUser() {
+        // In a real implementation, the user ID would come from auth session
+        // For now, we'll just use user ID 1 for demonstration
+        try {
+          const userId = getUserIdFromCookie() || 1;
+          await fetchUserProfile(userId);
+          
+          // Track this view as activity
+          trackActivity('view_profile');
+        } catch (error) {
+          console.error('Error initializing user:', error);
+          showError('Could not load user profile. Please try again later.');
+        }
+      }
+      
+      // Portfolio Upload Functionality
+      const uploadArea = document.getElementById('uploadArea');
+      const fileInput = document.getElementById('portfolioUpload');
+      const portfolioGallery = document.getElementById('portfolioGallery');
+      const progressBar = document.querySelector('.progress-fill');
+      const progressText = document.querySelector('.progress-text');
+      const imageCountEl = document.getElementById('imageCount');
+      
+      // Upload area click to browse
+      uploadArea.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      // Drag and drop functionality
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+      
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+      });
+      
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+      });
+      
+      // File input change
+      fileInput.addEventListener('change', () => {
+        handleFiles(fileInput.files);
+      });
+      
+      // Handle selected files
+      function handleFiles(files) {
+        // Check if adding these files would exceed the 20 image limit
+        const currentImageCount = document.querySelectorAll('.portfolio-item').length;
+        const totalAfterUpload = currentImageCount + files.length;
+        
+        if (totalAfterUpload > 20) {
+          alert(`You can only have up to 20 images in your portfolio. You currently have ${currentImageCount} images.`);
+          return;
+        }
+        
+        // Process each file
+        Array.from(files).forEach((file, index) => {
+          // Validate file type
+          if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/webp')) {
+            alert(`File "${file.name}" is not a supported image type. Please upload JPG, PNG, or WEBP files only.`);
+            return;
+          }
+          
+          // Validate file size (max 5MB)
+          if (file.size > 5 * 1024 * 1024) {
+            alert(`File "${file.name}" exceeds the 5MB size limit.`);
+            return;
+          }
+          
+          // Simulate upload progress
+          let progress = 0;
+          const uploadInterval = setInterval(() => {
+            progress += 5;
+            progressBar.style.width = `${progress}%`;
+            progressText.textContent = `${progress}%`;
+            
+            if (progress >= 100) {
+              clearInterval(uploadInterval);
+              setTimeout(() => {
+                progressBar.style.width = '0%';
+                progressText.textContent = '0%';
+                addImageToGallery(file);
+              }, 500);
+            }
+          }, 100);
+        });
+      }
+      
+      // Add image to gallery
+      function addImageToGallery(file) {
+        // Check if the empty message exists and remove it
+        const emptyMessage = portfolioGallery.querySelector('.empty-portfolio-message');
+        if (emptyMessage) {
+          portfolioGallery.removeChild(emptyMessage);
+        }
+        
+        // Create a portfolio item
+        const item = document.createElement('div');
+        item.className = 'portfolio-item';
+        
+        // Create image element
+        const img = document.createElement('img');
+        img.className = 'portfolio-image';
+        img.alt = 'Portfolio artwork';
+        
+        // Read file and set as image source
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        
+        // Create delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-image';
+        deleteBtn.innerHTML = '×';
+        deleteBtn.addEventListener('click', () => {
+          portfolioGallery.removeChild(item);
+          updateImageCount();
+          
+          // Show empty message if no images left
+          if (portfolioGallery.childElementCount === 0) {
+            const emptyMessage = document.createElement('p');
+            emptyMessage.className = 'empty-portfolio-message';
+            emptyMessage.textContent = 'No images in your portfolio yet. Upload some to get started!';
+            portfolioGallery.appendChild(emptyMessage);
+          }
+        });
+        
+        // Append elements to portfolio item
+        item.appendChild(img);
+        item.appendChild(deleteBtn);
+        
+        // Append portfolio item to gallery
+        portfolioGallery.appendChild(item);
+        
+        // Update image count
+        updateImageCount();
+      }
+      
+      // Update image count
+      function updateImageCount() {
+        const count = document.querySelectorAll('.portfolio-item').length;
+        imageCountEl.textContent = count;
+      }
+      
+      // Referral code copy functionality
+      const referralCode = document.getElementById('referralCode');
+      const referralLink = document.getElementById('referralLink');
+      const copyCodeBtn = document.getElementById('copyReferralCode');
+      const copyLinkBtn = document.getElementById('copyReferralLink');
+      
+      copyCodeBtn.addEventListener('click', () => {
+        referralCode.select();
+        document.execCommand('copy');
+        copyCodeBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          copyCodeBtn.textContent = 'Copy';
+        }, 2000);
+      });
+      
+      copyLinkBtn.addEventListener('click', () => {
+        referralLink.select();
+        document.execCommand('copy');
+        copyLinkBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          copyLinkBtn.textContent = 'Copy';
+        }, 2000);
+      });
+      
+      // AI Portfolio Analysis
+      const aiAnalysisBtn = document.getElementById('btnAiAnalysis');
+      const optimizeBtn = document.getElementById('btnOptimizePortfolio');
+      const aiResultsContainer = document.getElementById('aiAnalysisResults');
+      
+      aiAnalysisBtn.addEventListener('click', () => {
+        // Check if user has images
+        if (document.querySelectorAll('.portfolio-item').length === 0) {
+          alert('Please upload some portfolio images first before requesting an analysis.');
+          return;
+        }
+        
+        // Simulate AI analysis
+        aiResultsContainer.innerHTML = '<div class="loading-spinner"></div><p>Analyzing your portfolio...</p>';
+        
+        // Make API call for portfolio analysis
+        setTimeout(() => {
+          fetchAIAnalysis();
+        }, 2000);
+      });
+      
+      // Fetch AI analysis from our API
+      function fetchAIAnalysis() {
+        // In a real implementation, we would gather the portfolio data
+        // and send it to our backend for AI processing
+        const portfolioData = {
+          user_id: '123', // We would get the actual user ID from authentication
+          artist_name: document.getElementById('fullName').value || 'Artist',
+          art_type: document.getElementById('artistType').value || 'Mixed Media',
+          portfolio_description: 'Collection of artwork from my recent series',
+          portfolio_items: [] // Would contain image URLs or base64 data
+        };
+        
+        // Simulate an API response for now
+        const mockAnalysis = {
+          strengths: [
+            'Strong use of color and composition',
+            'Consistent artistic style across portfolio',
+            'Technical skill evident in detailed work'
+          ],
+          areas_for_improvement: [
+            'Consider adding more variety in subject matter',
+            'Could benefit from more diverse mediums',
+            'Add artist statement for context'
+          ],
+          opportunity_matches: [
+            'Your work would be well-suited for gallery exhibitions',
+            'Consider applying for residencies focused on your medium',
+            'Strong potential for public art commissions'
+          ]
+        };
+        
+        displayAIAnalysis(mockAnalysis);
+      }
+      
+      // Display AI analysis results
+      function displayAIAnalysis(analysis) {
+        aiResultsContainer.innerHTML = `
+          <div class="analysis-results">
+            <h3>Portfolio Analysis</h3>
+            
+            <div class="analysis-section">
+              <h4>Strengths</h4>
+              <ul>
+                ${analysis.strengths.map(strength => `<li>${strength}</li>`).join('')}
+              </ul>
+            </div>
+            
+            <div class="analysis-section">
+              <h4>Areas for Improvement</h4>
+              <ul>
+                ${analysis.areas_for_improvement.map(area => `<li>${area}</li>`).join('')}
+              </ul>
+            </div>
+            
+            <div class="analysis-section">
+              <h4>Opportunity Matches</h4>
+              <ul>
+                ${analysis.opportunity_matches.map(match => `<li>${match}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+        `;
+        
+        // Update AI analysis count
+        const aiCountEl = document.getElementById('aiAnalysisCount');
+        aiCountEl.textContent = parseInt(aiCountEl.textContent) + 1;
+      }
+      
+      // Load badges
+      // Fetch user profile data from the API
+      async function fetchUserProfile(userId) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/user/profile?user_id=${userId}`);
+          const data = await response.json();
+          
+          if (!data.success) {
+            throw new Error(data.error || 'Could not load profile');
+          }
+          
+          currentUser = data.profile;
+          updateProfileUI(currentUser);
+          return currentUser;
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+          throw error;
+        }
+      }
+      
+      // Update profile UI with user data
+      function updateProfileUI(user) {
+        // Update membership badge
+        const membershipBadge = document.getElementById('membershipBadge');
+        membershipBadge.textContent = user.membership_level.charAt(0).toUpperCase() + user.membership_level.slice(1) + ' Tier';
+        
+        // Update personal info form
+        const fullNameInput = document.getElementById('fullName');
+        const emailInput = document.getElementById('email');
+        const artistTypeSelect = document.getElementById('artistType');
+        const locationInput = document.getElementById('location');
+        
+        fullNameInput.value = user.name || '';
+        emailInput.value = user.email || '';
+        
+        // Update referral codes
+        const referralCodeInput = document.getElementById('referralCode');
+        const referralLinkInput = document.getElementById('referralLink');
+        
+        referralCodeInput.value = user.referrals.code || '';
+        referralLinkInput.value = `https://proletto.app/?ref=${user.referrals.code}` || '';
+        
+        // Update stats
+        document.getElementById('referralCount').textContent = user.referrals.count || 0;
+        document.getElementById('imageCount').textContent = user.activity.portfolio_count || 0;
+        document.getElementById('viewCount').textContent = user.activity.opportunity_views || 0;
+        document.getElementById('aiAnalysisCount').textContent = user.activity.ai_uses || 0;
+        
+        // Update current plan in settings
+        const currentPlanEl = document.getElementById('currentPlan');
+        currentPlanEl.textContent = user.membership_level.charAt(0).toUpperCase() + user.membership_level.slice(1);
+        
+        // Show state selection for Supporter tier
+        const stateSelectionDiv = document.getElementById('stateSelection');
+        if (user.membership_level === 'supporter' || user.membership_level === 'premium') {
+          stateSelectionDiv.classList.remove('hidden');
+          
+          // Check the selected states
+          const stateCheckboxes = document.querySelectorAll('input[name="states"]');
+          const selectedStates = user.selected_states || [];
+          
+          stateCheckboxes.forEach(checkbox => {
+            checkbox.checked = selectedStates.includes(checkbox.value);
+          });
+        } else {
+          stateSelectionDiv.classList.add('hidden');
+        }
+        
+        // Update subscription status if available
+        const subscriptionStatus = document.getElementById('subscriptionStatus');
+        const subscriptionDate = document.getElementById('subscriptionDate');
+        const cancelSubscription = document.getElementById('cancelSubscription');
+        
+        if (user.subscription && user.subscription.end_date) {
+          const endDate = new Date(user.subscription.end_date);
+          
+          if (user.subscription.active) {
+            subscriptionStatus.textContent = 'Active subscription';
+            subscriptionDate.textContent = `Renewal date: ${endDate.toLocaleDateString()}`;
+            cancelSubscription.classList.remove('hidden');
+          } else {
+            subscriptionStatus.textContent = 'Subscription expired';
+            subscriptionDate.textContent = `Expired on: ${endDate.toLocaleDateString()}`;
+            cancelSubscription.classList.add('hidden');
+          }
+        } else {
+          subscriptionStatus.textContent = 'No active subscription';
+          subscriptionDate.textContent = '';
+          cancelSubscription.classList.add('hidden');
+        }
+        
+        // Load badges after updating profile
+        loadBadges(user.badges || []);
+        
+        // Update email digest preferences
+        const digestEnabledCheckbox = document.getElementById('digestEnabled');
+        const digestDayOfWeekSelect = document.getElementById('digestDayOfWeek');
+        const dayOfWeekGroup = document.getElementById('dayOfWeekGroup');
+        
+        // Set digest enabled checkbox
+        digestEnabledCheckbox.checked = user.digest_enabled !== false;
+        
+        // Set preferred day of week if available
+        if (user.digest_day_of_week !== undefined && user.digest_day_of_week !== null) {
+          digestDayOfWeekSelect.value = user.digest_day_of_week;
+        } else {
+          // Default to Monday (0) if not set
+          digestDayOfWeekSelect.value = 0;
+        }
+        
+        // Show/hide day selection based on subscription level
+        if (user.membership_level === 'premium') {
+          dayOfWeekGroup.classList.remove('hidden');
+          digestDayOfWeekSelect.disabled = false;
+        } else {
+          dayOfWeekGroup.classList.remove('hidden');
+          digestDayOfWeekSelect.disabled = true;
+        }
+        
+        // Update UI based on digest enabled status
+        toggleDigestDayOfWeek();
+      }
+      
+      // Track user activity
+      async function trackActivity(activityType, details = null) {
+        if (!currentUser) return;
+        
+        try {
+          const response = await fetch(`${API_BASE_URL}/user/track-activity`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              user_id: currentUser.id,
+              activity_type: activityType,
+              details: details
+            })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success && data.new_badges && data.new_badges.length > 0) {
+            // Show notification for new badges
+            data.new_badges.forEach(badge => {
+              showNotification(`New Badge Earned: ${badge.name}!`);
+            });
+            
+            // Reload badges
+            loadBadges();
+          }
+          
+          return data;
+        } catch (error) {
+          console.error('Error tracking activity:', error);
+        }
+      }
+      
+      // Get user ID from cookie (in a real app, this would use secure cookies or JWT)
+      function getUserIdFromCookie() {
+        const name = 'proletto_user_id=';
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const cookieArray = decodedCookie.split(';');
+        
+        for (let i = 0; i < cookieArray.length; i++) {
+          let cookie = cookieArray[i].trim();
+          if (cookie.indexOf(name) === 0) {
+            return cookie.substring(name.length, cookie.length);
+          }
+        }
+        
+        return null;
+      }
+      
+      // Show notification
+      function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          notification.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+          notification.classList.remove('show');
+          setTimeout(() => {
+            document.body.removeChild(notification);
+          }, 300);
+        }, 3000);
+      }
+      
+      // Show error message
+      function showError(message) {
+        showNotification(message);
+      }
+      
+      // Update profile info handler
+      const personalInfoForm = document.getElementById('personalInfoForm');
+      if (personalInfoForm) {
+        personalInfoForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          if (!currentUser) return;
+          
+          // Get form data
+          const formData = new FormData(personalInfoForm);
+          const name = formData.get('fullName');
+          
+          // Get selected interests
+          const interestCheckboxes = document.querySelectorAll('input[name="interests"]:checked');
+          const interests = Array.from(interestCheckboxes).map(cb => cb.value);
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/user/profile`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                user_id: currentUser.id,
+                name: name,
+                interests: interests
+              })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showNotification('Profile updated successfully');
+              fetchUserProfile(currentUser.id);
+            } else {
+              showError(data.error || 'Error updating profile');
+            }
+          } catch (error) {
+            console.error('Error updating profile:', error);
+            showError('Could not update profile. Please try again later.');
+          }
+        });
+      }
+      
+      // Save selected states handler
+      const saveStatesButton = document.getElementById('saveStates');
+      if (saveStatesButton) {
+        saveStatesButton.addEventListener('click', async () => {
+          if (!currentUser) return;
+          
+          // Get selected states
+          const stateCheckboxes = document.querySelectorAll('input[name="states"]:checked');
+          const selectedStates = Array.from(stateCheckboxes).map(cb => cb.value);
+          
+          // Check if we're within the limit for Supporter tier
+          if (currentUser.membership_level === 'supporter' && selectedStates.length > 3) {
+            showError('Supporter tier is limited to 3 selected states');
+            return;
+          }
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/user/profile`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                user_id: currentUser.id,
+                selected_states: selectedStates
+              })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showNotification('Selected states updated successfully');
+              fetchUserProfile(currentUser.id);
+            } else {
+              showError(data.error || 'Error updating selected states');
+            }
+          } catch (error) {
+            console.error('Error updating selected states:', error);
+            showError('Could not update selected states. Please try again later.');
+          }
+        });
+      }
+      
+      // Logout handler
+      const logoutButton = document.getElementById('logoutButton');
+      if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+          // Clear user cookie and redirect to home
+          document.cookie = 'proletto_user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          window.location.href = 'index.html';
+        });
+      }
+      
+      function loadBadges(userBadges = []) {
+        const badgesContainer = document.getElementById('badgesContainer');
+        const lockedBadges = document.getElementById('lockedBadges');
+        
+        // All possible badges with their details
+        const allPossibleBadges = [
+          { id: 'early_adopter', name: 'Early Adopter', description: 'Joined during our beta phase', icon: '🚀' },
+          { id: 'community_builder', name: 'Community Builder', description: 'Referred 3+ artists', icon: '👥' },
+          { id: 'portfolio_master', name: 'Portfolio Master', description: 'Uploaded 10+ portfolio pieces', icon: '🎨' },
+          { id: 'application_pro', name: 'Application Pro', description: 'Applied to 20+ opportunities', icon: '📝' },
+          { id: 'premium_supporter', name: 'Premium Supporter', description: 'Premium member of Proletto', icon: '💎' },
+          { id: 'opportunity_hunter', name: 'Opportunity Hunter', description: 'Viewed 50+ opportunities', icon: '🔍' },
+          { id: 'ai_master', name: 'AI Master', description: 'Used AI tools 20+ times', icon: '⭐' }
+        ];
+        
+        // Filter badges into earned and not earned
+        const earnedBadges = [];
+        const notEarnedBadges = [];
+        
+        // If we have user badges from the API, use those
+        if (userBadges && userBadges.length > 0) {
+          // Get earned badge IDs
+          const earnedBadgeIds = userBadges.map(badge => badge.id);
+          
+          // Separate badges into earned and not earned
+          allPossibleBadges.forEach(badge => {
+            if (earnedBadgeIds.includes(badge.id)) {
+              // Find the user badge to get the earned date
+              const userBadge = userBadges.find(b => b.id === badge.id);
+              earnedBadges.push({
+                ...badge,
+                earned_at: userBadge.earned_at
+              });
+            } else {
+              notEarnedBadges.push(badge);
+            }
+          });
+        } else {
+          // Fallback to static badges if no user data is available
+          earnedBadges.push(allPossibleBadges[0], allPossibleBadges[2]);
+          notEarnedBadges.push(allPossibleBadges[1], allPossibleBadges[3], allPossibleBadges[4], allPossibleBadges[5], allPossibleBadges[6]);
+        }
+        
+        // Display earned badges
+        badgesContainer.innerHTML = '';
+        if (earnedBadges.length === 0) {
+          badgesContainer.innerHTML = '<p class="empty-badges-message">You haven\'t earned any badges yet. Start using Proletto features to collect badges!</p>';
+        } else {
+          earnedBadges.forEach(badge => {
+            badgesContainer.innerHTML += `
+              <div class="badge-item">
+                <div class="badge-icon">${badge.icon}</div>
+                <div class="badge-info">
+                  <h4>${badge.name}</h4>
+                  <p>${badge.description}</p>
+                </div>
+              </div>
+            `;
+          });
+        }
+        
+        // Display locked badges
+        lockedBadges.innerHTML = '';
+        notEarnedBadges.forEach(badge => {
+          lockedBadges.innerHTML += `
+            <div class="badge-item locked">
+              <div class="badge-icon">${badge.icon}</div>
+              <div class="badge-info">
+                <h4>${badge.name}</h4>
+                <p>${badge.description}</p>
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      // Add limit for interest selection
+      const interestCheckboxes = document.querySelectorAll('input[name="interests"]');
+      interestCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          const checkedCount = document.querySelectorAll('input[name="interests"]:checked').length;
+          
+          if (checkedCount > 5) {
+            checkbox.checked = false;
+            showNotification('Please select a maximum of 5 interests.');
+          }
+        });
+      });
+      
+      // Toggle digest day of week based on enabled status
+      function toggleDigestDayOfWeek() {
+        const digestEnabledCheckbox = document.getElementById('digestEnabled');
+        const dayOfWeekGroup = document.getElementById('dayOfWeekGroup');
+        
+        if (digestEnabledCheckbox.checked) {
+          dayOfWeekGroup.classList.remove('hidden');
+        } else {
+          dayOfWeekGroup.classList.add('hidden');
+        }
+      }
+      
+      // Email preference handlers
+      const digestEnabledCheckbox = document.getElementById('digestEnabled');
+      const saveEmailPreferencesButton = document.getElementById('saveEmailPreferences');
+      
+      // Toggle day of week group when checkbox changes
+      if (digestEnabledCheckbox) {
+        digestEnabledCheckbox.addEventListener('change', toggleDigestDayOfWeek);
+      }
+      
+      // Save email preferences handler
+      if (saveEmailPreferencesButton) {
+        saveEmailPreferencesButton.addEventListener('click', async () => {
+          if (!currentUser) return;
+          
+          const digestEnabled = digestEnabledCheckbox.checked;
+          const digestDayOfWeek = document.getElementById('digestDayOfWeek').value;
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/user/profile`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                user_id: currentUser.id,
+                digest_enabled: digestEnabled,
+                digest_day_of_week: digestDayOfWeek
+              })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showNotification('Email preferences updated successfully');
+              fetchUserProfile(currentUser.id);
+            } else {
+              showError(data.error || 'Error updating email preferences');
+            }
+          } catch (error) {
+            console.error('Error updating email preferences:', error);
+            showError('Could not update email preferences. Please try again later.');
+          }
+        });
+      }
+      
+      // Add notification CSS
+      const style = document.createElement('style');
+      style.textContent = `
+        .notification {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background-color: #a86a3e;
+          color: #fff;
+          padding: 15px 20px;
+          border-radius: 5px;
+          box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+          z-index: 1000;
+          opacity: 0;
+          transform: translateY(-20px);
+          transition: all 0.3s ease;
+        }
+        
+        .notification.show {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      `;
+      document.head.appendChild(style);
+    });
+  </script>
+  
+  <!-- Mobile Navigation -->
+  {% include "includes/mobile_nav.html" %}
+</body>
+</html>

@@ -1,0 +1,162 @@
+"""
+Cache Enhancements for Proletto
+
+1. /cache-health endpoint reporting backend and hit/miss stats
+2. Redis connection pool tuning with timeouts
+3. Namespaced cache keys and TTL patterns
+4. Circuit-breaker decorator for cache operations
+5. Startup validation of cache backend
+"""
+
+import os
+import time
+import threading
+from flask import Blueprint, current_app, jsonify
+from flask_caching import Cache
+from redis import Redis, ConnectionPool, RedisError
+from functools import wraps
+
+# ---------------------------
+# 1. Initialize Cache with Pool Tuning
+# ---------------------------
+
+def init_cache(app):
+    redis_url = os.getenv('REDIS_URL')
+    try:
+        # Connection pool with timeouts
+        pool = ConnectionPool.from_url(
+            redis_url,
+            max_connections=10,
+            socket_connect_timeout=2,
+            socket_keepalive=True
+        )
+        redis_client = Redis(connection_pool=pool, decode_responses=True)
+        # Test connection
+        redis_client.ping()
+        backend = {
+            'type': 'redis',
+            'client': redis_client
+        }
+        cache = Cache(config={
+            'CACHE_TYPE': 'RedisCache',
+            'CACHE_REDIS_CLIENT': redis_client,
+            'CACHE_DEFAULT_TIMEOUT': 60
+        })
+    except (RedisError, Exception) as e:
+        app.logger.error(f"Redis cache unavailable: {e}. Falling back to SimpleCache.")
+        backend = {
+            'type': 'simple',
+            'client': None
+        }
+        cache = Cache(config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 60})
+
+    cache.init_app(app)
+    # Store backend info for health checks
+    app.cache_backend = backend
+    return cache
+
+# ---------------------------
+# 2. Namespaced Key Helper + TTL
+# ---------------------------
+
+def make_key(namespace, key):
+    "Compose a namespaced cache key."  
+    return f"cache:v1:{namespace}:{key}"
+
+# Usage:
+# cache.set(make_key('opportunities', 'top10'), data, timeout=30)
+# cache.get(make_key('opportunities', 'top10'))
+
+# ---------------------------
+# 3. Circuit-Breaker Decorator
+# ---------------------------
+
+class CacheCircuitBreaker:
+    def __init__(self, max_failures=3, reset_timeout=60):
+        self.failures = 0
+        self.max_failures = max_failures
+        self.reset_timeout = reset_timeout
+        self.lock = threading.Lock()
+        self.tripped_until = 0
+
+    def __call__(self, fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            now = time.time()
+            if now < self.tripped_until:
+                # circuit is open: skip Redis, fall back to simple cache
+                return fn(*args, use_simple=True, **kwargs)
+            try:
+                result = fn(*args, use_simple=False, **kwargs)
+                self._reset()
+                return result
+            except Exception as e:
+                self._fail()
+                current_app.logger.warning(f"Cache operation failed: {e}")
+                return fn(*args, use_simple=True, **kwargs)
+        return wrapper
+
+    def _fail(self):
+        with self.lock:
+            self.failures += 1
+            if self.failures >= self.max_failures:
+                self.tripped_until = time.time() + self.reset_timeout
+                self.failures = 0
+
+    def _reset(self):
+        with self.lock:
+            self.failures = 0
+            self.tripped_until = 0
+
+cache_cb = CacheCircuitBreaker(max_failures=3, reset_timeout=120)
+
+# Example usage:
+# @cache_cb
+def get_cached_opportunities(cache, use_simple=False):
+    # if use_simple: use SimpleCache
+    return cache.get(make_key('opportunities', 'top10'))
+
+# ---------------------------
+# 4. /cache-health Endpoint
+# ---------------------------
+
+health_bp = Blueprint('health', __name__)
+
+@health_bp.route('/cache-health')
+def cache_health():
+    """Report cache backend type and basic stats."""
+    backend = current_app.cache_backend
+    data = {'backend': backend['type']}
+    if backend['type'] == 'redis':
+        try:
+            info = backend['client'].info()
+            data.update({
+                'uptime_in_seconds': info.get('uptime_in_seconds'),
+                'used_memory_human': info.get('used_memory_human'),
+                'keyspace_hits': info.get('keyspace_hits'),
+                'keyspace_misses': info.get('keyspace_misses'),
+            })
+        except Exception as e:
+            data['error'] = str(e)
+    return jsonify(data)
+
+# ---------------------------
+# 5. Startup Validation in App Factory
+# ---------------------------
+
+def create_app():
+    from flask import Flask
+    app = Flask(__name__)
+
+    # Initialize cache
+    cache = init_cache(app)
+
+    # Validate cache immediately
+    app.logger.info(f"Cache backend: {app.cache_backend['type']}")
+
+    # Register health endpoint
+    app.register_blueprint(health_bp)
+
+    # ... register other blueprints/routes ...
+
+    return app

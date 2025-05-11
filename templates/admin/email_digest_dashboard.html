@@ -1,0 +1,466 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Email Digest Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Email Digest Dashboard</h1>
+        <div>
+            <button class="btn btn-sm btn-primary shadow-sm" id="refresh-status">
+                <i class="fas fa-sync fa-sm text-white-50 mr-1"></i> Refresh Data
+            </button>
+            <button class="btn btn-sm btn-success shadow-sm ml-2" id="run-digest-now">
+                <i class="fas fa-paper-plane fa-sm text-white-50 mr-1"></i> Run Digest Now
+            </button>
+        </div>
+    </div>
+
+    <!-- Status Cards Row -->
+    <div class="row">
+        <!-- Total Emails Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Emails Sent</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-emails">-</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-envelope fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Successful Emails Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Successful Emails</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="successful-emails">-</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Failed Emails Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Failed Emails</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="failed-emails">-</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Emails Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Test Emails</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="test-emails">-</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-vial fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Last Run Status Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Last Run Status</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Actions:</div>
+                            <a class="dropdown-item" href="#" id="view-logs">View Logs</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="status-details mb-3">
+                        <div class="row mb-2">
+                            <div class="col-4 font-weight-bold">Last Run:</div>
+                            <div class="col-8" id="last-run-time">-</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 font-weight-bold">Status:</div>
+                            <div class="col-8" id="scheduler-status">-</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4 font-weight-bold">Next Run:</div>
+                            <div class="col-8" id="next-run-time">-</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 font-weight-bold">Schedule:</div>
+                            <div class="col-8" id="schedule-info">-</div>
+                        </div>
+                    </div>
+                    <div class="progress mb-4">
+                        <div class="progress-bar progress-bar-striped" role="progressbar" id="progress-bar"
+                            style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div id="status-message" class="text-center font-weight-bold"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Email Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Send Test Email</h6>
+                </div>
+                <div class="card-body">
+                    <form id="test-email-form">
+                        <div class="form-group">
+                            <label for="user-select">Select User</label>
+                            <select class="form-control" id="user-select" required>
+                                <option value="">-- Select a user --</option>
+                                {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.email }} ({{ user.username }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-paper-plane mr-2"></i>Send Test Email
+                        </button>
+                        <div class="mt-3" id="test-result"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Digest Emails Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Digest Emails</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="emails-table" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Sent At</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for digest in digests %}
+                        <tr>
+                            <td>{{ digest.id }}</td>
+                            <td>{{ digest.user.email }}</td>
+                            <td>{{ digest.sent_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>
+                                {% if digest.status == 'sent' %}
+                                <span class="badge badge-success">Sent</span>
+                                {% elif digest.status == 'failed' %}
+                                <span class="badge badge-danger">Failed</span>
+                                {% elif digest.status == 'test' %}
+                                <span class="badge badge-info">Test</span>
+                                {% else %}
+                                <span class="badge badge-secondary">{{ digest.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ digest.email_type or 'Regular' }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info view-details" data-id="{{ digest.id }}" data-toggle="modal" data-target="#detailsModal">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Email Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>User:</label>
+                                <p id="detail-user" class="form-control-static"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status:</label>
+                                <p id="detail-status" class="form-control-static"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Sent:</label>
+                                <p id="detail-sent" class="form-control-static"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Type:</label>
+                                <p id="detail-type" class="form-control-static"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Metadata:</label>
+                                <pre id="detail-metadata" class="p-3 bg-light"></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Error (if any):</label>
+                                <pre id="detail-error" class="p-3 bg-light"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="retry-email">Retry Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        $('#emails-table').DataTable({
+            order: [[2, 'desc']]
+        });
+
+        // Load initial status
+        refreshStatus();
+
+        // Refresh status button
+        $('#refresh-status').click(function() {
+            refreshStatus();
+        });
+
+        // Run digest now button
+        $('#run-digest-now').click(function() {
+            runDigestNow();
+        });
+
+        // Handle test email form submission
+        $('#test-email-form').submit(function(e) {
+            e.preventDefault();
+            sendTestEmail();
+        });
+
+        // View email details
+        $('.view-details').click(function() {
+            const id = $(this).data('id');
+            // In a real implementation, you would fetch details from the server
+            // For demo purposes, we're just showing placeholder data
+            $('#detail-user').text('user@example.com');
+            $('#detail-status').text('Sent');
+            $('#detail-sent').text('2025-05-07 12:00:00');
+            $('#detail-type').text('Weekly Digest');
+            $('#detail-metadata').text(JSON.stringify({
+                opportunities_count: 5,
+                template_version: '1.0',
+                rendering_time_ms: 156
+            }, null, 2));
+            $('#detail-error').text('');
+        });
+        
+        // Auto-refresh status every 60 seconds
+        setInterval(refreshStatus, 60000);
+    });
+
+    function refreshStatus() {
+        $('#refresh-status').prop('disabled', true);
+        $('#refresh-status i').addClass('fa-spin');
+        
+        $.ajax({
+            url: '/simple-admin/api/email-digest/status',
+            method: 'GET',
+            success: function(data) {
+                updateStatusCards(data);
+                updateStatusDetails(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching status:', error);
+                $('#status-message').html('<span class="text-danger">Error loading status. Please try again.</span>');
+            },
+            complete: function() {
+                $('#refresh-status').prop('disabled', false);
+                $('#refresh-status i').removeClass('fa-spin');
+            }
+        });
+    }
+
+    function updateStatusCards(data) {
+        $('#total-emails').text(data.total_emails_sent || 0);
+        $('#successful-emails').text(data.successful_emails || 0);
+        $('#failed-emails').text(data.failed_emails || 0);
+        $('#test-emails').text(data.test_emails || 0);
+    }
+
+    function updateStatusDetails(data) {
+        // Update last run time
+        if (data.last_run) {
+            const lastRunDate = new Date(data.last_run);
+            $('#last-run-time').text(lastRunDate.toLocaleString());
+        } else {
+            $('#last-run-time').text('Never run');
+        }
+
+        // Update scheduler status
+        if (data.active === true) {
+            $('#scheduler-status').html('<span class="badge badge-success">Active</span>');
+            $('#progress-bar').removeClass('bg-danger bg-warning').addClass('bg-success');
+            $('#progress-bar').css('width', '100%');
+        } else {
+            $('#scheduler-status').html('<span class="badge badge-danger">Inactive</span>');
+            $('#progress-bar').removeClass('bg-success bg-warning').addClass('bg-danger');
+            $('#progress-bar').css('width', '100%');
+        }
+
+        // Update next run time if available
+        if (data.next_run) {
+            const nextRunDate = new Date(data.next_run);
+            $('#next-run-time').text(nextRunDate.toLocaleString());
+        } else {
+            $('#next-run-time').text('Not scheduled');
+        }
+
+        // Update schedule info
+        if (data.schedule) {
+            $('#schedule-info').text(data.schedule);
+        } else {
+            $('#schedule-info').text('Not configured');
+        }
+
+        // Update status message
+        if (data.error) {
+            $('#status-message').html(`<span class="text-danger">Error: ${data.error}</span>`);
+        } else if (data.active) {
+            $('#status-message').html('<span class="text-success">Scheduler is running normally</span>');
+        } else {
+            $('#status-message').html('<span class="text-warning">Scheduler is not active</span>');
+        }
+    }
+
+    function runDigestNow() {
+        if (!confirm('Are you sure you want to run the digest email job now? This will send emails to all eligible users.')) {
+            return;
+        }
+        
+        $('#run-digest-now').prop('disabled', true);
+        
+        $.ajax({
+            url: '/simple-admin/api/email-digest/run-now',
+            method: 'POST',
+            success: function(data) {
+                if (data.success) {
+                    alert('Digest job started successfully!');
+                    refreshStatus();
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error running digest:', error);
+                alert('Error starting digest job. See console for details.');
+            },
+            complete: function() {
+                $('#run-digest-now').prop('disabled', false);
+            }
+        });
+    }
+
+    function sendTestEmail() {
+        const userId = $('#user-select').val();
+        if (!userId) {
+            $('#test-result').html('<div class="alert alert-warning">Please select a user</div>');
+            return;
+        }
+        
+        $('#test-email-form button').prop('disabled', true);
+        $('#test-result').html('<div class="alert alert-info">Sending test email...</div>');
+        
+        $.ajax({
+            url: '/simple-admin/api/email-digest/test',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ user_id: userId }),
+            success: function(data) {
+                if (data.status === 'success') {
+                    $('#test-result').html('<div class="alert alert-success">Test email sent successfully!</div>');
+                    refreshStatus(); // Refresh status to update counters
+                } else {
+                    $('#test-result').html(`<div class="alert alert-danger">Error: ${data.message || 'Unknown error'}</div>`);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error sending test email:', error);
+                $('#test-result').html('<div class="alert alert-danger">Error sending test email. See console for details.</div>');
+            },
+            complete: function() {
+                $('#test-email-form button').prop('disabled', false);
+            }
+        });
+    }
+</script>
+{% endblock %}

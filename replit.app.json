@@ -1,0 +1,12 @@
+{
+  "app_type": "flask",
+  "entry_point": "main.py",
+  "run_command": "python main.py",
+  "port": 80,
+  "dependencies": [
+    "flask",
+    "flask-sqlalchemy",
+    "flask-login",
+    "psycopg2-binary"
+  ]
+}

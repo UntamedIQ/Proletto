@@ -1,0 +1,97 @@
+ screenshot tells me Flask simply isn’t seeing a handler for /auth/register (and likely the others) even though you thought you’d added them. Let’s zero in on the two usual suspects: blueprints vs. straight @app.route, and trailing-slash mismatches.
+
+1. Verify Blueprint Registration (if you’re using one)
+If you moved your auth routes into a blueprint, make sure you actually registered it:
+
+python
+Copy
+Edit
+# in auth.py (or wherever)
+from flask import Blueprint
+
+auth_bp = Blueprint('auth', __name__, template_folder='templates')
+
+@auth_bp.route('/login')
+def login(): …
+
+@auth_bp.route('/register')
+def register(): …
+
+# in main.py
+from auth import auth_bp
+app.register_blueprint(auth_bp, url_prefix='/auth')
+Common gotchas:
+
+You need that app.register_blueprint(...) call before you hit your catch-all.
+
+url_prefix must exactly match the /auth in your links.
+
+2. Check for Trailing-Slash Strictness
+Flask treats /auth/register and /auth/register/ as different routes by default. If you defined:
+
+python
+Copy
+Edit
+@auth_bp.route('/register/')
+def register(): …
+then a request to /auth/register (no slash) will 404 instead of redirecting. You have two options:
+
+Normalize your decorators to no-slash style everywhere:
+
+python
+Copy
+Edit
+@auth_bp.route('/register')
+def register(): …
+Relax strict slashes globally:
+
+python
+Copy
+Edit
+app.url_map.strict_slashes = False
+3. Print Your Active Route Map
+Right after you create app = Flask(__name__), sprinkle in:
+
+python
+Copy
+Edit
+@app.before_first_request
+def log_routes():
+    for rule in app.url_map.iter_rules():
+        print(f"{rule} -> {rule.endpoint}")
+Restart your server, call GET /, then inspect your console. You should see lines like:
+
+bash
+Copy
+Edit
+/auth/login  -> auth.login
+/auth/register -> auth.register
+/opportunities -> opportunities
+...
+If /auth/register isn’t in that list (or is named oddly), that pinpoints the mis-registration.
+
+4. Double-check Your Redirect Functions
+If you added redirects from the old HTML names, ensure they point to the correct endpoint:
+
+python
+Copy
+Edit
+@app.route('/register.html')
+def redirect_register():
+    return redirect(url_for('auth.register'))  # endpoint must match blueprint + func name
+5. Re-test Just That One URL
+In your browser (or via curl/Postman), hit exactly:
+
+bash
+Copy
+Edit
+http://localhost:5000/auth/register
+Watch your Flask console:
+
+Does it fire the auth.register handler?
+
+Or does it drop to your catch-all?
+
+That tells you whether the route exists at all.
+
+Once you confirm the route is registered (or fix the decorator/blueprint), those 404s will clear up. Let me know what your printed route map shows!

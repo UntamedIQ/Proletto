@@ -1,0 +1,8 @@
+[
+  {
+    "username": "admin",
+    "password": "scrypt:32768:8:1$gHsgaBzl8gb6VS4B$82359cc802c184e0a40e5e7554730c37ada34322c61832c54ad58e4d5e97179620a4f9ee728592a79deecc6702c3593172f68758e82b70f3f52b000fdc62a739",
+    "email": "admin@example.com",
+    "is_admin": true
+  }
+]

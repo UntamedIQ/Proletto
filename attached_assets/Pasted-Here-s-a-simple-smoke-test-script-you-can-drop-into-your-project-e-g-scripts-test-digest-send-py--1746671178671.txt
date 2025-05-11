@@ -1,0 +1,79 @@
+Here’s a simple smoke-test script you can drop into your project (e.g. scripts/test_digest_send.py) to exercise the full weekly‐digest flow against a small, controlled list of test users:
+
+python
+Copy
+Edit
+#!/usr/bin/env python3
+import os
+import logging
+from datetime import datetime
+from your_app import create_app, db              # adjust imports
+from models import User, DigestEmail
+from email_digest import send_weekly_digest      # your mailer helper
+from self_learning_bot import get_recommendations # your recommender
+
+# Configure basic logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("digest_smoke_test")
+
+def main():
+    app = create_app()
+    with app.app_context():
+        # 1. Define your test recipient list
+        test_emails = os.getenv('DIGEST_TEST_EMAILS', '').split(',')
+        if not test_emails or test_emails == ['']:
+            logger.error("Set DIGEST_TEST_EMAILS to a comma-separated list of emails")
+            return
+
+        # 2. Create or fetch dummy test users
+        test_users = []
+        for email in test_emails:
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                user = User(email=email, name="Test User", is_pro=True)
+                db.session.add(user)
+                db.session.commit()
+            test_users.append(user)
+
+        # 3. Send a digest to each test user
+        for user in test_users:
+            try:
+                # Get top 5 recommendations
+                recs = get_recommendations(user.id)[:5]
+                send_weekly_digest(user.id, recs)
+                logger.info(f"✅ Sent digest to {user.email}")
+            except Exception as e:
+                logger.exception(f"❌ Failed to send digest to {user.email}: {e}")
+
+        # 4. Summarize in the DB
+        sent_count = DigestEmail.query.filter(
+            DigestEmail.sent_at >= datetime.utcnow().replace(hour=0, minute=0, second=0)
+        ).count()
+        logger.info(f"Total digests sent today: {sent_count}")
+
+if __name__ == "__main__":
+    main()
+How to Run
+Set up your test emails in Replit Secrets (or your shell):
+
+graphql
+Copy
+Edit
+DIGEST_TEST_EMAILS=test1@example.com,test2@example.com
+Ensure your SendGrid key and other ENV vars are set (SENDGRID_API_KEY, DOMAIN, etc.).
+
+Execute in the Replit shell:
+
+bash
+Copy
+Edit
+python3 scripts/test_digest_send.py
+Check each inbox for the email:
+
+Verify HTML formatting, image links, unsubscribe footer, etc.
+
+Click through the opportunity links to ensure they resolve correctly.
+
+Review the console/log output for any exceptions or failures.
+
+This end-to-end test ensures your digest template, mailer helper, scheduling logic, and SendGrid integration are all wired up correctly before you roll out to real subscribers.

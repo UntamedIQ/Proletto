@@ -1,0 +1,97 @@
+**Art Self‑Learning Bot Architecture & Implementation Plan**
+
+*Overview*: Build a recommendation bot that continuously learns from scraped opportunity data and user feedback—providing personalized art opportunities, detecting scraping anomalies, and optimizing platform workflows.
+
+---
+
+## 1. Data Pipeline
+
+1. **Scraped Data Ingestion**
+
+   * All scrapers write normalized records (title, url, deadline, tags, source) into **`Opportunities`** table.
+2. **Feedback Collection**
+
+   * `Feedback` table already capturing user `opp_id` + `rating`.
+3. **Feature Engineering**
+
+   * Compute features per opportunity: keyword TF-IDF, source reliability score, historical engagement metrics.
+   * Store in a **Feature Store** (e.g. Redis or Postgres view).
+
+## 2. Model Training
+
+1. **Training Job** (daily at 3 AM via APScheduler)
+
+   ```python
+   def retrain_recommender():
+       # Fetch features & feedback
+       X, y = load_features_and_labels()
+       model = train_model(X, y)  # e.g. LightGBMClassifier
+       save_model(model, path="models/recommender.pkl")
+   ```
+2. **Cross‑Validation & Drift Detection**
+
+   * Compute AUC/precision metrics and compare vs previous model.
+   * If performance drops >5%, send alert to Slack.
+
+## 3. Inference API
+
+1. **Endpoint** `GET /api/recommendations?user_id=<uid>`
+
+   * Loads latest model, user profile, recent opportunities.
+   * Returns top-10 ranked opps.
+2. **Caching**
+
+   * Cache per-user recommendations for 10 minutes in Redis to reduce load.
+
+## 4. Self‑Healing & Monitoring
+
+1. **Scraper Anomaly Detection**
+
+   * Monitor feature distributions (e.g. average TF-IDF dims). On sudden shifts, trigger a headless‑browser re‑scrape or escalate.
+2. **Automated Retuning**
+
+   * If user engagement (click‑through rate) drops below threshold, automatically adjust feature weights or re-trigger full retraining.
+
+## 5. Code Skeleton
+
+**`self_learning_bot.py`**
+
+```python
+import pickle, redis
+from models import Opportunity, Feedback
+from sklearn.feature_extraction.text import TfidfVectorizer
+from lightgbm import LGBMClassifier
+
+def load_data():
+    opps = Opportunity.query.all()
+    fb = Feedback.query.all()
+    # build X, y
+    return X, y
+
+def train_model(X, y):
+    model = LGBMClassifier()
+    model.fit(X, y)
+    return model
+
+def save_model(m, path):
+    with open(path, 'wb') as f:
+        pickle.dump(m, f)
+
+if __name__ == '__main__':
+    X, y = load_data()
+    m = train_model(X, y)
+    save_model(m, 'models/recommender.pkl')
+```
+
+## 6. Integration & Scheduling
+
+* Add APScheduler job:
+
+  ```python
+  scheduler.add_job(retrain_recommender, 'cron', hour=3, id='retrain_model')
+  ```
+* Expose `/api/recommendations` in your Flask app.
+
+---
+
+*This plan turns your scraped feeds and user signals into a continuously improving recommendation engine—automating model training, inference, and self‑healing.*

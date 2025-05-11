@@ -1,0 +1,744 @@
+{% extends "public/base.html" %}
+
+{% block title %}How It Works | Proletto{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="how-it-works-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1>How Proletto Works</h1>
+                <p class="lead">Proletto is designed to transform how artists discover and secure opportunities through AI-powered matching, portfolio optimization, and application assistance.</p>
+            </div>
+            <div class="col-lg-6">
+                <img src="/assets/how-it-works-hero.jpg" alt="Proletto platform overview" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Overview -->
+<section class="features-overview" id="opportunity-matching">
+    <div class="container">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6">
+                <img src="/assets/matching-illustration.jpg" alt="AI-powered opportunity matching" class="img-fluid rounded shadow-lg">
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content">
+                    <span class="feature-badge">01</span>
+                    <h2>AI-Powered Opportunity Matching</h2>
+                    <p>Our specialized engines continuously collect opportunities from across the art world, with geographic specialization for the top art states.</p>
+                    <ul class="feature-list">
+                        <li>Personalized recommendations based on your portfolio</li>
+                        <li>Access to grants, residencies, exhibitions, and commissions</li>
+                        <li>Receive notifications when relevant opportunities are found</li>
+                        <li>Save favorites to apply later</li>
+                    </ul>
+                    <div class="tier-info">
+                        <p><strong>Essentials Tier:</strong> Access to basic opportunity database</p>
+                        <p><strong>Insider Tier:</strong> Advanced matching + priority alerts</p>
+                        <p><strong>Gallery Tier:</strong> Complete access to all specialized engines</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row align-items-center flex-row-reverse mb-5" id="portfolio-optimization">
+            <div class="col-lg-6">
+                <img src="/assets/portfolio-optimization.jpg" alt="Portfolio optimization" class="img-fluid rounded shadow-lg">
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content">
+                    <span class="feature-badge">02</span>
+                    <h2>Portfolio Optimization</h2>
+                    <p>Our AI analyzes your portfolio and provides actionable insights to increase your chances of success with specific opportunity types.</p>
+                    <ul class="feature-list">
+                        <li>Get personalized recommendations for improvements</li>
+                        <li>Optimize your portfolio for specific opportunities</li>
+                        <li>Understand what grant reviewers and curators look for</li>
+                        <li>Track your portfolio's performance over time</li>
+                    </ul>
+                    <div class="tier-info">
+                        <p><strong>Essentials Tier:</strong> Basic portfolio analysis</p>
+                        <p><strong>Insider Tier:</strong> Detailed optimization recommendations</p>
+                        <p><strong>Gallery Tier:</strong> Advanced analytics + benchmark comparisons</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row align-items-center mb-5" id="application-assistance">
+            <div class="col-lg-6">
+                <img src="/assets/application-assistance.jpg" alt="Application assistance" class="img-fluid rounded shadow-lg">
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content">
+                    <span class="feature-badge">03</span>
+                    <h2>Application Assistance</h2>
+                    <p>Save time and improve your applications with our AI-powered submission tools that help you complete applications quickly and effectively.</p>
+                    <ul class="feature-list">
+                        <li>Auto-populate application forms with your profile information</li>
+                        <li>Get suggestions for artist statements and proposal text</li>
+                        <li>Track application status and deadlines</li>
+                        <li>Receive reminders for upcoming deadlines</li>
+                    </ul>
+                    <div class="tier-info">
+                        <p><strong>Essentials Tier:</strong> Basic application tracking</p>
+                        <p><strong>Insider Tier:</strong> AI-assisted application drafting</p>
+                        <p><strong>Gallery Tier:</strong> Premium auto-submission features</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row align-items-center flex-row-reverse" id="workspace">
+            <div class="col-lg-6">
+                <img src="/assets/workspace-collaboration.jpg" alt="Workspace collaboration" class="img-fluid rounded shadow-lg">
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-content">
+                    <span class="feature-badge">04</span>
+                    <h2>Collaborative Workspace</h2>
+                    <p>Work seamlessly with clients, galleries, and collaborators in a dedicated workspace designed for visual artists.</p>
+                    <ul class="feature-list">
+                        <li>Share and organize your portfolio with clients</li>
+                        <li>Manage projects and track deliverables</li>
+                        <li>Securely communicate and share files</li>
+                        <li>Create professional proposals and invoices</li>
+                    </ul>
+                    <div class="tier-info">
+                        <p><strong>Insider Tier:</strong> Basic workspace features</p>
+                        <p><strong>Gallery Tier:</strong> Advanced client management tools</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Steps -->
+<section class="how-it-works-steps">
+    <div class="container">
+        <h2 class="text-center mb-5">Getting Started is Simple</h2>
+        
+        <div class="steps-container">
+            <div class="steps-timeline">
+                <div class="timeline-line"></div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Create Your Account</h3>
+                    <p>Sign up for Proletto and begin your 7-day free trial of any tier. No credit card required to start.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Build Your Profile</h3>
+                    <p>Upload your portfolio and complete your artist profile with details about your practice and interests.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Discover Opportunities</h3>
+                    <p>Browse your personalized feed of opportunities that match your profile and portfolio.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Apply with Ease</h3>
+                    <p>Use our application tools to quickly apply to opportunities that interest you.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3>Track Your Progress</h3>
+                    <p>Monitor your applications, receive updates, and optimize your approach over time.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <h2 class="text-center mb-5">What Artists Say About Proletto</h2>
+        
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="testimonial-card-alt">
+                    <div class="quote-mark">"</div>
+                    <p class="testimonial-text">Proletto helped me discover a residency opportunity that perfectly aligned with my work. Without their platform, I never would have found it.</p>
+                    <div class="testimonial-author-alt">
+                        <img src="/static/assets/testimonial-1.svg" alt="Jane M.">
+                        <div>
+                            <h4>Jane M.</h4>
+                            <p>Mixed Media Artist, New York</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="testimonial-card-alt">
+                    <div class="quote-mark">"</div>
+                    <p class="testimonial-text">The portfolio optimization feature gave me insights I never would have considered. After making the suggested changes, I was accepted to a grant program I'd been trying to get into for years.</p>
+                    <div class="testimonial-author-alt">
+                        <img src="/static/assets/testimonial-2.svg" alt="Marcus T.">
+                        <div>
+                            <h4>Marcus T.</h4>
+                            <p>Digital Artist, California</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                <div class="testimonial-card-alt">
+                    <div class="quote-mark">"</div>
+                    <p class="testimonial-text">The collaborative workspace has been a game-changer for how I work with galleries. Everything is organized, professional, and my clients are impressed.</p>
+                    <div class="testimonial-author-alt">
+                        <img src="/static/assets/testimonial-3.svg" alt="Sophia K.">
+                        <div>
+                            <h4>Sophia K.</h4>
+                            <p>Sculptor, Chicago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="text-center mb-5">Frequently Asked Questions</h2>
+        
+        <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        What kinds of opportunities does Proletto find?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Proletto finds a wide range of opportunities for visual artists, including grants, residencies, exhibitions, public commissions, competitions, and more. Our specialized engines focus on different geographic regions and opportunity types to ensure comprehensive coverage.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        How is Proletto different from other opportunity platforms?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Unlike other platforms that simply list opportunities, Proletto uses AI to match opportunities to your specific portfolio and practice. We also provide tools to optimize your portfolio and streamline the application process, creating an end-to-end solution for artists.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        What membership plan is right for me?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        We offer three membership tiers to suit different needs:<br>
+                        - <strong>Essentials ($5/mo)</strong>: Great for emerging artists who want access to opportunities and basic portfolio tools.<br>
+                        - <strong>Proletto Insider ($15/mo)</strong>: Ideal for active artists applying to multiple opportunities, with advanced AI matching and application assistance.<br>
+                        - <strong>Gallery/Event ($50/mo)</strong>: Perfect for established artists, galleries, and organizations that need comprehensive tools and client management features.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Does Proletto work for all types of visual artists?
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes! Proletto works for artists across all visual mediums, including painting, sculpture, photography, digital art, installation, mixed media, performance, and more. Our AI adapts to your specific practice and medium to find relevant opportunities.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        Can I try Proletto before subscribing?
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Absolutely! We offer a 7-day free trial on all membership tiers. You can experience the full platform with no commitments and decide which plan works best for you. No credit card is required to start your trial.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container text-center">
+        <h2>Ready to transform your art career?</h2>
+        <p class="lead mb-4">Join thousands of artists who are discovering new opportunities every day with Proletto.</p>
+        <div class="cta-buttons">
+            <a href="/start-trial" class="btn btn-primary btn-lg">Start Your Free Trial</a>
+            <a href="/membership" class="btn btn-outline btn-lg">View Membership Plans</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* How It Works Page Styles */
+    .how-it-works-hero {
+        background-color: #f8f3e6;
+        padding: 6rem 0;
+    }
+    
+    .how-it-works-hero h1 {
+        font-family: var(--font-serif);
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--gray-900);
+    }
+    
+    .how-it-works-hero .lead {
+        font-size: 1.25rem;
+        color: var(--gray-700);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    .features-overview {
+        padding: 6rem 0;
+        background-color: #fff;
+    }
+    
+    .features-overview .row {
+        margin-bottom: 5rem;
+    }
+    
+    .features-overview .row:last-child {
+        margin-bottom: 0;
+    }
+    
+    .feature-content {
+        padding: 2rem;
+    }
+    
+    .feature-badge {
+        display: inline-block;
+        background-color: #8B5A2B;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-content h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--gray-900);
+    }
+    
+    .feature-content p {
+        font-size: 1.1rem;
+        color: var(--gray-700);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+    
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.5rem;
+    }
+    
+    .feature-list li {
+        position: relative;
+        padding-left: 2rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+        color: var(--gray-700);
+    }
+    
+    .feature-list li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #8B5A2B;
+        font-weight: bold;
+    }
+    
+    .tier-info {
+        background-color: #f8f3e6;
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+    
+    .tier-info p {
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+    
+    .tier-info p:last-child {
+        margin-bottom: 0;
+    }
+    
+    .how-it-works-steps {
+        padding: 6rem 0;
+        background-color: #f8f3e6;
+    }
+    
+    .how-it-works-steps h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 3rem;
+        color: var(--gray-900);
+    }
+    
+    .steps-container {
+        position: relative;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .steps-timeline {
+        position: absolute;
+        left: 49px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+    }
+    
+    .timeline-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 2px;
+        background-color: #8B5A2B;
+    }
+    
+    .step {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 3rem;
+    }
+    
+    .step:last-child {
+        margin-bottom: 0;
+    }
+    
+    .step-number {
+        width: 50px;
+        height: 50px;
+        background-color: #8B5A2B;
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-right: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .step-content {
+        flex: 1;
+        padding-top: 0.5rem;
+    }
+    
+    .step-content h3 {
+        font-family: var(--font-serif);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem;
+        color: var(--gray-900);
+    }
+    
+    .step-content p {
+        font-size: 1.1rem;
+        color: var(--gray-700);
+        margin: 0;
+        line-height: 1.6;
+    }
+    
+    .testimonials-section {
+        padding: 6rem 0;
+        background-color: #fff;
+    }
+    
+    .testimonials-section h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 3rem;
+        color: var(--gray-900);
+    }
+    
+    .testimonial-card-alt {
+        background-color: #f8f3e6;
+        border-radius: 8px;
+        padding: 2rem;
+        height: 100%;
+        position: relative;
+    }
+    
+    .quote-mark {
+        font-size: 4rem;
+        font-family: var(--font-serif);
+        color: rgba(139, 90, 43, 0.2);
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        line-height: 1;
+    }
+    
+    .testimonial-text {
+        font-size: 1.1rem;
+        color: var(--gray-700);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .testimonial-author-alt {
+        display: flex;
+        align-items: center;
+    }
+    
+    .testimonial-author-alt img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 1rem;
+    }
+    
+    .testimonial-author-alt h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 0.25rem;
+        color: var(--gray-900);
+    }
+    
+    .testimonial-author-alt p {
+        font-size: 0.9rem;
+        color: var(--gray-600);
+        margin: 0;
+    }
+    
+    .faq-section {
+        padding: 6rem 0;
+        background-color: #f8f3e6;
+    }
+    
+    .faq-section h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 3rem;
+        color: var(--gray-900);
+    }
+    
+    .accordion-item {
+        border: none;
+        border-bottom: 1px solid var(--gray-300);
+        background-color: transparent;
+    }
+    
+    .accordion-item:first-of-type {
+        border-top: 1px solid var(--gray-300);
+    }
+    
+    .accordion-button {
+        font-family: var(--font-serif);
+        font-size: 1.25rem;
+        font-weight: 600;
+        padding: 1.5rem 0;
+        color: var(--gray-900);
+        background-color: transparent;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        color: #8B5A2B;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: var(--gray-300);
+    }
+    
+    .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238B5A2B' class='bi bi-plus' viewBox='0 0 16 16'%3E%3Cpath d='M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z'/%3E%3C/svg%3E");
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .accordion-button:not(.collapsed)::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238B5A2B' class='bi bi-dash' viewBox='0 0 16 16'%3E%3Cpath d='M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z'/%3E%3C/svg%3E");
+    }
+    
+    .accordion-body {
+        padding: 0 0 1.5rem;
+        font-size: 1.1rem;
+        color: var(--gray-700);
+        line-height: 1.6;
+    }
+    
+    .cta-section {
+        padding: 6rem 0;
+        background-color: #8B5A2B;
+        color: #fff;
+    }
+    
+    .cta-section h2 {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+    
+    .cta-section .lead {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        max-width: 800px;
+        margin: 0 auto 2rem;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .cta-section .btn-primary {
+        background-color: #fff;
+        border-color: #fff;
+        color: #8B5A2B;
+    }
+    
+    .cta-section .btn-outline {
+        border-color: #fff;
+        color: #fff;
+    }
+    
+    .cta-section .btn-primary:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .cta-section .btn-outline:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .how-it-works-hero,
+        .features-overview,
+        .how-it-works-steps,
+        .testimonials-section,
+        .faq-section,
+        .cta-section {
+            padding: 4rem 0;
+        }
+        
+        .how-it-works-hero h1 {
+            font-size: 2.5rem;
+        }
+        
+        .feature-content h2,
+        .how-it-works-steps h2,
+        .testimonials-section h2,
+        .faq-section h2,
+        .cta-section h2 {
+            font-size: 2rem;
+        }
+        
+        .step-content h3 {
+            font-size: 1.25rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .how-it-works-hero,
+        .features-overview,
+        .how-it-works-steps,
+        .testimonials-section,
+        .faq-section,
+        .cta-section {
+            padding: 3rem 0;
+        }
+        
+        .how-it-works-hero h1 {
+            font-size: 2rem;
+        }
+        
+        .how-it-works-hero .lead {
+            font-size: 1.1rem;
+        }
+        
+        .feature-content {
+            padding: 1.5rem 0;
+        }
+        
+        .feature-content h2,
+        .how-it-works-steps h2,
+        .testimonials-section h2,
+        .faq-section h2,
+        .cta-section h2 {
+            font-size: 1.8rem;
+        }
+        
+        .feature-content p,
+        .step-content p,
+        .testimonial-text,
+        .accordion-body {
+            font-size: 1rem;
+        }
+        
+        .feature-list li {
+            font-size: 1rem;
+        }
+        
+        .cta-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
